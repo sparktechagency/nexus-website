@@ -1,103 +1,127 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import Image from "next/image"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import Link from "next/link"
+
+export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <div className="h-dvh grid grid-cols-1 lg:grid-cols-2  text-[#ffff] ">
+      <div className=" rounded-2xl ml-6 mt-6 relative">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+          src="/web_pic/authenticationPhoto2.png"
+          alt="Gaming controller with neon lights"
+          width={600}
+          height={300}
+          className="object-cover rounded-lg absolute top-20 w-[80%] ml-20 z-30"
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <Image
+          src="/web_pic/authenticationPhoto.png"
+          alt="Gaming controller with neon lights"
+          width={400}
+          height={400}
+          className="object-cover rounded-lg w-full h-[95vh] relative"
+        />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="absolute bottom-24 left-16 space-y-5">
+          <p
+            className="text-transparent bg-clip-text bg-gradient-to-r text-8xl font-bold"
+            style={{
+              backgroundImage:
+                "linear-gradient(90deg, rgba(101,35,231,1) 0%, rgba(2,60,227,1) 50%, rgba(101,35,231,1) 100%)",
+              WebkitBackgroundClip: "text", // Very important for Safari/Chrome
+              WebkitTextFillColor: "transparent", // Needed for full support
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Let’s Connect
+          </p>
+
+          <p className="text-4xl">
+            Make Your Space for an Unforgettable Gaming Experience.
+          </p>
+
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+
+
+
+      {/* Right section with login form - takes full width on small screens, half on medium and larger */}
+      <div className="flex justify-center items-center">
+        <div className="w-[646px] p-8 rounded-2xl">
+          <Card className="w-full  bg-gray-900/50 backdrop-blur-sm  rounded-xl shadow-lg">
+            <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
+              <Image
+                src="/web_pic/logo.png"
+                alt="Abstract geometric logo"
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+              <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+              <CardDescription className="text-sm text-gray-400 text-center">
+                Access your account with correct information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 px-6 pb-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email."
+                    className="pl-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="********"
+                    className="pl-10 pr-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <Link href="#" className="text-sm text-right text-purple-400 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-semibold py-2 rounded-md transition-all duration-200"
+              >
+                Sign In
+              </Button>
+            </CardContent>
+            <CardFooter className="flex justify-center text-sm text-gray-400 pb-8">
+              Don&apos;t have an account?{" "}
+              <Link href="#" className="text-purple-400 hover:underline ml-1">
+                Sign Up
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
