@@ -13,7 +13,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="h-dvh grid grid-cols-1 lg:grid-cols-2  text-[#ffff] ">
+    <div className="h-dvh grid grid-cols-1 lg:grid-cols-2  text-[#ffff] bg-cover bg-center"
+      style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}
+    >
       <div className=" rounded-2xl ml-6 mt-6 relative">
         <Image
           src="/web_pic/authenticationPhoto2.png"
@@ -31,17 +33,14 @@ export default function LoginPage() {
         />
 
         <div className="absolute bottom-24 left-16 space-y-5">
+
+
           <p
-            className="text-transparent bg-clip-text bg-gradient-to-r text-8xl font-bold"
-            style={{
-              backgroundImage:
-                "linear-gradient(90deg, rgba(101,35,231,1) 0%, rgba(2,60,227,1) 50%, rgba(101,35,231,1) 100%)",
-              WebkitBackgroundClip: "text", // Very important for Safari/Chrome
-              WebkitTextFillColor: "transparent", // Needed for full support
-            }}
-          >
+            className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-7xl font-bold">
             Let’s Connect
           </p>
+
+
 
           <p className="text-4xl">
             Make Your Space for an Unforgettable Gaming Experience.
@@ -56,42 +55,48 @@ export default function LoginPage() {
       {/* Right section with login form - takes full width on small screens, half on medium and larger */}
       <div className="flex justify-center items-center">
         <div className="w-[646px] p-8 rounded-2xl">
-          <Card className="w-full  bg-gray-900/50 backdrop-blur-sm  rounded-xl shadow-lg">
+          <div className="w-full  bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600  rounded-xl"
+            style={{
+              boxShadow:
+                "rgba(0, 0, 0, 0.16) 0px 2px 20px",
+            }}
+           
+            >
             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
               <Image
                 src="/web_pic/logo.png"
                 alt="Abstract geometric logo"
-                width={40}
-                height={40}
+                width={100}
+                height={100}
                 className="rounded-full"
               />
-              <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+              <CardTitle className="text-3xl font-bold text-[#ffff]">Sign In</CardTitle>
               <CardDescription className="text-sm text-gray-400 text-center">
                 Access your account with correct information
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 px-6 pb-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-[#ffff]">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter your email."
-                    className="pl-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                    className="pl-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                   />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-[#ffff]">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="********"
-                    className="pl-10 pr-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                    className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                   />
                   <button
                     type="button"
@@ -102,24 +107,34 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <Link href="#" className="text-sm text-right text-purple-400 hover:underline">
+                <Link href="#" className="text-sm text-right bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline">
                   Forgot password?
                 </Link>
               </div>
+
+
+
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-semibold py-2 rounded-md transition-all duration-200"
+                className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                style={{
+                  background:
+                    "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                }}
               >
                 Sign In
               </Button>
+
+
+
             </CardContent>
-            <CardFooter className="flex justify-center text-sm text-gray-400 pb-8">
+            <CardFooter className="flex justify-center text-sm text-[] pb-8">
               Don&apos;t have an account?{" "}
-              <Link href="#" className="text-purple-400 hover:underline ml-1">
+              <Link href="#" className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline ml-1">
                 Sign Up
               </Link>
             </CardFooter>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
