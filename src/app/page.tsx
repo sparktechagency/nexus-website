@@ -13,36 +13,35 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="h-dvh grid grid-cols-1 lg:grid-cols-2  text-[#ffff] bg-cover bg-center"
-      style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}
-    >
-      <div className=" rounded-2xl ml-6 mt-6 relative">
+    <div className="h-full lg:h-dvh grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0  text-[#ffff] bg-cover bg-center "
+      style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}>
+
+      <div className=" rounded-2xl px-4 lg:px-0 lg:ml-4 mt-6 relative flex justify-center">
         <Image
           src="/web_pic/authenticationPhoto2.png"
           alt="Gaming controller with neon lights"
           width={600}
           height={300}
-          className="object-cover rounded-lg absolute top-20 w-[80%] ml-20 z-30"
+          className="object-cover rounded-lg absolute top-8 md:top-16 lg:top-20 w-[80%]  z-30"
         />
+        
         <Image
           src="/web_pic/authenticationPhoto.png"
           alt="Gaming controller with neon lights"
           width={400}
           height={400}
-          className="object-cover rounded-lg w-full h-[95vh] relative"
+          className="object-cover rounded-lg w-full h-full lg:h-[95vh] relative"
         />
 
-        <div className="absolute bottom-24 left-16 space-y-5">
+        <div className="absolute bottom-4 md:bottom-8 lg:bottom-24 left-8 md:left-10 lg:left-16 space-y-5">
 
 
           <p
-            className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-7xl font-bold">
+            className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-4xl md:text-6xl lg:text-7xl font-bold">
             Let’s Connect
           </p>
 
-
-
-          <p className="text-4xl">
+          <p className="text-[14px] md:text-3xl lg:text-4xl">
             Make Your Space for an Unforgettable Gaming Experience.
           </p>
 
@@ -54,7 +53,7 @@ export default function LoginPage() {
 
       {/* Right section with login form - takes full width on small screens, half on medium and larger */}
       <div className="flex justify-center items-center">
-        <div className="w-[646px] p-8 rounded-2xl">
+        <div className="w-full lg:w-[646px] px-4 pb-4 lg:pb-0 lg:px-0 lg:p-8 rounded-2xl">
           <div className="w-full  bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600  rounded-xl"
             style={{
               boxShadow:
