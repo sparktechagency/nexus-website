@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="h-full lg:h-dvh grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0  text-[#ffff] bg-cover bg-center "
+    <div className="h-full lg:h-dvh grid grid-cols-1 xl:grid-cols-2 gap-10 xl:gap-0  text-[#ffff] bg-cover bg-center "
       style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}>
 
       <div className=" rounded-2xl px-4 lg:px-0 lg:ml-4 mt-6 relative flex justify-center">
@@ -24,7 +24,7 @@ export default function LoginPage() {
           height={300}
           className="object-cover rounded-lg absolute top-8 md:top-16 lg:top-20 w-[80%]  z-30"
         />
-        
+
         <Image
           src="/web_pic/authenticationPhoto.png"
           alt="Gaming controller with neon lights"
@@ -33,7 +33,7 @@ export default function LoginPage() {
           className="object-cover rounded-lg w-full h-full lg:h-[95vh] relative"
         />
 
-        <div className="absolute bottom-4 md:bottom-8 lg:bottom-24 left-8 md:left-10 lg:left-16 space-y-5">
+        <div className="absolute bottom-4 md:bottom-8 lg:bottom-16 xl:bottom-24 left-8 md:left-10 lg:left-16 space-y-5">
 
 
           <p
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
       {/* Right section with login form - takes full width on small screens, half on medium and larger */}
       <div className="flex justify-center items-center">
-        <div className="w-full lg:w-[646px] px-4 pb-4 lg:pb-0 lg:px-0 lg:p-8 rounded-2xl">
+        <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
           <div className="w-full  bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600  rounded-xl"
             style={{
               boxShadow:
