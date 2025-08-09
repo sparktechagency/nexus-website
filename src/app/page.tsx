@@ -150,7 +150,7 @@ export default function LoginPage() {
                   )}
 
                   <Link
-                    href="#"
+                    href="/forgot-password"
                     className="text-sm text-right bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline"
                   >
                     Forgot password?
@@ -167,7 +167,9 @@ export default function LoginPage() {
                       "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                   }}
                 >
+                <Link href="/home">
                   {isSubmitting ? "Signing In..." : "Sign In"}
+                </Link>
                 </Button>
               </CardContent>
             </form>
