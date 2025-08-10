@@ -10,7 +10,7 @@ import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
 
 export default function Navbar() {
     return (
-        <div className="  text-white px-4 md:px-6 lg:px-8 mb-6">
+        <div className="  text-white px-4 md:px-6 lg:px-8 mb-6 pt-6 ">
             {/* Navbar */}
             <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-4 mb-6 shadow-lg">
                 <div className="flex items-center space-x-4">
