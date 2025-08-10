@@ -1,5 +1,4 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -53,7 +52,6 @@ export default function RegisterModal() {
                             <Input
                                 id="opening-time"
                                 type="time"
-                                defaultValue="09:00"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                             />
                         </div>
@@ -64,7 +62,6 @@ export default function RegisterModal() {
                             <Input
                                 id="closing-time"
                                 type="time"
-                                defaultValue="21:00"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                             />
                         </div>
