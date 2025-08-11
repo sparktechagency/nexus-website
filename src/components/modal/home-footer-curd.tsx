@@ -2,13 +2,12 @@
 
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Clock, CreditCard, CalendarDays, CalendarClock } from "lucide-react"
+import { Clock } from "lucide-react"
 import Image from "next/image"
 
 export default function HomeFooterCurd() {
     return (
-        <div className=" bg-black px-4 md:px-6 lg:px-8 pb-8">
+        <div className=" bg-black py-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Todays Schedule Card */}
                 <Card className="col-span-1 bg-[#191829] text-white rounded-2xl border-none shadow-lg">

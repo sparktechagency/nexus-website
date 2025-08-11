@@ -46,6 +46,12 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+.customGap {
+  display: grid;
+  gap: var(--common-gap);
+}
+
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -126,18 +132,5 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    /* Apply the gradient background */
-    background: linear-gradient(
-      to bottom right,
-      var(--gradient-start),
-      var(--gradient-end)
-    );
-    color: var(--foreground);
-    /* Ensure the gradient covers the entire viewport */
-    min-height: 100vh;
-    /* Apply existing text color */
-    @apply text-foreground;
   }
 }

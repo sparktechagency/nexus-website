@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts"
 
 const data = [
   { name: "Sat\n12 Oct", bookings: 170 },
@@ -13,12 +13,25 @@ const data = [
   { name: "Fri\n12 Oct", bookings: 150 },
 ]
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface CustomTooltipProps extends TooltipProps<number, string> {
+  active?: boolean;
+  payload?: {
+    value: number;
+    payload: any;
+    dataKey: string;
+    name: string;
+    color: string;
+  }[];
+  label?: string;
+}
+
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#1e1829] p-3 rounded-lg shadow-md text-white text-sm border border-gray-700">
         <p className="font-bold">{`${payload[0].value} Bookings`}</p>
-        <p className="text-gray-400">{label.replace("\n", " ")}</p>
+        <p className="text-gray-400">{label?.replace("\n", " ")}</p>
       </div>
     )
   }

@@ -1,18 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bed, Calendar, BarChart, ThumbsUp, type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
+import { AverageRatingIcon, BookingIcon, RevenueIcon, RoomIcon } from "./custom-icons"
 
 interface SummaryCardProps {
   title: string
   value: string
-  icon: "Bed" | "Calendar" | "BarChart" | "ThumbsUp"
+  icon: "Room" | "Booking" | "Revenue" | "AverageRating"
   iconBgColor: string
 }
 
-const IconMap: { [key: string]: LucideIcon } = {
-  Bed: Bed,
-  Calendar: Calendar,
-  BarChart: BarChart,
-  ThumbsUp: ThumbsUp,
+const IconMap: { [key: string]: LucideIcon | React.FC<React.SVGProps<SVGSVGElement>>} = {
+
+  Room:RoomIcon,
+  Booking:BookingIcon,
+  Revenue:RevenueIcon,
+  AverageRating:AverageRatingIcon,
 }
 
 export default function SummaryCard({ title, value, icon, iconBgColor }: SummaryCardProps) {

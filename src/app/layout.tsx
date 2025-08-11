@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import {Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/shared/navbar/navbar";
 
 
 const poppins = Poppins({
@@ -12,17 +13,18 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Nexus Website",
-  description:"Nexus Website",
+  description: "Nexus Website",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode; 
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" className={`${poppins?.variable}`}>
-      <body suppressHydrationWarning>
+      <body className="bg-black" suppressHydrationWarning >
+        <Navbar />
         {children}
       </body>
     </html>

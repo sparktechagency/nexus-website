@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart } from "recharts"
+import { Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, TooltipProps } from "recharts"
 
 const data = [
   { name: "Sat\n19 Oct", revenue: 30000 },
@@ -13,7 +13,18 @@ const data = [
   { name: "Fri\n25 Oct", revenue: 20000 },
 ]
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+
+type CustomTooltipProps = TooltipProps<number, string> & {
+  active?: boolean
+  payload?: {
+    value: number
+    payload: any // You might want to further specify this if needed
+  }[]
+  label?: string
+}
+
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const date = label.split("\n")[1] || label // Extract date from label
     return (
@@ -25,6 +36,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   }
   return null
 }
+
+
 
 export default function WeeklyRevenueGraph() {
   return (
