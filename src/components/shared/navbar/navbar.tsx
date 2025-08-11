@@ -26,12 +26,18 @@ export default function Navbar() {
       router.push('/web-notification')
     }
 
+    const handleNavigateHome = () => {
+      router.push('/home')
+    }
+
 
     return (
         <div className="  text-white px-4 md:px-6 lg:px-8 mb-6">
             {/* Navbar */}
             <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-4 mb-6 shadow-lg">
-                <div className="flex items-center space-x-4">
+                <div 
+                onClick={handleNavigateHome}
+                className="cursor-pointer flex items-center space-x-4">
                     <Image
                         src="/web_pic/logo.png"
                         alt="Nexus Logo"
@@ -107,12 +113,12 @@ export default function Navbar() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="bg-[#292531] border-none text-white">
-                            <DropdownMenuItem onClick={() => {handleMenuClick("User History");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">User History</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Manage Promo");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Manage Promo</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Change Password");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Change Password</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {handleMenuClick("User History")}} className="hover:bg-gray-700 cursor-pointer">User History</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {handleMenuClick("Manage Promo")}} className="hover:bg-gray-700 cursor-pointer">Manage Promo</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {handleMenuClick("Change Password")}} className="hover:bg-gray-700 cursor-pointer">Change Password</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => {handleMenuClick("Terms & Conditions");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Terms & Conditions</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Privacy Policy");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Privacy Policy</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Logout");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Logout</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {handleMenuClick("Privacy Policy")}} className="hover:bg-gray-700 cursor-pointer">Privacy Policy</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {handleMenuClick("Logout")}} className="hover:bg-gray-700 cursor-pointer">Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -127,7 +133,7 @@ export default function Navbar() {
             <CustomModal
                 open={isOpen}
                 setIsOpen={setIsOpen}
-                className={"p-0 max-h-[0vh]"}
+                className={"p-4 max-h-[0vh]"}
                 maxWidth={"!max-w-[50vw]"}
             >
                 <TermsAndCondition />

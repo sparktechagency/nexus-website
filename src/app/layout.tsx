@@ -6,7 +6,7 @@ import Navbar from "@/components/shared/navbar/navbar";
 
 const poppins = Poppins({
   variable: "--font-poppins",
-  weight: ["400", "500", "600", "700"], // choose weights you need
+  weight: ["400", "500", "600", "700"], 
   subsets: ["latin"],
 });
 
@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   title: "Nexus Website",
   description: "Nexus Website",
 };
+
+
+
 
 export default function RootLayout({
   children,
