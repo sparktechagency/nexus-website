@@ -14,7 +14,7 @@ const DeleteRoom = ({ open, setIsOpen }: RoomCancelledProps) => {
 
             <div className="flex flex-col items-center justify-center   p-4">
                 <p className="text-lg  leading-relaxed">
-                    You want to delete this room
+                    You want to delete this room.
                 </p>
             </div>
 
