@@ -8,26 +8,30 @@ import { useState } from "react";
 import CustomModal from "@/components/modal/customModal";
 import TermsAndCondition from "@/components/terms-and-condition/page";
 import { useRouter } from "next/navigation";
+import PrivacyPolicy from "@/components/privacy-policy/page";
+import EditProfile from "@/components/edit-profile/page";
+
 
 
 export default function Navbar() {
     const router = useRouter()
-    const [isOpen, setIsOpen] = useState(false)
+    const [isTerms, setIsTerms] = useState(false)
+    const [isPrivacy, setIsPrivacy] = useState(false)
+    const [isProfile, setIsProfile] = useState(false)
 
 
     const handleMenuClick = (value: string) => {
-        if (value === "Terms & Conditions") {
-
-        }
-        // You can now use this value for navigation, API calls, etc.
+      if(value === "Logout"){
+       router.push('/') 
+      }
     };
 
     const handleNotification = () => {
-      router.push('/web-notification')
+        router.push('/web-notification')
     }
 
     const handleNavigateHome = () => {
-      router.push('/home')
+        router.push('/home')
     }
 
 
@@ -35,9 +39,9 @@ export default function Navbar() {
         <div className="  text-white px-4 md:px-6 lg:px-8 mb-6">
             {/* Navbar */}
             <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-4 mb-6 shadow-lg">
-                <div 
-                onClick={handleNavigateHome}
-                className="cursor-pointer flex items-center space-x-4">
+                <div
+                    onClick={handleNavigateHome}
+                    className="cursor-pointer flex items-center space-x-4">
                     <Image
                         src="/web_pic/logo.png"
                         alt="Nexus Logo"
@@ -57,7 +61,7 @@ export default function Navbar() {
                     <a href="/booking" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
                         Bookings
                     </a>
-                    <a href="/web-profile" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                    <a href="/profile" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
                         Profile
                     </a>
                 </div>
@@ -113,12 +117,12 @@ export default function Navbar() {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="bg-[#292531] border-none text-white">
-                            <DropdownMenuItem onClick={() => {handleMenuClick("User History")}} className="hover:bg-gray-700 cursor-pointer">User History</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Manage Promo")}} className="hover:bg-gray-700 cursor-pointer">Manage Promo</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Change Password")}} className="hover:bg-gray-700 cursor-pointer">Change Password</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Terms & Conditions");setIsOpen(!isOpen);}} className="hover:bg-gray-700 cursor-pointer">Terms & Conditions</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Privacy Policy")}} className="hover:bg-gray-700 cursor-pointer">Privacy Policy</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {handleMenuClick("Logout")}} className="hover:bg-gray-700 cursor-pointer">Logout</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("User History") }} className="hover:bg-gray-700 cursor-pointer">User History</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("Manage Promo") }} className="hover:bg-gray-700 cursor-pointer">Manage Promo</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("Change Password"); setIsProfile(!isProfile); }} className="hover:bg-gray-700 cursor-pointer">Change Password</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("Terms & Conditions"); setIsTerms(!isTerms); }} className="hover:bg-gray-700 cursor-pointer">Terms & Conditions</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("Privacy Policy"); setIsPrivacy(!isPrivacy); }} className="hover:bg-gray-700 cursor-pointer">Privacy Policy</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { handleMenuClick("Logout") }} className="hover:bg-gray-700 cursor-pointer">Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -129,14 +133,37 @@ export default function Navbar() {
 
 
 
-            {/* modal component(REGISTER) */}
+            {/* modal component(TERMS_AND_CONDITION) */}
             <CustomModal
-                open={isOpen}
-                setIsOpen={setIsOpen}
+                open={isTerms}
+                setIsOpen={setIsTerms}
                 className={"p-4 max-h-[0vh]"}
                 maxWidth={"!max-w-[50vw]"}
             >
                 <TermsAndCondition />
+            </CustomModal>
+
+
+            {/* modal component(PRIVACY) */}
+            <CustomModal
+                open={isPrivacy}
+                setIsOpen={setIsPrivacy}
+                className={"p-4 max-h-[0vh]"}
+                maxWidth={"!max-w-[50vw]"}
+            >
+                <PrivacyPolicy />
+            </CustomModal>
+
+
+
+            {/* modal component(EDIT_PROFILE) */}
+            <CustomModal
+                open={isProfile}
+                setIsOpen={setIsProfile}
+                className={"p-4 max-h-[0vh]"}
+                maxWidth={"!max-w-[40vw]"}
+            >
+                <EditProfile />
             </CustomModal>
         </div>
     )
