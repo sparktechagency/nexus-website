@@ -10,8 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from "next/link"
-// import CustomModal from "@/components/modal/customModal"
-// import SubscriptionModal from "@/components/modal/subscriptionModal"
 import { useRouter } from "next/navigation"
 
 
@@ -193,20 +191,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-
-
-      {/* modal component(RESCEDULE) */}
-      {/* <CustomModal
-        open={isSubscription}
-        setIsOpen={setIsSubscription}
-        className={"p-4 max-h-[0vh]"}
-        maxWidth={"!max-w-[50vw]"}
-      >
-        <SubscriptionModal 
-         open={isSubscription}
-        setIsOpen={setIsSubscription}
-        />
-      </CustomModal> */}
     </div>
   )
 }

@@ -3,12 +3,11 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { UploadCloud } from "lucide-react"
-import Link from "next/link"
 
-export default function RegisterModal() {
+export default function EditProfileModal() {
     return (
-        <div className="">
-            <h1 className="text-center text-[24px] py-4">Register a Gaming Zone</h1>
+        <div className="text-[#ffff]">
+            <h1 className="text-center text-[24px] py-4 text-[#ffff]">Edit profile</h1>
 
 
 
@@ -33,17 +32,7 @@ export default function RegisterModal() {
                             className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="contact-number" className="text-base font-medium">
-                            Contact Number
-                        </Label>
-                        <Input
-                            id="contact-number"
-                            type="tel"
-                            placeholder="Enter the contact number"
-                            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
-                        />
-                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="opening-time" className="text-base font-medium">
@@ -66,6 +55,8 @@ export default function RegisterModal() {
                             />
                         </div>
                     </div>
+
+
                     <div className="space-y-2">
                         <Label htmlFor="location" className="text-base font-medium">
                             Location
@@ -76,6 +67,34 @@ export default function RegisterModal() {
                             className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
                     </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="full-name" className="text-base font-medium">
+                                Your Full Name
+                            </Label>
+                            <Input
+                                id="full-name"
+                                type="tel"
+                                placeholder="Enter the your full name"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="contact-number" className="text-base font-medium">
+                                Contact Number
+                            </Label>
+                            <Input
+                                id="contact-number"
+                                type="tel"
+                                placeholder="Enter the contact number"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
+                    </div>
+
+
                     <Button
                         className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                         style={{
@@ -83,12 +102,15 @@ export default function RegisterModal() {
                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                         }}
                     >
-                        <Link href="/home">
-                            Register
-                        </Link>
+                        Save Changes
+                    </Button>
+                    <Button
+                        className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
+                        Cancel
                     </Button>
                 </div>
             </div>
         </div>
     )
 }
+

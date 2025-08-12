@@ -18,7 +18,7 @@ const AddNewRoom = () => {
                         <Label htmlFor="gaming-zone" className="text-base font-medium">
                             Room image
                         </Label>
-                        <div className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-700 bg-[#5E5E5E33]/80 text-gray-400 transition-colors hover:border-purple-500 hover:text-purple-500">
+                        <div className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-700 bg-[#5E5E5E33]/80 text-gray-400 transition-colors ">
                             <UploadCloud className="h-8 w-8" />
                             <span className="mt-2 text-sm">Upload</span>
                         </div>
