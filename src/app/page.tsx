@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from "next/link"
+// import CustomModal from "@/components/modal/customModal"
+// import SubscriptionModal from "@/components/modal/subscriptionModal"
+import { useRouter } from "next/navigation"
 
 
 type LoginFormInputs = {
@@ -19,6 +22,8 @@ type LoginFormInputs = {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const [isSubscription, setIsSubscription] = useState(false)
+  const router = useRouter()
 
   // React Hook Form setup
   const {
@@ -31,9 +36,11 @@ export default function LoginPage() {
   // Handle form submit
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     console.log("Form Data:", data)
-
-  reset()
+   router.push("/home?loginVerify=true")
+    reset()
   }
+
+ 
 
   return (
     <div
@@ -161,16 +168,16 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
+                  onClick={() => setIsSubscription(!isSubmitting)}
                   className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                   style={{
                     background:
                       "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                   }}
                 >
-                <Link href="/home">
-                  {isSubmitting ? "Signing In..." : "Sign In"}
-                </Link>
+                  {isSubmitting ? "Loading..." : "Sign In"}
                 </Button>
+
               </CardContent>
             </form>
 
@@ -186,6 +193,20 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+
+      {/* modal component(RESCEDULE) */}
+      {/* <CustomModal
+        open={isSubscription}
+        setIsOpen={setIsSubscription}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"!max-w-[50vw]"}
+      >
+        <SubscriptionModal 
+         open={isSubscription}
+        setIsOpen={setIsSubscription}
+        />
+      </CustomModal> */}
     </div>
   )
 }

@@ -1,10 +1,27 @@
+"use client"
 
+import CustomModal from '@/components/modal/customModal'
 import HomeFooterCurd from '@/components/modal/home-footer-curd'
+import SubscriptionModal from '@/components/modal/subscriptionModal'
 import DashboardSummaryCard from "@/components/summary-card"
 import WeeklyBookingGraph from "@/components/weekly-booking-graph"
 import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const HomePage = () => {
+  const searchParams = useSearchParams()
+  const showSubscription = searchParams.get("showSubscription")
+  const loginVerify = searchParams.get("loginVerify")
+  const [isSubscription, setIsSubscription] = useState(false)
+
+  useEffect(() => {
+    if (showSubscription === "true" || loginVerify === "true") {
+      setIsSubscription(true)
+    }
+  }, [showSubscription,loginVerify])
+
+
   return (
     <div className='px-4 md:px-6 lg:px-8 mb-6 '>
 
@@ -26,6 +43,21 @@ const HomePage = () => {
       </main>
 
       <HomeFooterCurd />
+
+
+
+      {/* modal component(RESCEDULE) */}
+      <CustomModal
+        open={isSubscription}
+        setIsOpen={setIsSubscription}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"!max-w-[50vw]"}
+      >
+        <SubscriptionModal
+          open={isSubscription}
+          setIsOpen={setIsSubscription}
+        />
+      </CustomModal>
     </div>
   )
 }
