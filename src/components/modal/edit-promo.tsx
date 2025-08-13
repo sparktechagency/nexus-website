@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useRef, useState, useEffect, Dispatch, SetStateAction } from "react";
@@ -15,13 +16,14 @@ type PromoFormValues = {
     minimumAmount: string;
     aboutPromo: string;
 };
-interface AddNewPromoProps {
+
+
+interface EditPromoProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-
-const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
+const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
     const contentRef = useRef<HTMLTextAreaElement | null>(null);
     const [isScrollable, setIsScrollable] = useState<boolean>(false);
     const { register, handleSubmit, reset } = useForm<PromoFormValues>();
@@ -65,7 +67,7 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
             `}</style>
 
             <div className="text-[#fff]">
-                <h1 className="text-center text-[24px] py-4">Add A New Promo</h1>
+                <h1 className="text-center text-[24px] py-4">Edit Promo</h1>
                 <div className="w-full rounded-xl border-none shadow-lg">
                     <div className="space-y-6">
                         <div className="space-y-2">
@@ -124,7 +126,7 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
                             className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                             style={{ background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)" }}
                         >
-                            Add
+                            Save changes
                         </Button>
 
                         <Button
@@ -140,4 +142,4 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
     );
 };
 
-export default AddNewPromo;
+export default EditPromo;
