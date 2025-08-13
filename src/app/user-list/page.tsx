@@ -139,7 +139,7 @@ const UserList = () => {
     }
 
     const handleBackClick = () => {
-        router.push("/home?showSubscription=true")
+        router.push("/home")
     }
 
 

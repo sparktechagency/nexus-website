@@ -27,6 +27,9 @@ export default function Navbar() {
       else if(value === "User History"){
        router.push('/user-list') 
       }
+      else if(value === "Manage Promo"){
+       router.push('/prom-management') 
+      }
     };
 
     const handleNotification = () => {
