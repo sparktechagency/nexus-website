@@ -24,6 +24,9 @@ export default function Navbar() {
       if(value === "Logout"){
        router.push('/') 
       }
+      else if(value === "User History"){
+       router.push('/user-list') 
+      }
     };
 
     const handleNotification = () => {

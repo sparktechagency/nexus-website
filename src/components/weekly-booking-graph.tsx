@@ -17,7 +17,7 @@ interface CustomTooltipProps extends TooltipProps<number, string> {
   active?: boolean;
   payload?: {
     value: number;
-    payload: any;
+    payload: string;
     dataKey: string;
     name: string;
     color: string;

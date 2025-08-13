@@ -20,7 +20,6 @@ type LoginFormInputs = {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isSubscription, setIsSubscription] = useState(false)
   const router = useRouter()
 
   // React Hook Form setup
@@ -166,7 +165,6 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  onClick={() => setIsSubscription(!isSubmitting)}
                   className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                   style={{
                     background:

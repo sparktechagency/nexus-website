@@ -18,7 +18,7 @@ type CustomTooltipProps = TooltipProps<number, string> & {
   active?: boolean
   payload?: {
     value: number
-    payload: any // You might want to further specify this if needed
+    payload: string // You might want to further specify this if needed
   }[]
   label?: string
 }
