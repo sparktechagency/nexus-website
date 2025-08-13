@@ -1,4 +1,12 @@
 import Navbar from "@/components/shared/navbar/navbar";
+import { Poppins } from "next/font/google";
+
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"], 
+  subsets: ["latin"],
+});
 
 export default function WebPageLayout({
     children,
@@ -6,7 +14,7 @@ export default function WebPageLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div>
+        <div className={`${poppins?.variable}`}>
             <div>
                 <Navbar />
                 {children}
