@@ -128,8 +128,7 @@ const mockUsers: User[] = [
 const UserList = () => {
     const router = useRouter()
     const [searchText, setSearchText] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
-    const totalPages = 10
+
 
 
 
@@ -189,6 +188,8 @@ const UserList = () => {
                                 <TableHead className="text-[#ffff] font-bold text-lg">Added By</TableHead>
                             </TableRow>
                         </TableHeader>
+
+                        
                         <TableBody className="">
                             {mockUsers.map((user) => (
                                 <TableRow key={user.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
