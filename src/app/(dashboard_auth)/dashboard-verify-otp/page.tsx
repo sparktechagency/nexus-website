@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, {
@@ -15,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
-export default function VerifyOtPPage() {
+export default function DashboardVerifyOtpPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
 
@@ -55,51 +56,18 @@ export default function VerifyOtPPage() {
 
     return (
         <div
-            className="h-full lg:h-dvh grid grid-cols-1 xl:grid-cols-2 gap-10 xl:gap-0 text-[#ffff] bg-cover bg-center"
-            style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}
-        >
+            className="h-screen flex justify-center items-center text-[#ffff] bg-cover bg-center"
+            style={{ backgroundImage: "url('/web_pic/login-bg.png')" }}>
 
-            {/* Left section */}
-            <div className="rounded-2xl px-4 lg:px-0 lg:ml-4 mt-6 relative flex justify-center">
-                <Image
-                    src="/web_pic/authenticationPhoto2.png"
-                    alt="Gaming controller with neon lights"
-                    width={600}
-                    height={300}
-                    className="object-cover rounded-lg absolute top-8 md:top-16 lg:top-20 w-[80%] z-30"
-                />
-
-                <Image
-                    src="/web_pic/authenticationPhoto.png"
-                    alt="Gaming controller with neon lights"
-                    width={400}
-                    height={400}
-                    className="object-cover rounded-lg w-full h-full lg:h-[95vh] relative"
-                />
-
-                <div className="absolute bottom-4 md:bottom-8 lg:bottom-16 xl:bottom-24 left-8 md:left-10 lg:left-16 space-y-5">
-                    <p className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-4xl md:text-6xl lg:text-7xl font-bold">
-                        Let’s Connect
-                    </p>
-                    <p className="text-[14px] md:text-3xl lg:text-4xl">
-                        Make Your Space for an Unforgettable Gaming Experience.
-                    </p>
-                </div>
-            </div>
-
-
-
-
-            {/* Right section */}
             <div className="flex justify-center items-center">
                 <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
                     <div
-                        className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600 rounded-xl"
+                        className="w-full bg-[#1c1629] backdrop-blur-sm shadow-2xl  rounded-xl"
                         style={{
                             boxShadow: "rgba(0, 0, 0, 0.16) 0px 2px 20px",
                         }}
                     >
-                        <div className=" rounded-xl border-none bg-[#2A2A2A] p-6 text-center shadow-lg">
+                        <div className=" rounded-xl border-none  p-6 text-center shadow-lg">
                             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
                                 <Image
                                     src="/web_pic/logo.png"
@@ -162,7 +130,7 @@ export default function VerifyOtPPage() {
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                     }}
                                 >
-                                    <Link href="/create-new-password">
+                                    <Link href="dashboard-create-new-password">
                                         Verify
                                     </Link>
                                 </Button>
@@ -171,7 +139,7 @@ export default function VerifyOtPPage() {
 
 
 
-                                <Link href="/forgot-password">
+                                <Link href="/dashboard-forgot-password">
                                     <Button
                                         className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
                                         Back

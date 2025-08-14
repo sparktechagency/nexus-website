@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
 
   const handleNavigate = () => {
-    router.push('/')
+    router.push('/dashboard-login')
   }
 
   return (
