@@ -2,10 +2,10 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Users, Building2, DollarSign } from "lucide-react"
+
 
 const revenueData = [
   { day: "Mon", value: 2000 },

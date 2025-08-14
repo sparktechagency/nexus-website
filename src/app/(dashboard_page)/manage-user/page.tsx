@@ -2,8 +2,9 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Image from "next/image"
+import Link from "next/link"
 
-const providersData = [
+const userData = [
     {
         id: 1,
         name: "Abir",
@@ -117,15 +118,16 @@ const ManageUserPage = () => {
                 </div>
 
 
-                {/* Providers Table */}
+                {/* user Table */}
                 <div className="bg-[#28242f] rounded-xl p-4 mb-4">
 
                     <div className="flex justify-between pb-10">
                         <h2 className="text-3xl font-bold ">Providers list who earn money</h2>
-                        <p className="text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
-                            View all
-                        </p>
-
+                        <Link href='/manage-user-list'>
+                            <p className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
+                                View all
+                            </p>
+                        </Link>
                     </div>
 
 
@@ -133,8 +135,9 @@ const ManageUserPage = () => {
                     <Table className="border-none">
                         <TableHeader>
                             <TableRow className="border-none hover:bg-transparent cursor-pointer">
-                                <TableHead className="text-[#ffff] font-bold text-lg">User</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg">Provider</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Booking ID</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg">Zone name</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Contact</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg text-right">Price</TableHead>
                             </TableRow>
@@ -142,13 +145,14 @@ const ManageUserPage = () => {
 
 
                         <TableBody>
-                            {providersData.map((gamer) => (
+                            {userData.map((gamer) => (
                                 <TableRow key={gamer.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                                     <TableCell className="flex items-center space-x-3">
                                         <Image src={gamer.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
                                         <span className="text-white">{gamer.name}</span>
                                     </TableCell>
                                     <TableCell className="text-slate-300">{gamer.bookingId}</TableCell>
+                                    <TableCell className="text-slate-300">{gamer.zoneName}</TableCell>
                                     <TableCell className="text-slate-300">{gamer.contact}</TableCell>
                                     <TableCell className="text-white text-right font-semibold">{gamer.price}</TableCell>
                                 </TableRow>

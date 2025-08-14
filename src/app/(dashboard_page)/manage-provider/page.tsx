@@ -1,11 +1,263 @@
-import React from 'react'
+
+"use client"
+
+import { CardHeader, CardTitle } from "@/components/ui/card"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Image from "next/image"
+import { Tooltip } from "recharts";
+import Link from "next/link"
+
+// Sample data for the activities chart
+const activitiesData = [
+  { day: "Sun", completedServices: 1500, totalEarnings: 1200 },
+  { day: "Mon", completedServices: 1800, totalEarnings: 1600 },
+  { day: "Tue", completedServices: 2100, totalEarnings: 1400 },
+  { day: "Wed", completedServices: 1600, totalEarnings: 2000 },
+  { day: "Thu", completedServices: 1900, totalEarnings: 1800 },
+  { day: "Fri", completedServices: 2200, totalEarnings: 1700 },
+  { day: "Sat", completedServices: 1400, totalEarnings: 1300 },
+]
+
+const providersData = [
+  {
+    id: 1,
+    name: "Abir",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    bookingId: "456854",
+    zoneName: "Dragon's Lair",
+    contact: "abid32@gmail.com",
+    price: "$1023",
+  },
+  {
+    id: 2,
+    name: "Maksud",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    bookingId: "365236",
+    zoneName: "Mystic Forest",
+    contact: "user123@example.com",
+    price: "$2045",
+  },
+  {
+    id: 3,
+    name: "Madhob",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    bookingId: "478562",
+    zoneName: "Galactic Arena",
+    contact: "contact@samplemail.com",
+    price: "$3047",
+  },
+  {
+    id: 4,
+    name: "Madhob",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    bookingId: "478562",
+    zoneName: "Shadow Realm",
+    contact: "contact@samplemail.com",
+    price: "$3047",
+  },
+]
 
 const ManageProviderPage = () => {
   return (
-    <div>
-      ManageProviderPage
+    <div className="text-[#fff] mb-6 pt-4 ">
+      <div className="flex justify-between gap-4">
+        <div className="bg-[#28242f] rounded-xl w-full">
+          <div className="p-8  flex  items-center">
+            <div>
+              <Image
+                src="https://randomuser.me/api/portraits/men/1.jpg"
+                alt="Hasan Mahmud"
+                width={100}
+                height={100}
+                className="object-cover rounded-full " />
+
+              <h1 className="text-2xl font-semibold text-white my-3">Hasan Mahmud</h1>
+              <p className="text-gray-500 mb-1">Location: Times Square, USA</p>
+              <p className="text-gray-500">hasanmahmud@gmail.com</p>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 mx-4 pb-4">
+            <div className="bg-[#16121e] rounded-xl">
+              <div className="p-6 ">
+                <div className="flex  mb-4">
+                  <div className="p-3 bg-blue-500/20 rounded-full">
+                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M24.8677 0.703125H28.967V2.76C30.3243 3.03055 31.5863 3.56453 32.698 4.30641L34.1531 2.85125L37.0517 5.74992L35.5966 7.205C36.3386 8.31656 36.8723 9.57883 37.1429 10.9359H39.1998V15.0352H37.143C36.8725 16.3925 36.3385 17.6546 35.5967 18.7662L37.0518 20.2213L34.1531 23.1199L32.6981 21.6649C31.5865 22.4069 30.3243 22.9407 28.9671 23.2113V25.268H24.8678V23.2113C23.5105 22.9408 22.2484 22.4068 21.1367 21.665L19.6817 23.12L16.7831 20.2213L18.238 18.7663C17.4961 17.6547 16.9623 16.3924 16.6916 15.0352H14.6349V10.9359H16.6916C16.9622 9.57859 17.4962 8.31656 18.238 7.20484L16.7829 5.74992L19.6815 2.85133L21.1366 4.30641C22.2483 3.56445 23.5105 3.0307 24.8677 2.76008V0.703125ZM23.6346 32.3975C24.4147 30.9748 23.9172 29.1599 22.5076 28.3385L13.4029 23.034C12.1457 22.5121 10.8776 22.5107 9.61951 23.0305L6.75646 24.2133V35.3727C8.18209 34.9663 9.53326 35.0563 11.005 35.836L16.2847 38.6329C17.4869 39.2698 18.7212 39.4789 20.0357 39.1267L36.2793 34.7745C37.7286 34.3861 38.5966 32.8825 38.2084 31.4329C37.8202 29.9834 36.3164 29.1152 34.8669 29.5035L25.0363 32.1375C24.9571 32.4887 24.824 32.8332 24.6339 33.1595C23.6258 34.8898 21.3858 35.4835 19.6547 34.4749L14.7912 31.6414C14.4932 31.4688 14.3915 31.0873 14.5641 30.7894C14.7367 30.4914 15.1182 30.3898 15.4162 30.5623L20.2797 33.3959C21.5315 34.1251 22.9253 33.6147 23.6346 32.3975ZM5.50646 23.2634V36.8145C5.50646 37.1449 5.236 37.4154 4.90561 37.4154H2.40115C2.07068 37.4154 1.80029 37.1449 1.80029 36.8145V23.2634C1.80029 22.933 2.07076 22.6625 2.40115 22.6625H4.90568C5.23607 22.6624 5.50646 22.933 5.50646 23.2634ZM29.3461 10.2252L25.6154 13.9559L24.3008 12.3017C23.9828 11.9016 23.4004 11.8351 23.0004 12.1532C22.6002 12.4713 22.5337 13.0535 22.8519 13.4537L24.7761 15.8753C25.1053 16.3467 25.7828 16.4112 26.1929 16.0011L30.6575 11.5366C31.0196 11.1745 31.0196 10.5873 30.6575 10.2252C30.2954 9.86305 29.7083 9.86305 29.3461 10.2252ZM26.9173 6.59898C23.3901 6.59898 20.5307 9.45836 20.5306 12.9857C20.5306 16.513 23.3901 19.3723 26.9173 19.3723C30.4446 19.3723 33.304 16.513 33.304 12.9856C33.3041 9.45836 30.4447 6.59898 26.9173 6.59898Z" fill="url(#paint0_linear_659_5602)" />
+                      <defs>
+                        <linearGradient id="paint0_linear_659_5602" x1="31.3595" y1="38.4193" x2="10.8061" y2="9.06594" gradientUnits="userSpaceOnUse">
+                          <stop offset="0.1006" stopColor="#57FFD9" />
+                          <stop offset="1" stopColor="#2A64FF" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+
+                  </div>
+                </div>
+                <p className="text-slate-400 mb-2">Completed services</p>
+                <p className="text-3xl font-bold text-white">4,856</p>
+              </div>
+            </div>
+
+            <div className="bg-[#16121e] rounded-xl">
+              <div className="p-6 ">
+                <div className="flex  mb-4">
+                  <div className="p-3 bg-blue-500/20 rounded-full">
+                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g clipPath="url(#clip0_659_5608)">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M33.2698 27.5874C33.2888 27.6482 33.3198 27.7046 33.3608 27.7534C33.4019 27.8022 33.4522 27.8424 33.5089 27.8716C33.5656 27.9008 33.6275 27.9184 33.6911 27.9235C33.7546 27.9286 33.8186 27.921 33.8792 27.9012C33.9398 27.8814 33.9958 27.8498 34.0441 27.8081C34.0924 27.7665 34.132 27.7157 34.1605 27.6586C34.189 27.6016 34.2059 27.5395 34.2102 27.4759C34.2145 27.4123 34.2062 27.3484 34.1856 27.2881C33.7412 25.9301 32.6313 25.2863 31.5545 25.1709V24.0328C31.5545 23.905 31.5037 23.7824 31.4133 23.692C31.3229 23.6016 31.2003 23.5509 31.0725 23.5509C30.9447 23.5509 30.8221 23.6016 30.7317 23.692C30.6413 23.7824 30.5905 23.905 30.5905 24.0328V25.2086C29.2977 25.4568 28.4278 26.4446 28.4134 27.7022C28.3899 29.7422 29.516 30.3806 30.5905 30.7118V34.5501C29.9362 34.3281 29.2841 33.8235 28.8484 32.9563C28.7906 32.8428 28.6903 32.7568 28.5693 32.717C28.4484 32.6772 28.3166 32.6869 28.2027 32.744C28.0889 32.801 28.0022 32.9008 27.9617 33.0215C27.9211 33.1422 27.93 33.2741 27.9863 33.3883C28.6161 34.642 29.6126 35.3146 30.5902 35.5495V36.7673C30.5902 36.8952 30.6409 37.0178 30.7313 37.1081C30.8217 37.1985 30.9443 37.2493 31.0721 37.2493C31.1999 37.2493 31.3225 37.1985 31.4129 37.1081C31.5033 37.0178 31.5541 36.8952 31.5541 36.7673V35.6421C31.7323 35.6347 31.9095 35.6111 32.0834 35.5718C33.3619 35.2778 34.1666 34.2479 34.185 32.8843C34.2145 30.6806 32.7569 30.2759 31.5538 29.974V26.1426C32.267 26.252 32.9778 26.6973 33.2691 27.5874H33.2698ZM29.377 27.7127C29.3875 26.8428 29.9714 26.3749 30.5905 26.1987V29.6998C29.843 29.4251 29.3625 28.9712 29.377 27.7127ZM33.2217 32.8712C33.2095 33.7821 32.7038 34.4398 31.8675 34.632C31.7645 34.6556 31.6599 34.6713 31.5545 34.6788V30.9688C32.6643 31.2635 33.2395 31.5685 33.2217 32.8712ZM21.4877 30.4C21.4877 30.4618 21.4897 30.5227 21.4904 30.5849C20.6121 30.5781 19.7349 30.5245 18.8623 30.4242V26.5515C19.8063 26.6566 20.7554 26.7085 21.7052 26.7072C21.8807 26.7072 22.0559 26.705 22.2308 26.7007C21.7393 27.8721 21.4867 29.1297 21.4877 30.4ZM0.500234 24.8995C0.998125 25.2946 1.68586 25.6495 2.55242 25.9555C4.34008 26.5874 6.70023 26.9352 9.19914 26.9352C11.698 26.9352 14.059 26.5874 15.8466 25.9555C16.7132 25.6497 17.3998 25.2946 17.8988 24.8995V27.8398C17.8977 28.468 17.0129 29.1545 15.531 29.6789C13.8468 30.2731 11.598 30.6016 9.19914 30.6016C6.80031 30.6016 4.55188 30.2734 2.86742 29.6789C1.38609 29.1545 0.501016 28.468 0.500234 27.8398V24.8995ZM22.7094 25.7228C22.3778 25.7353 22.0413 25.7436 21.7052 25.7436C20.7553 25.7444 19.8061 25.6902 18.8623 25.5815V23.4448C18.86 23.3652 18.8623 23.2886 18.8623 23.2088C18.8623 22.6199 18.5638 22.0747 17.9845 21.5882C19.2161 21.7733 20.4598 21.8656 21.7052 21.8644C25.1518 21.8644 28.7563 21.1593 30.4333 19.8259V20.8372C28.8412 20.9453 27.3011 21.4487 25.9525 22.3017C24.6039 23.1548 23.4892 24.3306 22.7094 25.7228ZM18.9846 17.0777C16.2365 16.7863 14.1248 16.0979 12.9779 15.1749V18.128C12.979 18.7584 13.8672 19.4491 15.3544 19.9744C17.0435 20.5711 19.2987 20.9004 21.7055 20.9004C24.1123 20.9004 26.368 20.5711 28.0579 19.9744C29.5436 19.4491 30.4321 18.7592 30.4336 18.1287V15.1646C29.3269 16.0562 27.3228 16.734 24.7227 17.044V17.9788C24.7226 18.1066 24.6718 18.2291 24.5814 18.3195C24.491 18.4098 24.3685 18.4606 24.2407 18.4607H19.4673C19.3395 18.4606 19.217 18.4098 19.1266 18.3194C19.0362 18.2291 18.9854 18.1066 18.9852 17.9788V17.0777H18.9846ZM30.4336 13.4827C30.4336 14.4137 28.4352 15.6109 24.7227 16.0736V10.8928C28.4355 11.3551 30.4336 12.5543 30.4336 13.4827ZM16.5127 8.46704L21.8538 0.97876L27.1936 8.46704H24.2405C24.1772 8.467 24.1145 8.47944 24.056 8.50364C23.9975 8.52785 23.9443 8.56335 23.8996 8.60811C23.8548 8.65287 23.8193 8.70602 23.7951 8.76451C23.7709 8.823 23.7585 8.88569 23.7585 8.94899V17.4966H19.9483V8.94907C19.9482 8.82127 19.8974 8.69872 19.8071 8.60835C19.7167 8.51798 19.5941 8.46718 19.4663 8.46712L16.5127 8.46704ZM18.9846 10.8577V16.1077C15.2157 15.6878 12.9779 14.4647 12.9779 13.4822C12.9779 12.5194 15.0816 11.2906 18.9846 10.8572V10.8577ZM9.19914 20.4458C4.22031 20.4458 0.500234 21.9045 0.500234 23.2088C0.500234 24.513 4.22031 25.9717 9.19914 25.9717C14.178 25.9717 17.8987 24.513 17.8987 23.2088C17.8987 21.9045 14.1783 20.4458 9.19914 20.4458ZM2.86742 34.5066C4.55164 35.1018 6.79969 35.4291 9.19891 35.4291C11.5981 35.4291 13.8466 35.1018 15.5308 34.5066C17.0134 33.9821 17.8985 33.2945 17.8985 32.6666V29.5342C16.2253 30.8624 12.6329 31.5655 9.19891 31.5655C5.76492 31.5655 2.17289 30.8624 0.5 29.5342V32.6666C0.5 33.2945 1.38516 33.9821 2.86719 34.5066H2.86742ZM21.705 35.4291C20.0091 35.4291 18.368 35.2624 16.9555 34.9514C18.1266 34.3618 18.8621 33.5968 18.8621 32.6666V31.3942C19.7568 31.4937 20.6562 31.5452 21.5565 31.5484C21.7206 32.9143 22.1785 34.2284 22.8987 35.4004C22.5042 35.419 22.1052 35.4291 21.7051 35.4291H21.705ZM31.0722 39.0212C29.3671 39.0211 27.7004 38.5155 26.2827 37.5682C24.865 36.6209 23.76 35.2745 23.1075 33.6992C22.455 32.1239 22.2843 30.3905 22.617 28.7182C22.9496 27.0459 23.7707 25.5098 24.9764 24.3042C26.182 23.0985 27.7181 22.2775 29.3904 21.9448C31.0627 21.6122 32.7961 21.7829 34.3714 22.4354C35.9467 23.0878 37.2931 24.1928 38.2404 25.6105C39.1877 27.0282 39.6933 28.6949 39.6934 30.4C39.6909 32.6857 38.7818 34.877 37.1656 36.4932C35.5495 38.1095 33.3582 39.0186 31.0725 39.0212H31.0722ZM4.81781 19.009H8.20789C8.27116 19.009 8.33382 18.9966 8.39228 18.9724C8.45075 18.9482 8.50388 18.9128 8.54864 18.8681C8.59339 18.8233 8.6289 18.7702 8.65313 18.7118C8.67736 18.6533 8.68983 18.5907 8.68984 18.5274V12.596H10.9702C11.0586 12.5961 11.1454 12.5718 11.221 12.5257C11.2966 12.4797 11.358 12.4138 11.3986 12.3351C11.4391 12.2565 11.4572 12.1682 11.4509 12.0799C11.4446 11.9916 11.414 11.9068 11.3627 11.8348L6.90523 5.58595C6.86071 5.52338 6.80186 5.47237 6.73361 5.43718C6.66536 5.40198 6.58968 5.38361 6.51289 5.38361C6.4361 5.38361 6.36042 5.40198 6.29217 5.43718C6.22392 5.47237 6.16507 5.52338 6.12055 5.58595L1.66383 11.8352C1.61243 11.9072 1.5819 11.9921 1.57558 12.0804C1.56927 12.1687 1.58741 12.257 1.62802 12.3357C1.66862 12.4144 1.73013 12.4803 1.80577 12.5263C1.88141 12.5723 1.96827 12.5966 2.0568 12.5964H4.33617V18.5278C4.33634 18.6556 4.38718 18.778 4.47754 18.8683C4.5679 18.9586 4.69039 19.0093 4.81812 19.0094L4.81781 19.009ZM34.7854 20.9141H37.6689C37.7966 20.9141 37.9191 20.8633 38.0094 20.773C38.0997 20.6827 38.1505 20.5602 38.1505 20.4325V15.4602H40.0177C40.1062 15.4601 40.193 15.4356 40.2686 15.3895C40.3442 15.3433 40.4056 15.2773 40.4461 15.1986C40.4867 15.1198 40.5048 15.0315 40.4984 14.9432C40.4921 14.8548 40.4616 14.77 40.4102 14.6978L36.6197 9.38282C36.5752 9.32026 36.5163 9.26925 36.4481 9.23405C36.3798 9.19885 36.3041 9.18049 36.2273 9.18049C36.1506 9.18049 36.0749 9.19885 36.0066 9.23405C35.9384 9.26925 35.8795 9.32026 35.835 9.38282L32.0445 14.6981C31.993 14.7702 31.9624 14.855 31.956 14.9433C31.9496 15.0316 31.9676 15.1199 32.008 15.1987C32.0485 15.2774 32.1098 15.3435 32.1854 15.3897C32.2609 15.4358 32.3476 15.4603 32.4362 15.4605H34.3034V20.4328C34.3036 20.5605 34.3546 20.6829 34.4449 20.7731C34.5353 20.8633 34.6577 20.914 34.7854 20.9141Z" fill="url(#paint0_linear_659_5608)" />
+                      </g>
+                      <defs>
+                        <linearGradient id="paint0_linear_659_5608" x1="20.6727" y1="38.942" x2="20.2528" y2="2.14149" gradientUnits="userSpaceOnUse">
+                          <stop stopColor="#6A54A3" />
+                          <stop offset="1" stopColor="#00B1D2" />
+                        </linearGradient>
+                        <clipPath id="clip0_659_5608">
+                          <rect width="40" height="40" fill="white" transform="translate(0.5)" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+
+                  </div>
+                </div>
+                <p className="text-slate-400 mb-2">Total pay</p>
+                <p className="text-3xl font-bold text-white">$4,856</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Right Section - Activities Chart */}
+        <div className="w-full">
+          <div className="bg-[#28242f] rounded-xl h-full p-4">
+            <CardHeader className="pb-4">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-white text-xl">Activities</CardTitle>
+                <span className="text-gray-400 text-sm">Last Week</span>
+              </div>
+            </CardHeader>
+            <div className="p-6 pt-0">
+              <div className="h-84">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={activitiesData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis
+                      dataKey="day"
+                      stroke="#9CA3AF"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="#9CA3AF"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      domain={[0, 2500]}
+                      ticks={[0, 500, 1000, 1500, 2000, 2500]}
+                    />
+
+                    {/* Tooltip */}
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        borderRadius: "8px",
+                        border: "none",
+                        color: "#fff",
+                        fontSize: "14px",
+                      }}
+                      labelStyle={{ color: "#9CA3AF" }}
+                      cursor={{ stroke: "#4B5563", strokeWidth: 1 }}
+                    />
+
+                    <Line
+                      type="monotone"
+                      dataKey="completedServices"
+                      stroke="#10B981"
+                      strokeWidth={2}
+                      dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: "#10B981" }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="totalEarnings"
+                      stroke="#06B6D4"
+                      strokeWidth={2}
+                      dot={{ fill: "#06B6D4", strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: "#06B6D4" }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Legend */}
+              <div className="flex justify-center space-x-6 mt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-400 text-sm">Completed services</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                  <span className="text-gray-400 text-sm">Total earnings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+      {/* Providers Table */}
+      <div className="bg-[#28242f] rounded-xl p-4 my-4">
+
+        <div className="flex justify-between pb-10">
+          <h2 className="text-3xl font-bold ">Gamers list who book gaming zone</h2>
+          <Link href='/manage-provider-list'>
+            <p className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
+              View all
+            </p>
+          </Link>
+        </div>
+
+
+
+        <Table className="border-none">
+          <TableHeader>
+            <TableRow className="border-none hover:bg-transparent cursor-pointer">
+              <TableHead className="text-[#ffff] font-bold text-lg">User</TableHead>
+              <TableHead className="text-[#ffff] font-bold text-lg">Booking ID</TableHead>
+              <TableHead className="text-[#ffff] font-bold text-lg">Contact</TableHead>
+              <TableHead className="text-[#ffff] font-bold text-lg text-right">Price</TableHead>
+            </TableRow>
+          </TableHeader>
+
+
+          <TableBody>
+            {providersData.map((gamer) => (
+              <TableRow key={gamer.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
+                <TableCell className="flex items-center space-x-3">
+                  <Image src={gamer.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
+                  <span className="text-white">{gamer.name}</span>
+                </TableCell>
+                <TableCell className="text-slate-300">{gamer.bookingId}</TableCell>
+                <TableCell className="text-slate-300">{gamer.contact}</TableCell>
+                <TableCell className="text-white text-right font-semibold">{gamer.price}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
 
-export default ManageProviderPage
+
+export default ManageProviderPage;
