@@ -188,7 +188,6 @@ const UserList = () => {
                                 <TableHead className="text-[#ffff] font-bold text-lg">Added By</TableHead>
                             </TableRow>
                         </TableHeader>
-
                         
                         <TableBody className="">
                             {mockUsers.map((user) => (
