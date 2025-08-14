@@ -1,9 +1,9 @@
 
-import { Card, CardContent } from "@/components/ui/card"
+import {  CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PremiumIcon, StandardIcon, StarIcon } from "@/components/custom-icons"
-import { Button } from "@/components/ui/button"
+
 
 const planData = [
   { name: "Basic Plan", count: 120, color: "text-yellow-400", icon: <StarIcon /> },

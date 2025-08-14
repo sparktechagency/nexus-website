@@ -1,26 +1,27 @@
+
+
+
+
 import { Button } from "@/components/ui/button"
 import { Dispatch, SetStateAction } from "react";
 
-interface RoomCancelledProps {
+interface DeleteManageUserProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 
-const DeleteRoom = ({ open, setIsOpen }: RoomCancelledProps) => {
+const DeleteManageUser = ({ open, setIsOpen }: DeleteManageUserProps) => {
     return (
         <div className="text-[#fff]">
-            <h1 className="text-center text-[24px] pb-4">Are you sure?</h1>
+            <h1 className="text-center text-3xl font-bold py-4">Delete User</h1>
+            <p className="text-lg  text-center leading-relaxed text-gray-500">
+                If you delete the user, it will be permanently <br /> removed from your dashboard
+            </p>
 
 
-            <div className="flex flex-col items-center justify-center   p-4">
-                <p className="text-lg  leading-relaxed">
-                    You want to delete this room.
-                </p>
-            </div>
 
-
-            <div className="flex justify-center items-center gap-4 mt-16">
+            <div className="flex justify-center items-center gap-4 mb-8 mt-16">
                 <Button
                     onClick={() => setIsOpen(!open)}
                     className="w-[40%] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
@@ -41,4 +42,4 @@ const DeleteRoom = ({ open, setIsOpen }: RoomCancelledProps) => {
     )
 }
 
-export default DeleteRoom
+export default DeleteManageUser

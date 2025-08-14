@@ -102,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar collapsible="icon" {...props} className="h-full border-none">
+    <Sidebar collapsible="icon" {...props} className="h-full border-none ">
       <SidebarHeader className="bg-[#0a0726]" >
         <div
           className="flex items-center space-x-2">

@@ -22,6 +22,17 @@ const TextColor = () => {
       >
         Sign In
       </Button>
+
+
+
+
+
+
+
+      {/* common bg color */}
+      const common color =            bg-[#28242f]
+
+      const gradient_color =          bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900
     </div>
   )
 }
