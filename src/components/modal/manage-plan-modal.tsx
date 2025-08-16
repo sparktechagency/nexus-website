@@ -24,7 +24,7 @@ const ManagePlanModal = () => {
     }
 
     return (
-        <div className="w-full max-w-md mx-auto bg-black text-white p-6 rounded-lg">
+        <div className="w-full  bg-black text-white p-6 rounded-lg">
             <h1 className="text-2xl font-semibold mb-8">Manage Plan</h1>
 
             {/* Plan Type Selection */}
@@ -32,15 +32,23 @@ const ManagePlanModal = () => {
                 {planTypes.map((plan) => (
                     <Button
                         key={plan}
-                        variant={selectedPlan === plan ? "default" : "outline"}
                         onClick={() => setSelectedPlan(plan)}
                         className={`flex-1 ${selectedPlan === plan
-                                ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-                                : "bg-transparent border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white"
+                            ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-5"
+                            : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-5"
                             }`}
                     >
-                        {plan}
+                        <span
+                            className={`${selectedPlan === plan
+                                ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
+                                : ""
+                                }`}
+                        >
+                            {plan}
+                        </span>
                     </Button>
+
+
                 ))}
             </div>
 
@@ -54,7 +62,7 @@ const ManagePlanModal = () => {
                     placeholder="How many bookings per day?"
                     value={bookingNumber}
                     onChange={(e) => setBookingNumber(e.target.value)}
-                    className="bg-gray-900 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-600 focus:ring-blue-600"
+                    className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                 />
             </div>
 
@@ -68,14 +76,18 @@ const ManagePlanModal = () => {
                     placeholder="Enter the price of this plan"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="bg-gray-900 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-600 focus:ring-blue-600"
+                    className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                 />
             </div>
 
             {/* Update Button */}
             <Button
                 onClick={handleUpdate}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 rounded-lg"
+                className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                style={{
+                    background:
+                        "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                }}
             >
                 Update
             </Button>
