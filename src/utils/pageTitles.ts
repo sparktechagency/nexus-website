@@ -21,29 +21,31 @@ export const pageTitles: Record<string, PageTitleConfig> = {
   },
   "/manage-users": {
     title: "Manage User",
-    subtitle: "Admin with access to this workspace can promote or demote user maintain business insights",
+    subtitle: "Here you can manage all the users & delete which one you like.",
   },
   "/manage-user": {
     title: "User Profile",
-    subtitle: "Provider details at a glance",
+    subtitle: "Here you can see details of the user.",
     backIcon:BackIcon,
   },
   "/manage-user-list": {
     title: "Providers list who earn money",
     backIcon:BackIcon,
   },
+
   "/manage-provider": {
     title: "Service Provider Profile",
-    subtitle: "Provider details at a glance",
+    subtitle: "Here you can see progress of the service provider.",
     backIcon:BackIcon,
   },
   "/manage-provider-list": {
     title: "Gamers list who book gaming zone",
     backIcon:BackIcon,
   },
+
   "/zone-listing": {
     title: "Zone listing",
-    subtitle: "Provider details at a glance",
+    subtitle: "You can see the zone details added by service providers.",
   },
   "/transaction": {
     title: "Transaction",
@@ -51,24 +53,23 @@ export const pageTitles: Record<string, PageTitleConfig> = {
   },
   "/subscription": {
     title: "Subscription Plan",
-    subtitle: "Provider details at a glance",
+    subtitle: "Manage your subscription play which was created for  service providers.",
     backIcon:BackIcon,
   },
   "/personal-details": {
     title: "Personal Details",
-    subtitle: "Update your personal information",
+    subtitle: "You can update your personal information.",
   },
   "/terms-and-conditions": {
     title: "Terms & Conditions",
-    subtitle: "Review our terms and conditions",
+    subtitle: "Here you can update terms & conditions for both of users.",
   },
   "/privacy-policy": {
     title: "Privacy Policy",
-    subtitle: "Understand how we protect your data",
+    subtitle: "Here you can update privacy policy for both of users.",
   },
   "/notification": {
     title: "Notifications",
-    subtitle: "Manage your notifications and alerts",
     backIcon:BackIcon,
   },
 };

@@ -28,7 +28,6 @@ interface NavProjectsProps {
 }
 
 export function NavProjects({ projects }: NavProjectsProps) {
-  const { isCollapsed } = useSidebar() as unknown as SidebarContext
   const pathname = usePathname()
 
 
@@ -41,19 +40,6 @@ export function NavProjects({ projects }: NavProjectsProps) {
           if (item.url === "users") {
             isActive = pathname.startsWith("/users") || pathname.startsWith("/provider") || pathname.startsWith("/userReviewRequest") || pathname.startsWith("/userReviewRequest") || pathname.startsWith("/userReviewDetails")
           }
-          else if (item.url === "services") {
-            isActive = pathname.startsWith("/services") || pathname.startsWith("/requestedServices")
-          }
-          else if (item.url === "referralManagement") {
-            isActive = pathname.startsWith("/referralManagement") || pathname.startsWith("/allReferrals")
-          }
-          else if (item.url === "disputeManagement") {
-            isActive = pathname.startsWith("/disputeManagement") || pathname.startsWith("/dispute_fom_user")
-          }
-          else if (item.url === "boostControl") {
-            isActive = pathname.startsWith("/boostControl") || pathname.startsWith("/pricingControl") || pathname.startsWith("/boostingRequests")
-          }
-
           else {
             isActive =
               pathname === `/${item.url}` ||
@@ -68,26 +54,15 @@ export function NavProjects({ projects }: NavProjectsProps) {
                     <Link
                       href={`/${item.url}`}
                       className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all  ${isActive
-                          ? "bg-[#0b041a] hover:bg-gray-800 text-white "
-                          : "text-white "
+                        ? "bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white py-[20px]"
+                        : "text-white  py-[20px]"
                         }`}
                     >
                       <item.icon className="h-5 w-5" />
-                      {!isCollapsed && (
-                        <span className="text-sm">{item.name}</span>
-                      )}
+                      <span className="text-sm">{item.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </TooltipTrigger>
-                {isCollapsed ? (
-                  <TooltipContent side="right">
-                    <p>{item.title}</p>
-                  </TooltipContent>
-                ) : (
-                  <TooltipContent side="right">
-                    <p>{item.name}</p>
-                  </TooltipContent>
-                )}
               </Tooltip>
             </SidebarMenuItem>
           )

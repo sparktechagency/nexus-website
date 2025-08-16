@@ -16,14 +16,12 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button"
 import {
-  AboutIcon,
-  BookingIcon,
-  ChangePasswordIcon,
   DashboardIcon,
-  PayoutIcon,
-  TermsIcon,
+  SettingIcon,
+  SubscriptionIcon,
   TransactionIcon,
-  UsersIcon
+  UsersIcon,
+  ZoneIcon
 } from "./custom-icons"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -50,7 +48,7 @@ export const data = {
     {
       name: "Zone listing",
       url: "zone-listing",
-      icon: BookingIcon,
+      icon: ZoneIcon,
     },
     {
       name: "Transaction",
@@ -60,7 +58,7 @@ export const data = {
     {
       name: "Subscription",
       url: "subscription",
-      icon: PayoutIcon,
+      icon: SubscriptionIcon,
     },
 
   ],
@@ -74,19 +72,19 @@ export const data = {
           title: "Personal details",
           description: "Update Account Security Credentials",
           url: "personal-details",
-          icon: ChangePasswordIcon,
+          icon: SettingIcon,
         },
         {
           title: "Terms & Conditions",
           description: "Legal Policies and Agreements",
           url: "terms-and-conditions",
-          icon: TermsIcon,
+          icon: SettingIcon,
         },
         {
           title: "Privacy policy",
           description: "Company Information and Background",
           url: "privacy-policy",
-          icon: AboutIcon,
+          icon: SettingIcon,
         },
         ,
       ],
@@ -102,8 +100,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar collapsible="icon" {...props} className="h-full border-none ">
-      <SidebarHeader className="bg-[#0a0726]" >
+    <Sidebar collapsible="icon" {...props} className="h-full border-2 border-[#706a7d6e] hover:border-[#706a7d6e]">
+      <SidebarHeader className="bg-[#0c0827]" >
         <div
           className="flex items-center space-x-2">
           <Image
@@ -118,7 +116,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
 
-      <SidebarContent className="bg-[#0a0726] ">
+      <SidebarContent className="bg-[#0c0827] ">
         <div className="">
           <NavProjects projects={data.projects} />
         </div>
@@ -127,7 +125,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
 
-      <SidebarFooter className="bg-[#0a0726]">
+      <SidebarFooter className="bg-[#0c0827]">
         <Button
           onClick={handleNavigate}
           className="w-full py-6 rounded-lg cursor-pointer text-white font-semibold transition-all duration-200"

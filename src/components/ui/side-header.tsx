@@ -22,7 +22,7 @@ const SiteHeader = () => {
   }
 
   return (
-    <div className="bg-[#1a1624] p-8 px-4 rounded flex justify-between">
+    <div className="bg-[#1a1624] p-8 px-4 rounded-xl flex justify-between">
       <div className="flex items-start space-x-3">
         {/* Render the icon only if it exists */}
 

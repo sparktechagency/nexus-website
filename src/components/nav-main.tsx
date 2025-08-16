@@ -77,8 +77,8 @@ export function NavMain({ items }: NavMainProps) {
                   <Link
                     key={subItem.title}
                     href={`/${subItem.url}`}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all ${isActive
-                        ? "bg-[#0b041a] text-white "
+                    className={`flex items-center gap-3 rounded-lg px-3 py-[12px] text-sm transition-all ${isActive
+                        ? "bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white "
                         : "text-white  hover:bg-[#0b041a] hover:text-[#fff]"
                       }`}
                   >
