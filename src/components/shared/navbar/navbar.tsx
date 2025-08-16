@@ -42,7 +42,7 @@ export default function Navbar() {
 
 
     return (
-        <div className="  text-white px-4 md:px-6 lg:px-8 mb-6">
+        <div className="  text-white px-4 md:px-6 lg:px-8 mb-6 mt-4">
             {/* Navbar */}
             <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-4 mb-6 shadow-lg">
                 <div
