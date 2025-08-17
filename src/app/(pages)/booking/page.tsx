@@ -7,6 +7,9 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import CustomModal from "@/components/modal/customModal"
 import AddGamer from "@/components/modal/booking-section-modal/add-gamer"
+import GamerInfoPayComplete from "@/components/modal/booking-section-modal/gamer-info-pay-complete"
+
+
 
 type BookingStatus = "ongoing" | "upcoming" | "completed" | "canceled"
 type GameType = "vip" | "bootcamp" | "ps5"
@@ -165,6 +168,7 @@ const BookingPage = () => {
     const [selectedGameType, setSelectedGameType] = useState<GameType>("vip")
     const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("ongoing")
     const [isAddRoom, setIsAddRoom] = useState(false)
+    const [gamerInfoPayCompleteModalOpen, seGamerInfoPayCompleteModalOpen] = useState(false)
 
 
 
@@ -193,6 +197,8 @@ const BookingPage = () => {
         const currentSlotIndex = timeSlots.indexOf(timeSlot)
         return currentSlotIndex === startRow
     }
+
+
 
 
 
@@ -276,7 +282,7 @@ const BookingPage = () => {
                     ))}
 
                     {/* Time Slots and Bookings */}
-                    {timeSlots.map((timeSlot, timeIndex) => (
+                    {timeSlots.map((timeSlot) => (
                         <div key={timeSlot} className="contents">
                             {/* Time Column */}
                             <div className=" p-4 border-b border-[#6f6a7c] text-gray-300 font-medium">{timeSlot}</div>
@@ -292,8 +298,9 @@ const BookingPage = () => {
                                     return (
                                         <div
                                             key={pcIndex}
+                                            onClick={() => seGamerInfoPayCompleteModalOpen(!gamerInfoPayCompleteModalOpen)} // modal open here......
                                             className={cn(
-                                                "border-b border-[#6f6a7c] p-1 relative",
+                                                "border-b border-[#6f6a7c] p-1 cursor-pointer relative",
                                                 booking.playerName === "Neymar"
                                                     ? "bg-[##B9C8FF]"
                                                     : "bg-pink-500/20",
@@ -321,7 +328,6 @@ const BookingPage = () => {
                                 }
 
                                 if (booking) {
-                                    // This cell is part of a booking but not the starting cell
                                     return null
                                 }
 
@@ -331,6 +337,24 @@ const BookingPage = () => {
                     ))}
                 </div>
             </Card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -350,7 +374,18 @@ const BookingPage = () => {
             </CustomModal>
 
 
-            
+            {/* modal component(Gamer_Info_Pay_Complete) */}
+            <CustomModal
+                open={gamerInfoPayCompleteModalOpen}
+                setIsOpen={seGamerInfoPayCompleteModalOpen}
+                className={"p-4 max-h-[0vh]"}
+                maxWidth={"!max-w-[40vw]"}
+            >
+                <GamerInfoPayComplete />
+            </CustomModal>
+
+
+
         </div>
     )
 }
