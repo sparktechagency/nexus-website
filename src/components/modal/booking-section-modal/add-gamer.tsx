@@ -45,13 +45,6 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
 
   const onSubmit = async (data: FormData) => {
     console.log("Form submitted:", data)
-    // Here you can access all form values in the 'data' object
-    // For example:
-    // console.log("Email:", data.email)
-    // console.log("PC Number:", data.pcNumber)
-    // console.log("Duration:", data.duration)
-    
-    // Handle form submission here (e.g., API call)
     
     setIsOpen(!open)
     reset()
