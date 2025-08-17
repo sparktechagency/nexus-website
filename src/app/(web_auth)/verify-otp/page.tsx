@@ -99,7 +99,7 @@ export default function VerifyOtPPage() {
                             boxShadow: "rgba(0, 0, 0, 0.16) 0px 2px 20px",
                         }}
                     >
-                        <div className=" rounded-xl border-none bg-[#2A2A2A] p-6 text-center shadow-lg">
+                        <div className=" rounded-xl border-none  p-6 text-center shadow-lg">
                             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
                                 <Image
                                     src="/web_pic/logo.png"
