@@ -5,6 +5,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import CustomModal from "@/components/modal/customModal"
+import AddGamer from "@/components/modal/booking-section-modal/add-gamer"
 
 type BookingStatus = "ongoing" | "upcoming" | "completed" | "canceled"
 type GameType = "vip" | "bootcamp" | "ps5"
@@ -18,6 +20,14 @@ interface Booking {
     status: BookingStatus
     gameType: GameType
 }
+
+
+
+
+
+
+
+
 
 const timeSlots = ["10:00 AM", "11:00 AM", "12:00 AM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM",]
 
@@ -40,8 +50,8 @@ const sampleBookings: Booking[] = [
         startTime: "10:00 AM",
         endTime: "11:00 PM",
         pc: 5,
-        status: "ongoing",
-        gameType: "vip",
+        status: "upcoming",
+        gameType: "bootcamp",
     },
     {
         id: "3",
@@ -117,6 +127,10 @@ const sampleBookings: Booking[] = [
     },
 ]
 
+
+
+
+// Time convert to Minute
 function convertTimeToMinutes(time: string): number {
     const [timeStr, period] = time.split(" ")
     let [hours, minutes] = timeStr.split(":").map(Number)
@@ -126,6 +140,10 @@ function convertTimeToMinutes(time: string): number {
 
     return hours * 60 + minutes
 }
+
+
+
+
 
 function calculateBookingSpan(startTime: string, endTime: string): { startRow: number; span: number } {
     const startMinutes = convertTimeToMinutes(startTime)
@@ -138,9 +156,24 @@ function calculateBookingSpan(startTime: string, endTime: string): { startRow: n
     return { startRow: startRow >= 0 ? startRow : 0, span }
 }
 
+
+
+
+
+
 const BookingPage = () => {
     const [selectedGameType, setSelectedGameType] = useState<GameType>("vip")
     const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("ongoing")
+    const [isAddRoom, setIsAddRoom] = useState(false)
+
+
+
+
+
+
+
+
+
 
     const filteredBookings = sampleBookings.filter(
         (booking) => booking.gameType === selectedGameType && booking.status === selectedStatus,
@@ -161,6 +194,8 @@ const BookingPage = () => {
         return currentSlotIndex === startRow
     }
 
+
+
     return (
         <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
             {/* Header */}
@@ -172,6 +207,7 @@ const BookingPage = () => {
                     </p>
                 </div>
                 <Button
+                    onClick={() => setIsAddRoom(!isAddRoom)}
                     className="w-fit px-6 py-2 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                     style={{
                         background:
@@ -186,14 +222,6 @@ const BookingPage = () => {
                     {(["vip", "bootcamp", "ps5"] as GameType[]).map((type) => (
                         <Button
                             key={type}
-                            // variant={selectedGameType === type ? "default" : "outline"}
-                            // className={cn(
-                            //     "px-6 py-2 rounded-full text-sm font-medium transition-colors",
-                            //     selectedGameType === type
-                            //         ? "bg-blue-600 text-white border-blue-600"
-                            //         : "bg-transparent text-gray-300 border-gray-600 hover:bg-gray-800",
-                            // )}
-
                             onClick={() => setSelectedGameType(type)}
                             className={` ${selectedGameType === type
                                 ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
@@ -213,6 +241,7 @@ const BookingPage = () => {
                     ))}
                 </div>
 
+
                 {/* Status Tabs */}
                 <div className="flex gap-8 mb-6 ">
                     {(["ongoing", "upcoming", "completed", "canceled"] as BookingStatus[]).map((status) => (
@@ -231,13 +260,6 @@ const BookingPage = () => {
                     ))}
                 </div>
             </div>
-
-
-
-
-
-
-
 
 
 
@@ -309,6 +331,26 @@ const BookingPage = () => {
                     ))}
                 </div>
             </Card>
+
+
+
+
+
+            {/* modal component(ADD_ROOM) */}
+            <CustomModal
+                open={isAddRoom}
+                setIsOpen={setIsAddRoom}
+                className={"p-4 max-h-[0vh]"}
+                maxWidth={"!max-w-[40vw]"}
+            >
+                <AddGamer
+                    open={isAddRoom}
+                    setIsOpen={setIsAddRoom}
+                />
+            </CustomModal>
+
+
+            
         </div>
     )
 }

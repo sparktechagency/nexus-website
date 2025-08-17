@@ -7,9 +7,10 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { useState } from "react";
 import CustomModal from "@/components/modal/customModal";
 import TermsAndCondition from "@/components/terms-and-condition/page";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import PrivacyPolicy from "@/components/privacy-policy/page";
 import EditProfile from "@/components/edit-profile/page";
+import Link from "next/link";
 
 
 
@@ -18,18 +19,19 @@ export default function Navbar() {
     const [isTerms, setIsTerms] = useState(false)
     const [isPrivacy, setIsPrivacy] = useState(false)
     const [isProfile, setIsProfile] = useState(false)
-
+    const pathname = usePathname();
+    const isActive = (path: string) => pathname === path;
 
     const handleMenuClick = (value: string) => {
-      if(value === "Logout"){
-       router.push('/') 
-      }
-      else if(value === "User History"){
-       router.push('/user-list') 
-      }
-      else if(value === "Manage Promo"){
-       router.push('/prom-management') 
-      }
+        if (value === "Logout") {
+            router.push('/')
+        }
+        else if (value === "User History") {
+            router.push('/user-list')
+        }
+        else if (value === "Manage Promo") {
+            router.push('/prom-management')
+        }
     };
 
     const handleNotification = () => {
@@ -39,6 +41,7 @@ export default function Navbar() {
     const handleNavigateHome = () => {
         router.push('/home')
     }
+
 
 
     return (
@@ -58,18 +61,42 @@ export default function Navbar() {
                     <span className="text-2xl font-bold tracking-wider">NEXUS</span>
                 </div>
                 <div className="hidden md:flex items-center space-x-6">
-                    <a href="/home" className="px-4 py-2 rounded-lg bg-purple-gradient-start text-white font-medium">
+                    <Link
+                        href="/home"
+                        className={`px-4 py-1 rounded-full transition-colors ${isActive('/home')
+                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                                : 'text-gray-300 '
+                            }`}
+                    >
                         Home
-                    </a>
-                    <a href="/room" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                    </Link>
+                    <Link
+                        href="/room"
+                        className={`px-4 py-1 rounded-full transition-colors ${isActive('/room')
+                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                                : 'text-gray-300 '
+                            }`}
+                    >
                         Rooms
-                    </a>
-                    <a href="/booking" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                    </Link>
+                    <Link
+                        href="/booking"
+                        className={`px-4 py-1 rounded-full transition-colors ${isActive('/booking')
+                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                                : 'text-gray-300 '
+                            }`}
+                    >
                         Bookings
-                    </a>
-                    <a href="/profile" className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+                    </Link>
+                    <Link
+                        href="/profile"
+                        className={`px-4 py-1 rounded-full transition-colors ${isActive('/profile')
+                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                                : 'text-gray-300 '
+                            }`}
+                    >
                         Profile
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex items-center space-x-4">
                     <svg
