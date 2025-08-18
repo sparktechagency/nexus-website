@@ -45,7 +45,8 @@ export function NavProjects({ projects }: NavProjectsProps) {
             <SidebarMenuItem key={item.name}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <SidebarMenuButton asChild>
+                  {/* =============== DEFAULT HOVER EFFECT REMOVE HERE ================ */}
+                  <SidebarMenuButton asChild className="hover:bg-[#0b041a] hover:text-white active:bg-transparent">
                     <Link
                       href={`/${item.url}`}
                       className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all  ${isActive
