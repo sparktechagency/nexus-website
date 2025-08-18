@@ -357,6 +357,15 @@ const BookingPage = () => {
 
 
 
+
+
+
+
+
+
+
+
+
             {/* modal component(ADD_ROOM) */}
             <CustomModal
                 open={isAddRoom}

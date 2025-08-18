@@ -1,6 +1,18 @@
 
 
 const ExtraModalPage = () => {
+    const [selectedGameType, setSelectedGameType] = useState<GameType>("vip")
+    const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("ongoing")
+    const [isAddRoom, setIsAddRoom] = useState(false)
+    const [gamerInfoPayCompleteModalOpen, setGamerInfoPayCompleteModalOpen] = useState(false)
+    const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
+    const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
+    const [gamerReviewRatingModalOpen, setGamerReviewRatingModalOpen] = useState(false)
+    const [rescheduleUpdateModalOpen, setRescheduleUpdateModalOpen] = useState(false)
+    const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
+    const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
+
+
     return (
         <div>
 

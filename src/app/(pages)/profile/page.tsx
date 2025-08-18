@@ -6,10 +6,29 @@ import EditProfileModal from "@/components/modal/edit-profile-modal"
 import { Button } from "@/components/ui/button"
 import { Mail, MapPin, Phone, Clock, Gamepad2, User } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { ChangeEvent, useRef, useState } from "react"
 
 export default function WebProfilePage() {
   const [isEdit, setIsEdit] = useState(false)
+  const [profileImage, setProfileImage] = useState("https://randomuser.me/api/portraits/women/2.jpg")
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setProfileImage(event.target.result as string)
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const reviews = [
     {
@@ -75,13 +94,28 @@ export default function WebProfilePage() {
             {/* Basic Info Section */}
             <div className=" rounded-xl p-6  ">
               <div className="flex justify-center">
-                <div className="relative">
-                  <Image
-                    src="https://randomuser.me/api/portraits/women/2.jpg"
-                    alt="photo"
-                    className="object-cover rounded-full"
-                    width={100}
-                    height={100}
+                <div className="relative cursor-pointer"
+                  onClick={handleImageClick}
+                >
+                  <div
+                    className="cursor-pointer"
+
+                  >
+                    <Image
+                      src={profileImage}
+                      alt="photo"
+                      className="w-[100px] h-[100px] object-cover rounded-full"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
                   />
 
                   <div className="absolute -top-2 -right-2 text-2xl">
@@ -105,48 +139,18 @@ export default function WebProfilePage() {
                     </svg>
 
                   </div>
-                  <div className="absolute -bottom-4 -right-2  rounded-full p-1">
-                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g filter="url(#filter0_dddd_968_2824)">
-                        <rect x="8" y="8" width="40" height="40" rx="20" fill="white" shapeRendering="crispEdges" />
-                        <path d="M27 32V23.85L24.4 26.45L23 25L28 20L33 25L31.6 26.45L29 23.85V32H27ZM22 36C21.45 36 20.9793 35.8043 20.588 35.413C20.1967 35.0217 20.0007 34.5507 20 34V31H22V34H34V31H36V34C36 34.55 35.8043 35.021 35.413 35.413C35.0217 35.805 34.5507 36.0007 34 36H22Z" fill="url(#paint0_linear_968_2824)" />
-                      </g>
+                  <div className="bg-white absolute -bottom-0 -right-2  rounded-full p-1">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 16V7.85L8.4 10.45L7 9L12 4L17 9L15.6 10.45L13 7.85V16H11ZM6 20C5.45 20 4.97933 19.8043 4.588 19.413C4.19667 19.0217 4.00067 18.5507 4 18V15H6V18H18V15H20V18C20 18.55 19.8043 19.021 19.413 19.413C19.0217 19.805 18.5507 20.0007 18 20H6Z" fill="url(#paint0_linear_968_2825)" />
                       <defs>
-                        <filter id="filter0_dddd_968_2824" x="0" y="0" width="56" height="56" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                          <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                          <feOffset dx="-4" />
-                          <feGaussianBlur stdDeviation="2" />
-                          <feComposite in2="hardAlpha" operator="out" />
-                          <feColorMatrix type="matrix" values="0 0 0 0 0.654902 0 0 0 0 0.745098 0 0 0 0 0.996078 0 0 0 0.15 0" />
-                          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_968_2824" />
-                          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                          <feOffset dx="4" />
-                          <feGaussianBlur stdDeviation="2" />
-                          <feComposite in2="hardAlpha" operator="out" />
-                          <feColorMatrix type="matrix" values="0 0 0 0 0.654902 0 0 0 0 0.745098 0 0 0 0 0.996078 0 0 0 0.15 0" />
-                          <feBlend mode="normal" in2="effect1_dropShadow_968_2824" result="effect2_dropShadow_968_2824" />
-                          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                          <feOffset dy="-4" />
-                          <feGaussianBlur stdDeviation="2" />
-                          <feComposite in2="hardAlpha" operator="out" />
-                          <feColorMatrix type="matrix" values="0 0 0 0 0.654902 0 0 0 0 0.745098 0 0 0 0 0.996078 0 0 0 0.15 0" />
-                          <feBlend mode="normal" in2="effect2_dropShadow_968_2824" result="effect3_dropShadow_968_2824" />
-                          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                          <feOffset dy="4" />
-                          <feGaussianBlur stdDeviation="2" />
-                          <feComposite in2="hardAlpha" operator="out" />
-                          <feColorMatrix type="matrix" values="0 0 0 0 0.654902 0 0 0 0 0.745098 0 0 0 0 0.996078 0 0 0 0.15 0" />
-                          <feBlend mode="normal" in2="effect3_dropShadow_968_2824" result="effect4_dropShadow_968_2824" />
-                          <feBlend mode="normal" in="SourceGraphic" in2="effect4_dropShadow_968_2824" result="shape" />
-                        </filter>
-                        <linearGradient id="paint0_linear_968_2824" x1="20" y1="28" x2="36" y2="28" gradientUnits="userSpaceOnUse">
+                        <linearGradient id="paint0_linear_968_2825" x1="4" y1="12" x2="20" y2="12" gradientUnits="userSpaceOnUse">
                           <stop stopColor="#6523E7" />
                           <stop offset="0.5" stopColor="#023CE3" stopOpacity="0.8" />
                           <stop offset="1" stopColor="#6523E7" />
                         </linearGradient>
                       </defs>
                     </svg>
+
 
                   </div>
                 </div>
