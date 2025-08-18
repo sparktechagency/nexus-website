@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { useSidebar } from "./ui/sidebar"
-import { ComponentType } from "react";
 
 interface SidebarContext {
   isCollapsed: boolean;
@@ -16,12 +15,12 @@ interface SidebarContext {
 interface NavSubItem {
   title: string;
   url: string;
-  icon?: ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface NavItem {
   title: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   items?: NavSubItem[];
 }
 

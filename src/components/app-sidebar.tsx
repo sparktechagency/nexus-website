@@ -85,7 +85,7 @@ export const data = {
           description: "Company Information and Background",
           url: "privacy-policy",
           icon: SettingIcon,
-        },
+        }
         ,
       ],
     },

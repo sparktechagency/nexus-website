@@ -7,7 +7,6 @@
 import type React from "react"
 import { Crown } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useRouter } from "next/navigation"
 
 interface NotificationItem {
     id: string
@@ -68,9 +67,6 @@ const notifications: NotificationItem[] = [
 
 
 const NotificationPage = () => {
-    const router = useRouter()
-
-  
 
 
     return (

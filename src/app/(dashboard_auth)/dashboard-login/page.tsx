@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import Image from "next/image"
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"

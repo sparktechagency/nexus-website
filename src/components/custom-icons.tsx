@@ -37,15 +37,14 @@ export const ZoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export const TransactionIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
         <mask id="mask0_563_5418" maskUnits="userSpaceOnUse" x="3" y="1" width="18" height="22">
-            <path d="M18.5 4.19684H5.5C4.94772 4.19684 4.5 4.64571 4.5 5.19943V21.2409C4.5 21.7946 4.94772 22.2435 5.5 22.2435H18.5C19.0523 22.2435 19.5 21.7946 19.5 21.2409V5.19943C19.5 4.64571 19.0523 4.19684 18.5 4.19684Z" fill="white" stroke="white" strokeWidth="1.25" strokeWidth="round" />
-            <path d="M9 2.19165V5.19942M15 2.19165V5.19942" stroke="white" strokeWidth="1.25" strokeLinecap="round" strokeWidth="round" />
-            <path d="M8 9.71106H16M8 13.7214H14M8 17.7318H12" stroke="black" strokeWidth="1.25" strokeLinecap="round" strokeWidth="round" />
+            <path d="M18.5 4.19684H5.5C4.94772 4.19684 4.5 4.64571 4.5 5.19943V21.2409C4.5 21.7946 4.94772 22.2435 5.5 22.2435H18.5C19.0523 22.2435 19.5 21.7946 19.5 21.2409V5.19943C19.5 4.64571 19.0523 4.19684 18.5 4.19684Z" fill="white" stroke="white" strokeWidth="1.25" strokeLinecap="round" />
+            <path d="M9 2.19165V5.19942M15 2.19165V5.19942" stroke="white" strokeWidth="1.25" strokeLinecap="round" />
+            <path d="M8 9.71106H16M8 13.7214H14M8 17.7318H12" stroke="black" strokeWidth="1.25" strokeLinecap="round" />
         </mask>
         <g mask="url(#mask0_563_5418)">
             <path d="M0 0.186462H24V24.2486H0V0.186462Z" fill="currentColor" />
         </g>
     </svg>
-
 
 );
 export const SubscriptionIcon = (props: React.SVGProps<SVGSVGElement>) => (

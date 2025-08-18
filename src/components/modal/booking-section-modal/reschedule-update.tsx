@@ -30,7 +30,7 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { Label } from "@/components/ui/label"
 import { UploadCloud, X } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 type RoomFormValues = {
   roomImage: FileList
@@ -20,7 +21,6 @@ const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const {
-    register,
     handleSubmit,
     reset,
     setValue,
@@ -74,10 +74,12 @@ const ImageUpload = () => {
           {imagePreview ? (
             <div className="relative">
               <div className="relative  w-full overflow-hidden rounded-lg border border-gray-700">
-                <img
-                  src={imagePreview }
+                <Image
+                  src={imagePreview}
                   alt="Room preview"
-                  className="h-auto max-h-80 w-full object-contain"
+                  width={100}
+                  height={100}
+                  className="h-[100px] w-[150px] object-contain rounded-lg"
                 />
                 <button
                   type="button"
@@ -110,7 +112,7 @@ const ImageUpload = () => {
           {errors.roomImage && <p className="text-red-500 text-sm">{errors.roomImage.message}</p>}
         </div>
 
-     
+
       </form>
     </div>
   )

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -15,8 +14,6 @@ import BookingConfirmation from "@/components/modal/booking-section-modal/bookin
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating"
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
 
-
-
 type BookingStatus = "ongoing" | "upcoming" | "completed" | "canceled"
 type GameType = "vip" | "bootcamp" | "ps5"
 
@@ -30,15 +27,7 @@ interface Booking {
     gameType: GameType
 }
 
-
-
-
-
-
-
-
-
-const timeSlots = ["10:00 AM", "11:00 AM", "12:00 AM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM",]
+const timeSlots = ["10:00 AM", "11:00 AM", "12:00 AM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"]
 
 const pcColumns = ["PC 1", "PC 2", "PC 3", "PC 4", "PC 5"]
 
@@ -136,23 +125,17 @@ const sampleBookings: Booking[] = [
     },
 ]
 
-
-
-
 // Time convert to Minute
 function convertTimeToMinutes(time: string): number {
     const [timeStr, period] = time.split(" ")
-    let [hours, minutes] = timeStr.split(":").map(Number)
+    const [hours, minutes] = timeStr.split(":").map(Number)
 
-    if (period === "PM" && hours !== 12) hours += 12
-    if (period === "AM" && hours === 12) hours = 0
+    let adjustedHours = hours
+    if (period === "PM" && hours !== 12) adjustedHours += 12
+    if (period === "AM" && hours === 12) adjustedHours = 0
 
-    return hours * 60 + minutes
+    return adjustedHours * 60 + minutes
 }
-
-
-
-
 
 function calculateBookingSpan(startTime: string, endTime: string): { startRow: number; span: number } {
     const startMinutes = convertTimeToMinutes(startTime)
@@ -165,11 +148,6 @@ function calculateBookingSpan(startTime: string, endTime: string): { startRow: n
     return { startRow: startRow >= 0 ? startRow : 0, span }
 }
 
-
-
-
-
-
 const BookingPage = () => {
     const [selectedGameType, setSelectedGameType] = useState<GameType>("vip")
     const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("ongoing")
@@ -181,15 +159,6 @@ const BookingPage = () => {
     const [rescheduleUpdateModalOpen, setRescheduleUpdateModalOpen] = useState(false)
     const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
     const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
-
-
-
-
-
-
-
-
-
 
     const filteredBookings = sampleBookings.filter(
         (booking) => booking.gameType === selectedGameType && booking.status === selectedStatus,
@@ -209,10 +178,6 @@ const BookingPage = () => {
         const currentSlotIndex = timeSlots.indexOf(timeSlot)
         return currentSlotIndex === startRow
     }
-
-
-
-
 
     return (
         <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
@@ -278,9 +243,6 @@ const BookingPage = () => {
                     ))}
                 </div>
             </div>
-
-
-
 
             {/* Booking Table */}
             <Card className="bg-transparent border-[#6f6a7c] overflow-hidden">
@@ -350,22 +312,6 @@ const BookingPage = () => {
                 </div>
             </Card>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             {/* modal component(ADD_ROOM) */}
             <CustomModal
                 open={isAddRoom}
@@ -379,7 +325,6 @@ const BookingPage = () => {
                 />
             </CustomModal>
 
-
             {/* modal component(Gamer_Info_Pay_Complete) */}
             <CustomModal
                 open={gamerInfoPayCompleteModalOpen}
@@ -389,8 +334,6 @@ const BookingPage = () => {
             >
                 <GamerInfoPayComplete />
             </CustomModal>
-
-
 
             {/* modal component(Gamer_Info_con-booking) */}
             <CustomModal
@@ -402,7 +345,6 @@ const BookingPage = () => {
                 <GamerInfoConBooking />
             </CustomModal>
 
-
             {/* modal component(gamer-info-con-reschedule) */}
             <CustomModal
                 open={gamerInfoRescheduleModalOpen}
@@ -412,7 +354,6 @@ const BookingPage = () => {
             >
                 <GamerInfoConReschedule />
             </CustomModal>
-
 
             {/* modal component(reschedule-update) */}
             <CustomModal
@@ -427,8 +368,6 @@ const BookingPage = () => {
                 />
             </CustomModal>
 
-
-
             {/* modal component(reschedule-update) */}
             <CustomModal
                 open={bookingConfirmationModalOpen}
@@ -441,8 +380,6 @@ const BookingPage = () => {
                     setIsOpen={setBookingConfirmationModalOpen}
                 />
             </CustomModal>
-
-
 
             {/* modal component(reschedule-update) */}
             <CustomModal
@@ -457,8 +394,6 @@ const BookingPage = () => {
                 />
             </CustomModal>
 
-
-
             {/* modal component(CancelTab_Modal) */}
             <CustomModal
                 open={cancelTabModalModalOpen}
@@ -468,10 +403,8 @@ const BookingPage = () => {
 
                 <CancelTabModal />
             </CustomModal>
-
-
-
         </div>
     )
 }
+
 export default BookingPage

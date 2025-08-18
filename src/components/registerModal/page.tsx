@@ -22,7 +22,6 @@ export default function RegisterModal() {
     const {
         register,
         handleSubmit,
-        reset,
         setValue,
         formState: { errors },
     } = useForm<RoomFormValues>()

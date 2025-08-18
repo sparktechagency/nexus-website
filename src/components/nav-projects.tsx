@@ -8,13 +8,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
-
-interface SidebarContext {
-  isCollapsed: boolean
-}
+import { Tooltip, TooltipTrigger } from "./ui/tooltip"
 
 type ProjectItem = {
   name: string

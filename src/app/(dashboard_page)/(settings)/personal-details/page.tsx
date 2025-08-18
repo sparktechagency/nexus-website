@@ -3,10 +3,10 @@
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { User, Phone, MapPin, ImageIcon } from "lucide-react"
+import { User, Phone, MapPin } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { UploadCloud, X } from "lucide-react"
+import { X } from "lucide-react"
 
 
 type RoomFormValues = {
@@ -23,7 +23,6 @@ export default function PersonalDetailsPage() {
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm<RoomFormValues>()

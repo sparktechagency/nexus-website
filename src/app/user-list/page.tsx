@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, ImagePlusIcon as PrevIcon, ForwardIcon as NextIcon } from "lucide-react"
+import { Search} from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
