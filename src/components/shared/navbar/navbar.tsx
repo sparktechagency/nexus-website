@@ -23,7 +23,19 @@ export default function Navbar() {
     const isActive = (path: string) => pathname === path;
 
     const handleMenuClick = (value: string) => {
-        if (value === "Logout") {
+        if (value === "Home") {
+            router.push('/home')
+        }
+       else if (value === "Rooms") {
+            router.push('/room')
+        }
+       else if (value === "Bookings") {
+            router.push('/booking')
+        }
+       else if (value === "Profile") {
+            router.push('/profile')
+        }
+       else if (value === "Logout") {
             router.push('/')
         }
         else if (value === "User History") {
@@ -47,10 +59,10 @@ export default function Navbar() {
     return (
         <div className="  text-white px-4 md:px-6 lg:px-8 mb-6 mt-4">
             {/* Navbar */}
-            <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-4 mb-6 shadow-lg">
+            <nav className="bg-[#1e1829] flex items-center justify-between bg-card-bg rounded-full p-2 md:p-4 mb-6 shadow-lg">
                 <div
                     onClick={handleNavigateHome}
-                    className="cursor-pointer flex items-center space-x-4">
+                    className="cursor-pointer flex items-center space-x-1 md:space-x-4">
                     <Image
                         src="/web_pic/logo.png"
                         alt="Nexus Logo"
@@ -58,14 +70,15 @@ export default function Navbar() {
                         height={40}
                         className="rounded-full"
                     />
-                    <span className="text-2xl font-bold tracking-wider">NEXUS</span>
+                    <span className="md:text-2xl font-bold tracking-wider">NEXUS</span>
                 </div>
-                <div className="hidden md:flex items-center space-x-6">
+
+                <div className="hidden xl:flex items-center space-x-6">
                     <Link
                         href="/home"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/home')
-                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
-                                : 'text-gray-300 '
+                            ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                            : 'text-gray-300 '
                             }`}
                     >
                         Home
@@ -73,8 +86,8 @@ export default function Navbar() {
                     <Link
                         href="/room"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/room')
-                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
-                                : 'text-gray-300 '
+                            ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                            : 'text-gray-300 '
                             }`}
                     >
                         Rooms
@@ -82,8 +95,8 @@ export default function Navbar() {
                     <Link
                         href="/booking"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/booking')
-                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
-                                : 'text-gray-300 '
+                            ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                            : 'text-gray-300 '
                             }`}
                     >
                         Bookings
@@ -91,17 +104,18 @@ export default function Navbar() {
                     <Link
                         href="/profile"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/profile')
-                                ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
-                                : 'text-gray-300 '
+                            ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
+                            : 'text-gray-300 '
                             }`}
                     >
                         Profile
                     </Link>
+
                 </div>
                 <div className="flex items-center space-x-4">
                     <svg
                         onClick={handleNotification}
-                        className="w-[30px] h-[30px] xl:w-[40px] xl:h-[40px] cursor-pointer rounded-full" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        className="w-[30px] h-[30px] md:w-[45px] md:h-[45px]  cursor-pointer rounded-full" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="56" height="56" rx="24" fill="#5E5E5E" fillOpacity="0.2" />
                         <path fillRule="evenodd" clipRule="evenodd" d="M21 34C20.8296 33.9999 20.662 33.9562 20.5132 33.8732C20.3644 33.7902 20.2393 33.6705 20.1498 33.5256C20.0602 33.3806 20.0092 33.2152 20.0015 33.0449C19.9938 32.8747 20.0298 32.7054 20.106 32.553L22 28.764V26C22 22.272 24.55 19.14 28 18.252C31.45 19.14 34 22.272 34 26V28.764L35.894 32.553C35.9701 32.7054 36.0061 32.8747 35.9984 33.0449C35.9907 33.2152 35.9397 33.3806 35.8502 33.5256C35.7606 33.6705 35.6355 33.7902 35.4867 33.8732C35.3379 33.9562 35.1703 33.9999 35 34H21Z" fill="black" fillOpacity="0.2" />
                         <path d="M32 34C32 35.0608 31.5785 36.0782 30.8284 36.8284C30.0782 37.5785 29.0608 38 28 38C26.9391 38 25.9217 37.5785 25.1715 36.8284C24.4214 36.0782 24 35.0608 24 34M21 34C20.8296 33.9999 20.662 33.9562 20.5132 33.8732C20.3644 33.7902 20.2393 33.6705 20.1498 33.5256C20.0602 33.3806 20.0092 33.2152 20.0015 33.0449C19.9938 32.8747 20.0298 32.7054 20.106 32.553L22 28.763V26C22 22.272 24.55 19.14 28 18.252C31.45 19.14 34 22.272 34 26V28.764L35.894 32.553C35.9701 32.7054 36.0061 32.8747 35.9984 33.0449C35.9907 33.2152 35.9397 33.3806 35.8502 33.5256C35.7606 33.6705 35.6355 33.7902 35.4867 33.8732C35.3379 33.9562 35.1703 33.9999 35 34H21Z" stroke="#C2C2C2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -111,7 +125,7 @@ export default function Navbar() {
 
 
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center space-x-2 cursor-pointer focus:outline-none bg-[#292531] p-2 rounded-full">
+                        <DropdownMenuTrigger className="flex items-center space-x-1 md:space-x-2 cursor-pointer focus:outline-none bg-[#292531] p-2 md:p-3 rounded-full">
 
                             <div className="relative">
                                 <Image
@@ -119,11 +133,11 @@ export default function Navbar() {
                                     alt="Angkara Messi"
                                     width={30}
                                     height={30}
-                                    className="rounded-full object-cover flex-shrink-0"
+                                    className="w-[15px] h-[15px] md:w-[30px] md:h-[30px] rounded-full object-cover flex-shrink-0"
                                 />
 
                                 <svg
-                                    className="absolute -top-2 -right-1"
+                                    className="w-[10px] h-[10px] md:w-[15px] md:h-[15px] absolute -top-2 md:-top-2.5 -right-1"
                                     width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_968_2048)">
                                         <path d="M14.4235 11.2032L15.2696 5.67116L13.0928 7.88427L12.4856 4.02403L9.71492 7.34852L8.0001 2.56299L6.28528 7.34852L3.51458 4.02403L2.90745 7.88427L0.730591 5.67116L1.57675 11.2032V12.6855H14.4235V11.2032Z" fill="#FFDB0C" />
@@ -145,17 +159,34 @@ export default function Navbar() {
 
                             </div>
 
-                            <span className="font-medium">Md. Jusef</span>
-                            <ChevronDown className="w-4 h-4 text-gray-300" />
+                            <span className="text-xs md:text-xl md:font-medium">Md. Jusef</span>
+                            <ChevronDown className="md:w-4 md:h-4 text-gray-300" />
                         </DropdownMenuTrigger>
 
+
+
+
+
+
+
+
+
+
                         <DropdownMenuContent className="bg-[#292531] border-none text-white">
+                            {/* small/medium device */}
+                            <div className="xl:hidden">
+                                <DropdownMenuItem onClick={() => { handleMenuClick("Home") }} className="hover:bg-gray-700 cursor-pointer">Home</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { handleMenuClick("Rooms") }} className="hover:bg-gray-700 cursor-pointer">Rooms</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { handleMenuClick("Bookings") }} className="hover:bg-gray-700 cursor-pointer">Bookings</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { handleMenuClick("Profile") }} className="hover:bg-gray-700 cursor-pointer">Profile</DropdownMenuItem>
+                            </div>
                             <DropdownMenuItem onClick={() => { handleMenuClick("User History") }} className="hover:bg-gray-700 cursor-pointer">User History</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { handleMenuClick("Manage Promo") }} className="hover:bg-gray-700 cursor-pointer">Manage Promo</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { handleMenuClick("Change Password"); setIsProfile(!isProfile); }} className="hover:bg-gray-700 cursor-pointer">Change Password</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { handleMenuClick("Terms & Conditions"); setIsTerms(!isTerms); }} className="hover:bg-gray-700 cursor-pointer">Terms & Conditions</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { handleMenuClick("Privacy Policy"); setIsPrivacy(!isPrivacy); }} className="hover:bg-gray-700 cursor-pointer">Privacy Policy</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { handleMenuClick("Logout") }} className="hover:bg-gray-700 cursor-pointer">Logout</DropdownMenuItem>
+
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
