@@ -25,7 +25,7 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Angkara Messi</p>
+                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
                                 <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
                             </div>
                             <span className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-sm font-semibold">VIP</span>
@@ -39,7 +39,7 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Neymar De Junior</p>
+                                <p className="text-xs md:text-base font-medium">Neymar De Junior</p>
                                 <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
                             </div>
                             <span className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-sm font-semibold">Bootcamp</span>
@@ -66,12 +66,12 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Angkara Messi</p>
+                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
                                 <p className="text-textMediumGray text-sm">$564.00</p>
                             </div>
                             <div className="flex flex-col items-end">
                                 <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-sm font-semibold">Bootcamp</span>
+                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">Bootcamp</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
@@ -83,12 +83,12 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Angkara Messi</p>
+                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
                                 <p className="text-textMediumGray text-sm">$645.00</p>
                             </div>
                             <div className="flex flex-col items-end">
                                 <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-sm font-semibold">VIP</span>
+                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">VIP</span>
                             </div>
                         </div>
                     </CardContent>
@@ -113,12 +113,12 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Angkara Messi</p>
-                                <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
+                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
+                                <p className="text-xs md:text-sm">10:00 AM - 11:00 AM</p>
                             </div>
                             <div className="flex flex-col items-end">
-                                <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-sm font-semibold">VIP</span>
+                                <p className="text-xs md:text-sm">12/25/2025</p>
+                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">VIP</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
@@ -130,12 +130,12 @@ export default function HomeFooterCurd() {
                                 className="rounded-md object-cover flex-shrink-0"
                             />
                             <div className="flex-1">
-                                <p className="text-textLightGray text-base font-medium">Angkara Messi</p>
-                                <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
+                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
+                                <p className="text-xs md:text-sm">10:00 AM - 11:00 AM</p>
                             </div>
                             <div className="flex flex-col items-end">
-                                <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-sm font-semibold">Bootcamp</span>
+                                <p className="text-xs md:text-sm">12/25/2025</p>
+                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">Bootcamp</span>
                             </div>
                         </div>
                     </CardContent>

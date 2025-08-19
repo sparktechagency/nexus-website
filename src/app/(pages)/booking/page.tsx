@@ -317,7 +317,7 @@ const BookingPage = () => {
                 open={isAddRoom}
                 setIsOpen={setIsAddRoom}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <AddGamer
                     open={isAddRoom}
@@ -330,7 +330,7 @@ const BookingPage = () => {
                 open={gamerInfoPayCompleteModalOpen}
                 setIsOpen={setGamerInfoPayCompleteModalOpen}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <GamerInfoPayComplete />
             </CustomModal>
@@ -340,7 +340,7 @@ const BookingPage = () => {
                 open={gamerInfoConBookingModalOpen}
                 setIsOpen={setGamerInfoConBookingModalOpen}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <GamerInfoConBooking />
             </CustomModal>
@@ -350,7 +350,7 @@ const BookingPage = () => {
                 open={gamerInfoRescheduleModalOpen}
                 setIsOpen={setGamerInfoRescheduleModalOpen}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <GamerInfoConReschedule />
             </CustomModal>
@@ -360,7 +360,7 @@ const BookingPage = () => {
                 open={rescheduleUpdateModalOpen}
                 setIsOpen={setRescheduleUpdateModalOpen}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <RescheduleUpdate
                     open={rescheduleUpdateModalOpen}
@@ -373,7 +373,7 @@ const BookingPage = () => {
                 open={bookingConfirmationModalOpen}
                 setIsOpen={setBookingConfirmationModalOpen}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[30vw]"}
+                maxWidth={"md:!max-w-[30vw]"}
             >
                 <BookingConfirmation
                     open={bookingConfirmationModalOpen}

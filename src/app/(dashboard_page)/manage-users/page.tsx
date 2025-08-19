@@ -176,7 +176,7 @@ const ManageUserPage = () => {
         open={isDelete}
         setIsOpen={setIsDelete}
         className={"p-0 max-h-[0vh]"}
-        maxWidth={"!max-w-[30vw]"}
+        maxWidth={"md:!max-w-[30vw]"}
       >
         <DeleteManageUser
           open={isDelete}

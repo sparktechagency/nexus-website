@@ -253,7 +253,7 @@ export default function WebProfilePage() {
         open={isEdit}
         setIsOpen={setIsEdit}
         className={"p-0 max-h-[0vh]"}
-        maxWidth={"!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[40vw]"}
       >
         <EditProfileModal />
       </CustomModal>

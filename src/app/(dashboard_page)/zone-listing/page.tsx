@@ -178,7 +178,7 @@ const ZoneListingPage = () => {
         open={isOpen}
         setIsOpen={setIsOpen}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[40vw]"}
       >
         <ZoneListDetails
           open={isOpen}

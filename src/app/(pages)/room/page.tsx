@@ -77,16 +77,16 @@ const RoomPage = () => {
     <div className="px-4 md:px-6 lg:px-8 mb-6 ">
       <div className=" rounded-2xl">
         <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-2">Rooms of Your Gaming Zone</h1>
+              <h1 className="md:text-2xl font-bold text-white mb-2">Rooms of Your Gaming Zone</h1>
               <p className="text-slate-400 text-sm">
                 You can update your room information from here & also can add a new room.
               </p>
             </div>
             <Button
               onClick={() => setIsAddRoom(!isAddRoom)}
-              className="w-[200px] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+              className="w-[170px] md:w-[200px] mt-4 md:mt-0 md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
               style={{
                 background:
                   "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -166,7 +166,7 @@ const RoomPage = () => {
         open={isAddRoom}
         setIsOpen={setIsAddRoom}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"!max-w-[40vw]"}
+        maxWidth={" md:!max-w-[60vw] xl:!max-w-[40vw]"}
       >
         <AddNewRoom />
       </CustomModal>
@@ -177,7 +177,7 @@ const RoomPage = () => {
         open={isEditRoom}
         setIsOpen={setIsEditRoom}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[60vw] xl:!max-w-[40vw]"}
       >
         <EditRoom />
       </CustomModal>
@@ -190,7 +190,7 @@ const RoomPage = () => {
         open={isDeleteRoom}
         setIsOpen={setIsDeleteRoom}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"!max-w-[30vw]"}
+        maxWidth={"md:!max-w-[60vw] xl:!max-w-[30vw]"}
       >
         <DeleteRoom
           open={isDeleteRoom}

@@ -227,7 +227,7 @@ export default function PromoManagement() {
                 open={isAddPromo}
                 setIsOpen={setIsAddPromo}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <AddNewPromo open={isAddPromo}
                     setIsOpen={setIsAddPromo} />
@@ -240,7 +240,7 @@ export default function PromoManagement() {
                 open={isEditPromo}
                 setIsOpen={setIsEditPromo}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <EditPromo
                     open={isEditPromo}
@@ -254,7 +254,7 @@ export default function PromoManagement() {
                 open={isAddPromoInof}
                 setIsOpen={setIsAddPromoInof}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <AddPromoInfo
                     open={isAddPromoInof}

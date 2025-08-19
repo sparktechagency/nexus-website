@@ -225,7 +225,7 @@ export default function Navbar() {
                 open={isProfile}
                 setIsOpen={setIsProfile}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[40vw]"}
             >
                 <EditProfile />
             </CustomModal>
