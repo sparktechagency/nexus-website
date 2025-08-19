@@ -85,7 +85,7 @@ export default function ForgotPage() {
                                 height={100}
                                 className="rounded-full"
                             />
-                            <CardTitle className="text-3xl font-bold text-[#ffff]">Forget Password</CardTitle>
+                            <CardTitle className="md:text-3xl font-bold text-[#ffff]">Forget Password</CardTitle>
                             <CardDescription className="text-sm text-gray-400 text-center">
                                 Provide email address which you used to create account
                             </CardDescription>
@@ -102,7 +102,7 @@ export default function ForgotPage() {
                                             id="email"
                                             type="email"
                                             placeholder="Enter your email."
-                                            className="pl-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            className="pl-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                                             {...register("email", {
                                                 required: "Email is required",
                                                 pattern: {
@@ -124,7 +124,7 @@ export default function ForgotPage() {
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                                        className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                                         style={{
                                             background:
                                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -136,7 +136,7 @@ export default function ForgotPage() {
 
                                 <Link href="/">
                                     <Button
-                                        className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
+                                        className="w-full mt-4 md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
                                         Back to Login
                                     </Button>
                                 </Link>

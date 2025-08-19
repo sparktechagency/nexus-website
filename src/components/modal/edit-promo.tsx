@@ -75,7 +75,7 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
                             <Input
                                 id="promoCode"
                                 placeholder="Enter the promo code name"
-                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                                 {...register("promoCode")}
                             />
                         </div>
@@ -86,7 +86,7 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
                                 <Input
                                     id="validDate"
                                     placeholder="What date will it start"
-                                    className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                    className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                                     {...register("validDate")}
                                 />
                             </div>
@@ -95,7 +95,7 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
                                 <Input
                                     id="percentage"
                                     placeholder="Enter the percentage of discount"
-                                    className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                    className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                                     {...register("percentage")}
                                 />
                             </div>
@@ -106,24 +106,43 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
                             <Input
                                 id="minimumAmount"
                                 placeholder="Enter the minimum order amount"
-                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                                 {...register("minimumAmount")}
                             />
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="w-full overflow-hidden">
                             <Label htmlFor="aboutPromo" className="text-base font-medium">About promo</Label>
-                            <Textarea
-                                id="aboutPromo"
-                                placeholder="Describe the promotion details"
-                                className={`resize-none rounded-lg border-none bg-[#5E5E5E33]/80 text-white placeholder:text-gray-500 focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0 overflow-y-auto custom-scrollbar ${!isScrollable && "h-[150px]"}`}
-                                {...register("aboutPromo")}
-                            />
+                            <div className="sm:-mx-4 p-4">
+                                <textarea
+                                    id="aboutPromo"
+                                    placeholder="Describe the promotion details"
+                                    className=" w-[calc(100%+32px)]  /* Forces full width */
+                                    min-h-[150px]
+                                    rounded-lg
+                                    bg-[#5E5E5E33]/80
+                                    text-white
+                                    placeholder:text-gray-500
+                                    p-4
+                                    border-none
+                                    focus:outline-none
+                                    resize-none
+                                    overflow-auto
+                                    break-all
+                                    whitespace-pre-wrap
+                                    box-border
+                                    -ml-4
+                                    sm:w-full
+                                    sm:ml-0
+                                    " {...register("aboutPromo")} />
+                            </div>
                         </div>
+
+
 
                         <Button
                             type="submit"
-                            className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                            className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                             style={{ background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)" }}
                         >
                             Save changes
@@ -131,7 +150,7 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
 
                         <Button
                             onClick={() => setIsOpen(!open)}
-                            className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
+                            className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
                         >
                             Cancel
                         </Button>

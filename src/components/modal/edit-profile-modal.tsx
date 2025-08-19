@@ -129,7 +129,7 @@ export default function EditProfileModal() {
                             id="gaming-zone-name"
                             placeholder="Enter the name of the room"
                             {...register("gamingZoneName", { required: true })}
-                            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                            className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
                         {errors.gamingZoneName && (
                             <span className="text-red-500 text-sm">Required</span>
@@ -137,7 +137,7 @@ export default function EditProfileModal() {
                     </div>
 
                     {/* Opening & Closing Time */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="openingTime" className="text-white text-sm">
                                 Opening Time
@@ -147,7 +147,7 @@ export default function EditProfileModal() {
                                     id="openingTime"
                                     type="time"
                                     {...register("openingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 [&::-webkit-calendar-picker-indicator]:invert"
                                 />
                             </div>
                             {errors.openingTime && <p className="text-red-400 text-xs mt-1">{errors.openingTime.message}</p>}
@@ -162,7 +162,7 @@ export default function EditProfileModal() {
                                     id="closingTime"
                                     type="time"
                                     {...register("closingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 [&::-webkit-calendar-picker-indicator]:invert"
                                 />
                             </div>
                             {errors.closingTime && <p className="text-red-400 text-xs mt-1">{errors.closingTime.message}</p>}
@@ -178,7 +178,7 @@ export default function EditProfileModal() {
                             id="location"
                             placeholder="Enter the Location"
                             {...register("location", { required: true })}
-                            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                            className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
                         {errors.location && (
                             <span className="text-red-500 text-sm">Required</span>
@@ -186,7 +186,7 @@ export default function EditProfileModal() {
                     </div>
 
                     {/* Full Name & Contact */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="full-name" className="text-base font-medium">
                                 Your Full Name
@@ -195,7 +195,7 @@ export default function EditProfileModal() {
                                 id="full-name"
                                 placeholder="Enter your full name"
                                 {...register("fullName", { required: true })}
-                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                             />
                             {errors.fullName && (
                                 <span className="text-red-500 text-sm">Required</span>
@@ -210,7 +210,7 @@ export default function EditProfileModal() {
                                 type="tel"
                                 placeholder="Enter the contact number"
                                 {...register("contactNumber", { required: true })}
-                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                             />
                             {errors.contactNumber && (
                                 <span className="text-red-500 text-sm">Required</span>
@@ -221,7 +221,7 @@ export default function EditProfileModal() {
                     {/* Buttons */}
                     <Button
                         type="submit"
-                        className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                        className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                         style={{
                             background:
                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -232,7 +232,7 @@ export default function EditProfileModal() {
                     <Button
                         type="button"
                         onClick={() => reset()}
-                        className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
+                        className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
                     >
                         Cancel
                     </Button>

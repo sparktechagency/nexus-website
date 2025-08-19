@@ -27,6 +27,8 @@ const PrivacyPolicy = () => {
     }, []);
 
 
+
+    
     return (
         <>
             <style>{`
@@ -44,7 +46,7 @@ const PrivacyPolicy = () => {
       `}</style>
 
             <div className="text-[#fff] pb-4">
-                <h1 className="text-center text-2xl font-semibold pb-4">Privacy Policy</h1>
+                <h1 className="text-center md:text-2xl font-semibold pb-4">Privacy Policy</h1>
 
                 <div
                     ref={contentRef}

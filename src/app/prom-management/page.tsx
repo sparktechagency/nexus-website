@@ -130,18 +130,21 @@ export default function PromoManagement() {
 
     return (
         <div className="text-[#fff]  px-4 md:px-6 lg:px-8 mb-6 pt-4">
-            <div className="flex justify-between">
+            <div className="flex flex-col md:flex-row md:justify-between">
                 <div>
                     <div className="flex items-center gap-3 mb-4">
+
                         <svg
                             onClick={handleBackClick}
                             className="cursor-pointer"
                             width="18" height="30" viewBox="0 0 18 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 30L0 15L15 0L17.6625 2.6625L5.325 15L17.6625 27.3375L15 30Z" fill="white" />
                         </svg>
+
                         <h1 className="text-xl font-medium">Manage Promo</h1>
+
                     </div>
-                    <p className="text-sm pl-8 mb-6">
+                    <p className="text-sm pl-8 mb-6 ">
                         You can update your room information from here & also can add a new room.
                     </p>
                 </div>
@@ -149,7 +152,7 @@ export default function PromoManagement() {
                 <div>
                     <Button
                         onClick={() => setIsAddPromo(!isAddPromo)}
-                        className="w-[160px] px-4 py-5 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                        className="w-[160px] px-4 md:py-5 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                         style={{
                             background:
                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -227,7 +230,7 @@ export default function PromoManagement() {
                 open={isAddPromo}
                 setIsOpen={setIsAddPromo}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
                 <AddNewPromo open={isAddPromo}
                     setIsOpen={setIsAddPromo} />
@@ -240,7 +243,7 @@ export default function PromoManagement() {
                 open={isEditPromo}
                 setIsOpen={setIsEditPromo}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
                 <EditPromo
                     open={isEditPromo}
@@ -249,12 +252,12 @@ export default function PromoManagement() {
             </CustomModal>
 
 
-            {/* modal component(EDIT_PROMO) */}
+            {/* modal component(ADD_PROMO_INFO) */}
             <CustomModal
                 open={isAddPromoInof}
                 setIsOpen={setIsAddPromoInof}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
                 <AddPromoInfo
                     open={isAddPromoInof}

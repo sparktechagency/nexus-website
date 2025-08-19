@@ -202,7 +202,7 @@ export default function Navbar() {
                 open={isTerms}
                 setIsOpen={setIsTerms}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[50vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[50vw]"}
             >
                 <TermsAndCondition />
             </CustomModal>
@@ -213,7 +213,7 @@ export default function Navbar() {
                 open={isPrivacy}
                 setIsOpen={setIsPrivacy}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"!max-w-[50vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[50vw]"}
             >
                 <PrivacyPolicy />
             </CustomModal>
@@ -225,7 +225,7 @@ export default function Navbar() {
                 open={isProfile}
                 setIsOpen={setIsProfile}
                 className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[40vw]"}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
                 <EditProfile />
             </CustomModal>

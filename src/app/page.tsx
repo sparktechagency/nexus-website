@@ -90,7 +90,7 @@ export default function LoginPage() {
                 height={100}
                 className="rounded-full"
               />
-              <CardTitle className="text-3xl font-bold text-[#ffff]">Sign In</CardTitle>
+              <CardTitle className="md:text-3xl font-bold text-[#ffff]">Sign In</CardTitle>
               <CardDescription className="text-sm text-gray-400 text-center">
                 Access your account with correct information
               </CardDescription>
@@ -107,7 +107,7 @@ export default function LoginPage() {
                       id="email"
                       type="email"
                       placeholder="Enter your email."
-                      className="pl-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("email", {
                         required: "Email is required",
                         pattern: {
@@ -131,7 +131,7 @@ export default function LoginPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="********"
-                      className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("password", {
                         required: "Password is required",
                         minLength: {
@@ -165,7 +165,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                  className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                   style={{
                     background:
                       "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",

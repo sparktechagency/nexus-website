@@ -64,7 +64,7 @@ const AddPromoInfo = ({ open, setIsOpen }: AddPromoInfoProps) => {
 
                         <Button
                             onClick={() => setIsOpen(!open)}
-                            className="w-full border-none py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200 mt-8"
+                            className="w-full border-none md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200 mt-8"
                             style={{ background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)" }}
                         >
                             Close

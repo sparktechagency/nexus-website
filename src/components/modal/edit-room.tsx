@@ -67,7 +67,7 @@ const EditRoom = () => {
 
   return (
     <div className="text-[#fff]">
-      <h1 className="text-center text-[24px] py-4">Add New Room</h1>
+      <h1 className="text-center text-[24px] py-4">Edit Room</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="w-full rounded-xl border-none shadow-lg space-y-6">
         {/* Room Image */}
@@ -125,7 +125,7 @@ const EditRoom = () => {
           <Input
             id="roomName"
             placeholder="Enter the name of the room"
-            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+            className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
             {...register("roomName", { required: "Room name is required" })}
           />
           {errors.roomName && <p className="text-red-500 text-sm">{errors.roomName.message}</p>}
@@ -141,7 +141,7 @@ const EditRoom = () => {
               type="number"
               id="pcNumber"
               placeholder="How many pc available here"
-              className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+              className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
               {...register("pcNumber", {
                 required: "PC number is required",
                 valueAsNumber: true,
@@ -158,7 +158,7 @@ const EditRoom = () => {
               type="number"
               id="pricing"
               placeholder="Pricing per hour of each one seat"
-              className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+              className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
               {...register("pricing", {
                 required: "Pricing is required",
                 valueAsNumber: true,
@@ -171,7 +171,7 @@ const EditRoom = () => {
         {/* Buttons */}
         <Button
           type="submit"
-          className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+          className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
           style={{
             background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
           }}
@@ -185,7 +185,7 @@ const EditRoom = () => {
             setImagePreview(null)
             setSelectedFile(null)
           }}
-          className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
+          className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
         >
           Cancel
         </Button>

@@ -41,7 +41,7 @@ const EditProfile = () => {
 
   return (
     <div className="text-[#fff]">
-      <h1 className="text-center text-2xl font-semibold pb-4">
+      <h1 className="text-center md:text-2xl font-semibold pb-4">
         Change Your Password
       </h1>
       <p className="text-center">
@@ -64,7 +64,7 @@ const EditProfile = () => {
                   id="currentPassword"
                   type={showCurrentPassword ? "text" : "password"}
                   placeholder="********"
-                  className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                   {...register("currentPassword", {
                     required: "Current password is required",
                   })}
@@ -101,7 +101,7 @@ const EditProfile = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="********"
-                  className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                   {...register("password", {
                     required: "Password is required",
                   })}
@@ -136,7 +136,7 @@ const EditProfile = () => {
                   id="retypePassword"
                   type={showRetypePassword ? "text" : "password"}
                   placeholder="********"
-                  className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                   {...register("retypePassword", {
                     required: "Please confirm your password",
                     validate: (value) =>
@@ -167,7 +167,7 @@ const EditProfile = () => {
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+              className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
               style={{
                 background:
                   "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",

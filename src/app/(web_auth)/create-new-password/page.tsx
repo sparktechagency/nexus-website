@@ -105,7 +105,7 @@ export default function CreateNewPasswordPage() {
                                             id="password"
                                             type={showPassword ? "text" : "password"}
                                             placeholder="********"
-                                            className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                                             {...register("password", { required: "Password is required" })}
                                         />
                                         <button
@@ -128,7 +128,7 @@ export default function CreateNewPasswordPage() {
                                             id="retypePassword"
                                             type={showRetypePassword ? "text" : "password"}
                                             placeholder="********"
-                                            className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                                             {...register("retypePassword", {
                                                 required: "Please confirm your password",
                                                 validate: value =>
@@ -151,7 +151,7 @@ export default function CreateNewPasswordPage() {
                                 {/* Submit */}
                                 <Button
                                     type="submit"
-                                    className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                                    className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                                     style={{
                                         background:
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",

@@ -123,7 +123,7 @@ const AddNewRoom = () => {
           <Input
             id="roomName"
             placeholder="Enter the name of the room"
-            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+            className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
             {...register("roomName", { required: "Room name is required" })}
           />
           {errors.roomName && <p className="text-red-500 text-sm">{errors.roomName.message}</p>}
@@ -139,7 +139,7 @@ const AddNewRoom = () => {
               type="number"
               id="pcNumber"
               placeholder="How many pc available here"
-              className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+              className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
               {...register("pcNumber", {
                 required: "PC number is required",
                 valueAsNumber: true,
@@ -169,7 +169,7 @@ const AddNewRoom = () => {
         {/* Buttons */}
         <Button
           type="submit"
-          className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+          className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
           style={{
             background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
           }}
@@ -183,7 +183,7 @@ const AddNewRoom = () => {
             setImagePreview(null)
             setSelectedFile(null)
           }}
-          className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
+          className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
         >
           Cancel
         </Button>

@@ -88,7 +88,7 @@ export default function RegisterPage() {
                 height={100}
                 className="rounded-full"
               />
-              <CardTitle className="text-3xl font-bold text-[#ffff]">Sign Up</CardTitle>
+              <CardTitle className="md:text-3xl font-bold text-[#ffff]">Sign Up</CardTitle>
               <CardDescription className="text-sm text-gray-400 text-center">
                 Give correct information to create NEXUS account
               </CardDescription>
@@ -104,7 +104,7 @@ export default function RegisterPage() {
                     <Input
                       id="fullName"
                       placeholder="Enter your full name."
-                      className="pl-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("fullName", { required: "Full name is required" })}
                     />
                   </div>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                       id="email"
                       type="email"
                       placeholder="Enter your email."
-                      className="pl-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("email", { required: "Email is required" })}
                     />
                   </div>
@@ -136,7 +136,7 @@ export default function RegisterPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="********"
-                      className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("password", { required: "Password is required" })}
                     />
                     <button
@@ -159,7 +159,7 @@ export default function RegisterPage() {
                       id="retypePassword"
                       type={showRetypePassword ? "text" : "password"}
                       placeholder="********"
-                      className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                       {...register("retypePassword", {
                         required: "Please confirm your password",
                         validate: value =>
@@ -197,7 +197,7 @@ export default function RegisterPage() {
                 {/* Submit */}
                 <Button
                   type="submit"
-                  className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                  className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                   onClick={() => setIsOpen(!isOpen)}
                   style={{
                     background:

@@ -65,12 +65,12 @@ export default function WebProfilePage() {
   return (
     <div className="min-h-screen bg-[#0a0b1e] text-white p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-evenly gap-10">
-          <h2 className="text-white text-2xl font-bold mb-6">Basic info</h2>
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-evenly gap-3 xl:gap-10">
+          <h2 className="text-white md:text-2xl font-bold xl:mb-6">Basic info</h2>
 
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-4">
             <Button
-              className="w-[130px] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+              className="w-[130px] md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
               style={{
                 background:
                   "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -82,7 +82,7 @@ export default function WebProfilePage() {
 
               Support
             </Button>
-            <h2 className="text-white text-2xl font-bold">Gamers thought about you!</h2>
+            <h2 className="text-white md:text-2xl font-bold">Gamers thought about you!</h2>
           </div>
         </div>
 
@@ -160,7 +160,7 @@ export default function WebProfilePage() {
             {/* Personal Information Section */}
             <div className=" rounded-xl p-6 ">
               <h2 className="text-white text-2xl font-normal mb-6">Personal information</h2>
-              <div className="space-y-3">
+              <div className="space-y-6 md:space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <User className="w-4 h-4 text-white mr-3" />
@@ -205,9 +205,10 @@ export default function WebProfilePage() {
                 </div>
               </div>
 
+
               <Button
                 onClick={() => setIsEdit(!isEdit)}
-                className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200 mt-6"
+                className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200 mt-6"
                 style={{
                   background:
                     "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -252,8 +253,8 @@ export default function WebProfilePage() {
       <CustomModal
         open={isEdit}
         setIsOpen={setIsEdit}
-        className={"p-0 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
+        className={"p-0 max-h-[30vh]"}
+        maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
       >
         <EditProfileModal />
       </CustomModal>

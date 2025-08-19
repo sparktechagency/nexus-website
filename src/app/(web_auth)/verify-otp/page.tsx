@@ -108,7 +108,7 @@ export default function VerifyOtPPage() {
                                     height={100}
                                     className="rounded-full"
                                 />
-                                <CardTitle className="text-3xl font-bold text-[#ffff]">Verify Email</CardTitle>
+                                <CardTitle className="md:text-3xl font-bold text-[#ffff]">Verify Email</CardTitle>
                                 <CardDescription className="text-sm text-gray-400 text-center">
                                     We’ve sent 6 digits code on your email
                                 </CardDescription>
@@ -156,7 +156,7 @@ export default function VerifyOtPPage() {
 
                                 <Button
                                     onClick={handleVerify}
-                                    className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                                    className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                                     style={{
                                         background:
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -173,7 +173,7 @@ export default function VerifyOtPPage() {
 
                                 <Link href="/forgot-password">
                                     <Button
-                                        className="w-full py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
+                                        className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
                                         Back
                                     </Button>
                                 </Link>
