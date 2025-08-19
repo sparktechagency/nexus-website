@@ -12,7 +12,7 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
   return (
     <div className="">
       <div className="text-center mb-8">
-        <h1 className="text-white text-3xl font-bold mb-2">Subscription Packages</h1>
+        <h1 className="text-white md:text-3xl font-bold mb-2">Subscription Packages</h1>
         <p className="text-gray-300 text-sm">You have to buy one of any subscription packages for add bookings.</p>
       </div>
 
