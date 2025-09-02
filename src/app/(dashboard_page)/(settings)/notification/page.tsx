@@ -60,7 +60,7 @@ const notifications: NotificationItem[] = [
             avatar: "https://randomuser.me/api/portraits/women/2.jpg",
         },
         message: "Sazzat Hossain has cancelled the seat booking at your Arena.",
-        time: "09:00 AM",
+        time: "08:00 AM",
         read_at: "2025-08-11T09:30:00Z"
     },
 ]

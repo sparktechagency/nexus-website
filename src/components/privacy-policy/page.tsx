@@ -68,7 +68,7 @@ const PrivacyPolicy = () => {
 
 
                         </div>
-                        <span className="xl:text-xl font-medium">Updated July 17, 2025</span>
+                        <span className="xl:text-[21px] font-medium">Updated July 17, 2025</span>
                     </div>
 
                     <div className="space-y-8">

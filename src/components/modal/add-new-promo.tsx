@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-
+// type define ========
 type PromoFormValues = {
     promoCode: string;
     validDate: string;
