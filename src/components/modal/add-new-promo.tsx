@@ -26,6 +26,7 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
     const [isScrollable, setIsScrollable] = useState<boolean>(false);
     const { register, handleSubmit, reset } = useForm<PromoFormValues>();
 
+    console.log(isScrollable)
     useEffect(() => {
         const el = contentRef.current;
         if (!el) return;

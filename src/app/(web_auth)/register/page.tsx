@@ -15,10 +15,10 @@ import CustomModal from "@/components/modal/customModal"
 import RegisterModal from "@/components/registerModal/page"
 
 type RegisterFormInputs = {
-  fullName: string
+  name: string
   email: string
   password: string
-  retypePassword: string
+  retype_password: string
   terms: boolean
 }
 
@@ -26,6 +26,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showRetypePassword, setShowRetypePassword] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+
 
   const {
     register,
@@ -41,6 +42,7 @@ export default function RegisterPage() {
     console.log("Form Values:", data)
     reset()
   }
+  
 
   return (
     <div
@@ -98,17 +100,17 @@ export default function RegisterPage() {
               <CardContent className="space-y-6 px-6 pb-6">
                 {/* Full Name */}
                 <div className="grid gap-2">
-                  <Label htmlFor="fullName" className="text-[#ffff]">Full Name</Label>
+                  <Label htmlFor="name" className="text-[#ffff]">Full Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id="fullName"
+                      id="name"
                       placeholder="Enter your full name."
                       className="pl-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                      {...register("fullName", { required: "Full name is required" })}
+                      {...register("name", { required: "Full name is required" })}
                     />
                   </div>
-                  {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName.message}</p>}
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
                 </div>
 
                 {/* Email */}
@@ -152,15 +154,15 @@ export default function RegisterPage() {
 
                 {/* Retype Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="retypePassword" className="text-[#ffff]">Retype Password</Label>
+                  <Label htmlFor="retype_password" className="text-[#ffff]">Retype Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id="retypePassword"
+                      id="retype_password"
                       type={showRetypePassword ? "text" : "password"}
                       placeholder="********"
                       className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                      {...register("retypePassword", {
+                      {...register("retype_password", {
                         required: "Please confirm your password",
                         validate: value =>
                           value === passwordValue || "Passwords do not match"
@@ -174,7 +176,7 @@ export default function RegisterPage() {
                       {showRetypePassword ? <EyeOff className="h-4 w-4 " /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {errors.retypePassword && <p className="text-red-500 text-sm">{errors.retypePassword.message}</p>}
+                  {errors.retype_password && <p className="text-red-500 text-sm">{errors.retype_password.message}</p>}
                 </div>
 
                 {/* Terms */}

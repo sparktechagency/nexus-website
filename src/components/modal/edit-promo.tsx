@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "../ui/textarea";
 
 type PromoFormValues = {
     promoCode: string;
@@ -27,7 +26,8 @@ const EditPromo = ({ open, setIsOpen }: EditPromoProps) => {
     const contentRef = useRef<HTMLTextAreaElement | null>(null);
     const [isScrollable, setIsScrollable] = useState<boolean>(false);
     const { register, handleSubmit, reset } = useForm<PromoFormValues>();
-
+    console.log(isScrollable)
+    
     useEffect(() => {
         const el = contentRef.current;
         if (!el) return;
