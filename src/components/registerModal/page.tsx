@@ -3,22 +3,38 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { UploadCloud, X } from "lucide-react"
-import Link from "next/link"
 import { useState } from "react"
 import Image from "next/image"
+import { useRegisterApiMutation } from "@/redux/authontication/authApi"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
+import CustomButtonLoader from "../loader/CustomButtonLoader"
+
 
 type RoomFormValues = {
     roomImage: FileList
-    gamingZoneName: string
-    contactNumber: string
-    openingTime: string
-    closingTime: string
-    location: string
+    gaming_zone_name: string
+    phone: string
+    opening_time: string
+    closing_time: string
+    address: string
 }
 
-export default function RegisterModal() {
+interface RegisterFormInputs {
+    name: string
+    email: string
+    password: string
+    retype_password: string
+    terms: boolean
+}
+
+export default function RegisterModal({ registerData }: { registerData: RegisterFormInputs }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+    const [collectPhoto, setCollectPhoto] = useState<File | null>(null)
+    const router = useRouter()
+
+    const [registerApi, { isLoading }] = useRegisterApiMutation()
+
     const {
         register,
         handleSubmit,
@@ -30,7 +46,6 @@ export default function RegisterModal() {
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
-            setSelectedFile(file)
             const reader = new FileReader()
             reader.onloadend = () => {
                 setImagePreview(reader.result as string)
@@ -43,17 +58,59 @@ export default function RegisterModal() {
                 setValue("roomImage", fileList)
             }
         }
+        setCollectPhoto(file ?? null);
     }
+
 
     const removeImage = () => {
         setImagePreview(null)
-        setSelectedFile(null)
         setValue("roomImage", {} as FileList)
     }
 
-    const onSubmit = (data: RoomFormValues) => {
-        console.log("Form Data:", data)
-        console.log("Selected File:", selectedFile)
+    const onSubmit = async (data: RoomFormValues) => {
+
+        const formData = new FormData();
+
+        formData.append("name", registerData?.name);
+        formData.append("email", registerData?.email);
+        formData.append("password", registerData?.password);
+        formData.append("retype_password", registerData?.retype_password);
+        formData.append("role", "PROVIDER"); // default data append
+
+        formData.append("gaming_zone_name", data?.gaming_zone_name);
+        formData.append("phone", data?.phone); // You can remove this if it's already in the previous section
+        formData.append("opening_time", data?.opening_time);
+        formData.append("closing_time", data?.closing_time);
+        formData.append("address", data?.address);
+
+        if (collectPhoto) {
+            formData.append("gaming_zone", collectPhoto);
+        }
+
+        // formData.forEach((value, key) => {
+        //     console.log(key, value);
+        // });
+
+
+        try {
+            const res = await registerApi(formData).unwrap();
+            console.log('register response-------> ', res)
+
+            if (res?.status === 'success') {
+                console.log(res?.message)
+                toast.success(res?.message)
+                router.push('/')
+
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data.message)
+            }
+        }
+
+
 
         // If you want to reset after submit
         // reset()
@@ -63,7 +120,7 @@ export default function RegisterModal() {
 
 
     return (
-        <div className="">
+        <div className="p-8 ">
             <h1 className="text-center text-[24px] py-4">Register a Gaming Zone</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -91,12 +148,12 @@ export default function RegisterModal() {
                                             <X className=" h-4 w-4" />
                                         </button>
                                     </div>
-                               
+
                                 </div>
                             ) : (
                                 <label
                                     htmlFor="roomImage"
-                                    className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg  bg-[#5E5E5E33]/80 text-gray-400 transition-colors hover:bg-[#5E5E5E33]/60"
+                                    className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg  bg-gray-900 text-gray-400 transition-colors hover:bg-gray-900"
                                 >
                                     <UploadCloud className="h-8 w-8" />
                                     <span className="mt-2 text-sm">Upload Image</span>
@@ -115,86 +172,89 @@ export default function RegisterModal() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="gaming-zone-name" className="text-base font-medium">
+                            <Label htmlFor="gaming_zone_name" className="text-base font-medium">
                                 Gaming Zone Name
                             </Label>
                             <Input
-                                id="gaming-zone-name"
+                                id="gaming_zone_name"
                                 placeholder="Enter the name of the room"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
-                                {...register("gamingZoneName", { required: "Gaming zone name is required" })}
+                                {...register("gaming_zone_name", { required: "Gaming zone name is required" })}
                             />
-                            {errors.gamingZoneName && (
-                                <p className="text-red-500 text-sm">{errors.gamingZoneName.message}</p>
+                            {errors.gaming_zone_name && (
+                                <p className="text-red-500 text-sm">{errors.gaming_zone_name.message}</p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="contact-number" className="text-base font-medium">
+                            <Label htmlFor="phone" className="text-base font-medium">
                                 Contact Number
                             </Label>
                             <Input
-                                id="contact-number"
+                                id="phone"
                                 type="tel"
+                                maxLength={11}
                                 placeholder="Enter the contact number"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
-                                {...register("contactNumber", {
-                                    required: "Contact number is required",
+                                {...register("phone", {
+                                    required: "phone number is required",
                                     pattern: {
                                         value: /^[0-9]{10,15}$/,
                                         message: "Please enter a valid phone number",
                                     },
                                 })}
                             />
-                            {errors.contactNumber && (
-                                <p className="text-red-500 text-sm">{errors.contactNumber.message}</p>
+                            {errors.phone && (
+                                <p className="text-red-500 text-sm">{errors.phone.message}</p>
                             )}
                         </div>
 
-                         <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="openingTime" className="text-white text-sm">
-                                Opening Time
-                            </Label>
-                            <div className="relative">
-                                <Input
-                                    id="openingTime"
-                                    type="time"
-                                    {...register("openingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
-                                />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="opening_time" className="text-white text-sm">
+                                    Opening Time
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="opening_time"
+                                        type="tex"
+                                        placeholder="Enter the opening time(10.00 AM)"
+                                        {...register("opening_time")}
+                                        className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    />
+                                </div>
+                                {errors.opening_time && <p className="text-red-400 text-xs mt-1">{errors.opening_time.message}</p>}
                             </div>
-                            {errors.openingTime && <p className="text-red-400 text-xs mt-1">{errors.openingTime.message}</p>}
+
+                            <div className="space-y-2">
+                                <Label htmlFor="closing_time" className="text-white text-sm">
+                                    Closing Time
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="closing_time"
+                                        type="tex"
+                                        placeholder="Enter the closing time(10.00 AM)"
+                                        {...register("closing_time")}
+                                        className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    />
+                                </div>
+                                {errors.closing_time && <p className="text-red-400 text-xs mt-1">{errors.closing_time.message}</p>}
+                            </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="closingTime" className="text-white text-sm">
-                                Closing Time
-                            </Label>
-                            <div className="relative">
-                                <Input
-                                    id="closingTime"
-                                    type="time"
-                                    {...register("closingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
-                                />
-                            </div>
-                            {errors.closingTime && <p className="text-red-400 text-xs mt-1">{errors.closingTime.message}</p>}
-                        </div>
-                    </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="location" className="text-base font-medium">
-                                Location
+                            <Label htmlFor="address" className="text-base font-medium">
+                                Address
                             </Label>
                             <Input
-                                id="location"
-                                placeholder="Enter the Location"
+                                id="address"
+                                placeholder="Enter the Address"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
-                                {...register("location", { required: "Location is required" })}
+                                {...register("address", { required: "Address is required" })}
                             />
-                            {errors.location && (
-                                <p className="text-red-500 text-sm">{errors.location.message}</p>
+                            {errors.address && (
+                                <p className="text-red-500 text-sm">{errors.address.message}</p>
                             )}
                         </div>
 
@@ -204,11 +264,12 @@ export default function RegisterModal() {
                             style={{
                                 background:
                                     "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                            }}
-                        >
-                            <Link href="/home">
-                                Register
-                            </Link>
+                            }}>
+                            {isLoading ? (
+                                <CustomButtonLoader />
+                            ) : (
+                                'Register'
+                            )}
                         </Button>
                     </div>
                 </div>

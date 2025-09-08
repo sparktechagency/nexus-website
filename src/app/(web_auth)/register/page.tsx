@@ -26,12 +26,19 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showRetypePassword, setShowRetypePassword] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [registerData, setRegisterData] = useState<RegisterFormInputs>({
+    name: "",
+    email: "",
+    password: "",
+    retype_password: "",
+    terms: false,
+  })
 
 
   const {
     register,
     handleSubmit,
-    reset,
+    // reset,
     watch,
     formState: { errors }
   } = useForm<RegisterFormInputs>()
@@ -39,10 +46,10 @@ export default function RegisterPage() {
   const passwordValue = watch("password")
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = (data) => {
-    console.log("Form Values:", data)
-    reset()
+    setRegisterData(data)
+    // reset()
   }
-  
+
 
   return (
     <div
@@ -231,7 +238,9 @@ export default function RegisterPage() {
         className={"p-0 max-h-[0vh]"}
         maxWidth={"!max-w-[50vw]"}
       >
-        <RegisterModal />
+        <RegisterModal 
+        registerData={registerData} 
+        />
       </CustomModal>
     </div>
   )
