@@ -108,12 +108,6 @@ export default function RegisterModal({ registerData }: { registerData: Register
             }
         }
 
-
-
-        // If you want to reset after submit
-        // reset()
-        // setImagePreview(null)
-        // setSelectedFile(null)
     }
 
 

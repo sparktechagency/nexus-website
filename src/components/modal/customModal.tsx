@@ -28,7 +28,7 @@ export default function CustomModal({ open, setIsOpen, children, className, maxW
             <DialogTrigger asChild />
             <DialogContent
                 className={cn(
-                    "sm:max-w-[425px] bg-[#000000]  border-1 border-gray-800",
+                    "sm:max-w-[425px] bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm border-none ",
                     maxWidth,
                     className?.replace(/max-h-\[[^\]]+\]/g, ""), 
                     maxHeightClass

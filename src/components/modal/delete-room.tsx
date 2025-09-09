@@ -9,7 +9,7 @@ interface RoomCancelledProps {
 
 const DeleteRoom = ({ open, setIsOpen }: RoomCancelledProps) => {
     return (
-        <div className="text-[#fff]">
+        <div className="text-[#fff xl:p-8">
             <h1 className="text-center text-[24px] pb-4">Are you sure?</h1>
 
 

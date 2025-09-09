@@ -64,7 +64,7 @@ const AddNewRoom = () => {
   }
 
   return (
-    <div className="text-[#fff]">
+    <div className="text-[#fff xl:p-8">
       <h1 className="text-center text-[24px] py-4">Add New Room</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="w-full rounded-xl border-none shadow-lg space-y-6">

@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation"
 import { useLoginApiMutation } from "@/redux/authontication/authApi"
 import toast from "react-hot-toast"
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
+import Cookies from 'js-cookie';
+
 
 
 type LoginFormInputs = {
@@ -26,7 +28,7 @@ export default function LoginPage() {
   const router = useRouter()
 
 
-  const [loginApi,{isLoading}] = useLoginApiMutation()
+  const [loginApi, { isLoading }] = useLoginApiMutation()
 
   // React Hook Form setup
   const {
@@ -39,32 +41,45 @@ export default function LoginPage() {
   // Handle form submit
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
 
-     const formData = new FormData();
+    const formData = new FormData();
+    formData.append("email", data?.email);
+    formData.append("password", data?.password);
 
-        formData.append("email", data?.email);
-        formData.append("password", data?.password);
+    try {
+      const res = await loginApi(formData).unwrap();
 
-        try {
-            const res = await loginApi(formData).unwrap();
-            console.log('login response-------> ', res)
 
-            if (res?.status === 'success') {
-                toast.success(res?.message)
-               router.push("/home?loginVerify=true")
-            } else {
-                toast.error(res?.messages)
-            }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data.message)
-            }
+      const token = res?.data?.access_token
+      const role = res?.data?.user?.role
+      const subscription_status = res?.data?.user?.subscription_status
+
+
+
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+        if (token) {
+          Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
         }
+        if (role) {
+          Cookies.set('role', role);
+        }
+        if (subscription_status) {
+          Cookies.set('subscription_status', subscription_status);
+        }
+        router.push("/home?loginVerify=true")
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors: any) {
+      if (errors) {
+        toast.error(errors.data.message)
+      }
+    }
 
-  //  router.push("/home?loginVerify=true")
-    // reset()
+
   }
 
- 
+
 
   return (
     <div
@@ -104,11 +119,10 @@ export default function LoginPage() {
       <div className="flex justify-center items-center">
         <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
           <div
-            className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600 rounded-xl"
-            style={{
-              boxShadow: "rgba(0, 0, 0, 0.16) 0px 2px 20px",
-            }}
+            className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm  rounded-xl"
           >
+
+            
             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
               <Image
                 src="/web_pic/logo.png"

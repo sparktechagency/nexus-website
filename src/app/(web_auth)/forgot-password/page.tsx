@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Mail } from 'lucide-react'
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useForgotPasswordApiMutation } from "@/redux/authontication/authApi"
+import toast from "react-hot-toast"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 
 type ForgotInput = {
@@ -16,6 +20,15 @@ type ForgotInput = {
 }
 
 export default function ForgotPage() {
+const router = useRouter()
+
+
+
+const [forgotPasswordApi, { isLoading }] = useForgotPasswordApiMutation()
+
+
+
+
 
     const {
         register,
@@ -29,9 +42,23 @@ export default function ForgotPage() {
 
     // Handle form submit
     const onSubmit: SubmitHandler<ForgotInput> = async (data) => {
-        console.log("Form Data:", data)
+           const formData = new FormData();
+     
+        formData.append("email", data.email);
 
-        reset()
+        try {
+            const res = await forgotPasswordApi(formData).unwrap();
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+             router.push(`/verify-otp?email=${formData.get('email')}&text=forgot-password`)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data.message)
+            }
+        }
     }
 
     return (
@@ -72,10 +99,8 @@ export default function ForgotPage() {
             <div className="flex justify-center items-center">
                 <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
                     <div
-                        className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600 rounded-xl"
-                        style={{
-                            boxShadow: "rgba(0, 0, 0, 0.16) 0px 2px 20px",
-                        }}
+                        className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm rounded-xl"
+                       
                     >
                         <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
                             <Image
@@ -120,7 +145,7 @@ export default function ForgotPage() {
 
 
                                 {/* Submit Button */}
-                                <Link href="/verify-otp">
+
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
@@ -130,8 +155,10 @@ export default function ForgotPage() {
                                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                         }}
                                     >
-                                        {isSubmitting ? "Loading..." : "Get Code"}
-                                    </Button></Link>
+                                        {
+                                            isLoading ? <CustomButtonLoader /> : "Get Code"
+                                        }
+                                    </Button>
 
 
                                 <Link href="/">

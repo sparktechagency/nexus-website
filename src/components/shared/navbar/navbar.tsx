@@ -11,7 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 import PrivacyPolicy from "@/components/privacy-policy/page";
 import EditProfile from "@/components/edit-profile/page";
 import Link from "next/link";
-
+import Cookies from 'js-cookie';
 
 
 export default function Navbar() {
@@ -36,6 +36,9 @@ export default function Navbar() {
             router.push('/profile')
         }
        else if (value === "Logout") {
+            Cookies.remove('token');
+            Cookies.remove('role');
+            Cookies.remove('subscription_status');
             router.push('/')
         }
         else if (value === "User History") {

@@ -16,7 +16,8 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
+import { useForgotPasswordApiMutation, useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
+import Cookies from 'js-cookie';
 
 export default function VerifyOtPPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
@@ -25,7 +26,7 @@ export default function VerifyOtPPage() {
     const searchParams = useSearchParams()
 
     const [verifyOtpApi, { isLoading }] = useVerifyOtpApiMutation()
-
+    const [forgotPasswordApi] = useForgotPasswordApiMutation()
 
 
     const email = searchParams.get('email')
@@ -68,6 +69,7 @@ export default function VerifyOtPPage() {
         }
     }
 
+    // verify otp code function
     const handleVerify = async () => {
         const fullOtp = otp.join("")
         const formData = new FormData();
@@ -78,13 +80,30 @@ export default function VerifyOtPPage() {
 
         try {
             const res = await verifyOtpApi(formData).unwrap();
-            console.log('verifyOtpApi res', res)
+            const token = res?.data?.access_token
+            const role = res?.data?.user?.role
+            const subscription_status = res?.data?.user?.subscription_status
+
+
             if (res?.status === 'success') {
                 toast.success(res?.message)
-                if(text === 'sign-up'){
-                    router.push(`/create-new-password?email=${email}`)
-                }else{
+                if (token) {
+                    Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
+                }
+                if (role) {
+                    Cookies.set('role', role);
+                }
+                if (subscription_status) {
+                    Cookies.set('subscription_status', subscription_status);
+                }
+                if (text === 'sign-up') {
                     router.push(`/`)
+                }
+                else if (text === 'forgot-password[') {
+                    router.push(`/`)
+                }
+                else {
+                    router.push(`/create-new-password?email=${email}`)
                 }
 
             } else {
@@ -96,6 +115,31 @@ export default function VerifyOtPPage() {
             }
         }
     }
+
+    // send again otp code function
+    const handleSendAgainOtp = async () => {
+        const formData = new FormData();
+
+        if (email) {
+            formData.append("email", email);
+        }
+
+        try {
+            const res = await forgotPasswordApi(formData).unwrap();
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data.message)
+            }
+        }
+
+    }
+
+
 
     return (
         <div
@@ -138,10 +182,8 @@ export default function VerifyOtPPage() {
             <div className="flex justify-center items-center">
                 <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
                     <div
-                        className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl border-1 border-gray-600 rounded-xl"
-                        style={{
-                            boxShadow: "rgba(0, 0, 0, 0.16) 0px 2px 20px",
-                        }}
+                        className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm rounded-xl"
+                       
                     >
                         <div className=" rounded-xl border-none  p-6 text-center shadow-lg">
                             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
@@ -188,7 +230,9 @@ export default function VerifyOtPPage() {
                                         ))}
                                     </div>
                                     <div className="text-right text-sm">
-                                        <Button variant="link" className="cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline">
+                                        <Button
+                                            onClick={handleSendAgainOtp}
+                                            variant="link" className="cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline">
                                             Send again
                                         </Button>
                                     </div>
