@@ -14,10 +14,30 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import toast from "react-hot-toast"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
 
 export default function VerifyOtPPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const [verifyOtpApi, { isLoading }] = useVerifyOtpApiMutation()
+
+
+
+    const email = searchParams.get('email')
+    const text = searchParams.get('text')
+
+
+
+
+
+
+
+
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
         const value = e.target.value
@@ -48,9 +68,33 @@ export default function VerifyOtPPage() {
         }
     }
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         const fullOtp = otp.join("")
-        console.log("Verifying OTP:", fullOtp)
+        const formData = new FormData();
+        if (email) {
+            formData.append("email", email);
+        }
+        formData.append("otp", fullOtp);
+
+        try {
+            const res = await verifyOtpApi(formData).unwrap();
+            console.log('verifyOtpApi res', res)
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                if(text === 'sign-up'){
+                    router.push(`/create-new-password?email=${email}`)
+                }else{
+                    router.push(`/`)
+                }
+
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data.message)
+            }
+        }
     }
 
     return (
@@ -162,9 +206,7 @@ export default function VerifyOtPPage() {
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                     }}
                                 >
-                                    <Link href="/create-new-password">
-                                        Verify
-                                    </Link>
+                                    Verify
                                 </Button>
 
 

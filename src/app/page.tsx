@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button"
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useLoginApiMutation } from "@/redux/authontication/authApi"
+import toast from "react-hot-toast"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 
 type LoginFormInputs = {
@@ -22,6 +25,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
+
+  const [loginApi,{isLoading}] = useLoginApiMutation()
+
   // React Hook Form setup
   const {
     register,
@@ -32,9 +38,30 @@ export default function LoginPage() {
 
   // Handle form submit
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    console.log("Form Data:", data)
-   router.push("/home?loginVerify=true")
-    reset()
+
+     const formData = new FormData();
+
+        formData.append("email", data?.email);
+        formData.append("password", data?.password);
+
+        try {
+            const res = await loginApi(formData).unwrap();
+            console.log('login response-------> ', res)
+
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+               router.push("/home?loginVerify=true")
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data.message)
+            }
+        }
+
+  //  router.push("/home?loginVerify=true")
+    // reset()
   }
 
  
@@ -135,8 +162,8 @@ export default function LoginPage() {
                       {...register("password", {
                         required: "Password is required",
                         minLength: {
-                          value: 6,
-                          message: "Password must be at least 6 characters"
+                          value: 4,
+                          message: "Password must be at least 4 characters"
                         }
                       })}
                     />
@@ -171,7 +198,9 @@ export default function LoginPage() {
                       "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                   }}
                 >
-                  {isSubmitting ? "Loading..." : "Sign In"}
+                  {
+                    isLoading ? <CustomButtonLoader /> : 'Sign In'
+                  }
                 </Button>
 
               </CardContent>

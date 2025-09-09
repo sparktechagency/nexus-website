@@ -94,12 +94,10 @@ export default function RegisterModal({ registerData }: { registerData: Register
 
         try {
             const res = await registerApi(formData).unwrap();
-            console.log('register response-------> ', res)
 
             if (res?.status === 'success') {
-                console.log(res?.message)
                 toast.success(res?.message)
-                router.push('/')
+                router.push(`/verify-otp?email=${formData.get('email')}&text=sign-up`)
 
             } else {
                 toast.error(res?.messages)
@@ -245,13 +243,13 @@ export default function RegisterModal({ registerData }: { registerData: Register
 
                         <div className="space-y-2">
                             <Label htmlFor="address" className="text-base font-medium">
-                                Address
+                                Location
                             </Label>
                             <Input
                                 id="address"
-                                placeholder="Enter the Address"
+                                placeholder="Enter the Location"
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
-                                {...register("address", { required: "Address is required" })}
+                                {...register("address", { required: "Location is required" })}
                             />
                             {errors.address && (
                                 <p className="text-red-500 text-sm">{errors.address.message}</p>
