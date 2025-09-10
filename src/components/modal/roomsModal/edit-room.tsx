@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -7,12 +8,13 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { UploadCloud, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useCreateRoomApiMutation } from "@/redux/website/rooms/roomApi"
-import CustomButtonLoader from "../loader/CustomButtonLoader"
+import { useSingleGetRoomApiQuery, useUpdateRoomApiMutation } from "@/redux/website/rooms/roomApi"
+import CustomButtonLoader from "../../loader/CustomButtonLoader"
 import toast from "react-hot-toast"
-import { type } from "os"
+import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
+
 
 type RoomFormValues = {
   photo: FileList
@@ -22,16 +24,14 @@ type RoomFormValues = {
 }
 
 type RoomStateProps = {
-  open : boolean,
-  setIsOpen : (value:boolean)=>void
+  open: boolean,
+  setIsOpen: (value: boolean) => void
+  editId: number
 }
 
-const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
+const EditRoom = ({ open, setIsOpen, editId }: RoomStateProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-
-
-  const [createRoomApi, { isLoading }] = useCreateRoomApiMutation()
 
   const {
     register,
@@ -41,6 +41,22 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
     formState: { errors },
   } = useForm<RoomFormValues>()
 
+  const [updateRoomApi, { isLoading: updateLoading }] = useUpdateRoomApiMutation()
+
+  // get room data by id -
+  const { data: getRoomData, isLoading, isError, error } = useSingleGetRoomApiQuery(editId)
+  const singleRoomData = getRoomData?.data
+
+  useEffect(() => {
+    if (singleRoomData) {
+      setValue("name", singleRoomData.name)
+      setValue("no_of_pc", singleRoomData.no_of_pc)
+      setValue("price", singleRoomData.price)
+      if (singleRoomData.photo) {
+        setImagePreview(singleRoomData.photo);
+      }
+    }
+  }, [singleRoomData, setValue])
 
   // image file get and preview show
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,9 +85,13 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
     formData.append("name", data.name)
     formData.append("no_of_pc", data.no_of_pc.toString())
     formData.append("price", data.price.toString())
+    formData.append("_method", "PUT")
 
     try {
-      const res = await createRoomApi(formData).unwrap();
+      const res = await updateRoomApi({
+        id: editId,
+        updateRoomInfo: formData
+      }).unwrap();
       console.log(res)
       if (res?.status === 'success') {
         toast.success(res?.message)
@@ -88,6 +108,42 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
         toast.error(errors.data?.message)
       }
     }
+  }
+
+
+
+  // loading state manage here
+  if (isLoading) {
+    return (
+      <div className="text-[#fff] xl:p-8 flex justify-center items-center">
+        <div className="text-center">
+          <CustomButtonLoaderTwo />
+          <p className="mt-4 text-gray-300">Loading room data, please wait...</p>
+          <p className="text-sm text-gray-400 mt-1">This may take a few moments</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state manage here
+  if (isError) {
+    return (
+      <div className="text-[#fff] xl:p-8 flex justify-center items-center">
+        <div className="text-center text-red-500">
+          <p>Failed to load data</p>
+          <p className="text-sm mt-2">{(error as any)?.data?.message || 'Unknown error'}</p>
+          <Button
+            onClick={() => setIsOpen(false)}
+            className="mt-4 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+            style={{
+              background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+            }}
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -164,6 +220,7 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
             </Label>
             <Input
               type="number"
+              step="any"  // Allow floating point numbers
               id="no_of_pc"
               placeholder="How many pc available here"
               className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
@@ -181,6 +238,7 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
             </Label>
             <Input
               type="number"
+              step="any"  // Allow floating point numbers
               id="price"
               placeholder="Pricing per hour of each one seat"
               className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
@@ -201,7 +259,7 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
             background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
           }}
         >
-          {isLoading ? <CustomButtonLoader /> : 'Add'}
+          {updateLoading ? <CustomButtonLoader /> : 'Save Changes'}
         </Button>
         <Button
           type="button"
@@ -220,4 +278,4 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
   )
 }
 
-export default AddNewRoom
+export default EditRoom

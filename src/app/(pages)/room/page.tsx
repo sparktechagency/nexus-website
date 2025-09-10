@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { CardHeader } from "@/components/ui/card"
 import CustomModal from "@/components/modal/customModal"
-import DeleteRoom from "@/components/modal/delete-room"
-import AddNewRoom from "@/components/modal/add-new-room"
-import EditRoom from "@/components/modal/edit-room"
+import DeleteRoom from "@/components/modal/roomsModal/delete-room"
+import AddNewRoom from "@/components/modal/roomsModal/add-new-room"
+import EditRoom from "@/components/modal/roomsModal/edit-room"
 import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
 import {
   Pagination,
@@ -37,6 +37,7 @@ const RoomPage = () => {
   const [isEditRoom, setIsEditRoom] = useState(false)
   const [isDeleteRoom, setIsDeleteRoom] = useState(false)
   const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [editId, setEditId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [page, setPage] = useState(10)
 
@@ -48,6 +49,9 @@ const RoomPage = () => {
 
   const handleDeleteRoom = (id: number) => {
     setDeleteId(id)
+  }
+  const handleUpdateRoom = (id: number) => {
+    setEditId(id)
   }
 
 
@@ -125,7 +129,10 @@ const RoomPage = () => {
                       </button>
 
                       <button
-                        onClick={() => setIsEditRoom(!isEditRoom)}
+                        onClick={() => {
+                          setIsEditRoom(!isEditRoom),
+                          handleUpdateRoom(item?.id)
+                        }}
                         className="cursor-pointer">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M6.414 15.8902L16.556 5.74822L15.142 4.33422L5 14.4762V15.8902H6.414ZM7.243 17.8902H3V13.6472L14.435 2.21222C14.6225 2.02475 14.8768 1.91943 15.142 1.91943C15.4072 1.91943 15.6615 2.02475 15.849 2.21222L18.678 5.04122C18.8655 5.22875 18.9708 5.48306 18.9708 5.74822C18.9708 6.01338 18.8655 6.26769 18.678 6.45522L7.243 17.8902ZM3 19.8902H21V21.8902H3V19.8902Z" fill="#20BF55" />
@@ -184,7 +191,11 @@ const RoomPage = () => {
         className={"p-4 max-h-[0vh]"}
         maxWidth={"md:!max-w-[60vw] xl:!max-w-[40vw]"}
       >
-        <EditRoom />
+        <EditRoom
+          open={isEditRoom}
+          setIsOpen={setIsEditRoom}
+          editId={editId ?? 0}
+        />
       </CustomModal>
 
 

@@ -34,9 +34,16 @@ const roomApi = baseApi.injectEndpoints({
             }),
             providesTags: ['room'],
         }),
+        singleGetRoomApi: builder.query({
+            query: (id) => ({
+                url: `/rooms/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['room'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery } = roomApi;
+export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery,useSingleGetRoomApiQuery } = roomApi;
