@@ -1,13 +1,12 @@
-
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-   images: {
+  images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'randomuser.me',
-        pathname: '/api/portraits/**',
+        protocol: 'http',
+        hostname: '103.186.20.114',
+        pathname: '/uploads/rooms/**',  // Adjust this pattern if needed
       },
     ],
   },

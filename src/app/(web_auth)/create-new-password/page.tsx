@@ -63,7 +63,7 @@ export default function CreateNewPasswordPage() {
             }
         } catch (errors: any) {
             if (errors) {
-                toast.error(errors.data.message)
+                toast.error(errors.data?.message)
             }
         }
     }

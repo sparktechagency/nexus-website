@@ -11,66 +11,44 @@ import CustomModal from "@/components/modal/customModal"
 import DeleteRoom from "@/components/modal/delete-room"
 import AddNewRoom from "@/components/modal/add-new-room"
 import EditRoom from "@/components/modal/edit-room"
+import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
-interface GamingRoom {
-  id: number
-  avatar: string
-  name: string
-  pcCount: number
-  pricePerHour: number
+
+interface RoomProps {
+  id: number;
+  name: string;
+  no_of_pc: number;
+  price: number;
+  photo: string;
 }
 
-const mockRooms: GamingRoom[] = [
-  {
-    id: 1,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "VIP",
-    pcCount: 12,
-    pricePerHour: 564,
-  },
-  {
-    id: 2,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "Bootcamp",
-    pcCount: 30,
-    pricePerHour: 564,
-  },
-  {
-    id: 3,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "PS5",
-    pcCount: 24,
-    pricePerHour: 564,
-  },
-  {
-    id: 4,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "VIP",
-    pcCount: 5,
-    pricePerHour: 564,
-  },
-  {
-    id: 5,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "VIP",
-    pcCount: 5,
-    pricePerHour: 564,
-  },
-  {
-    id: 6,
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    name: "VIP",
-    pcCount: 5,
-    pricePerHour: 564,
-  },
-]
 
 const RoomPage = () => {
   const [isAddRoom, setIsAddRoom] = useState(false)
   const [isEditRoom, setIsEditRoom] = useState(false)
   const [isDeleteRoom, setIsDeleteRoom] = useState(false)
+  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [page, setPage] = useState(10)
+
+  const { data: getRoom, refetch } = useGetRoomApiQuery({ per_page: page, page: currentPage })
+  const roomData: RoomProps[] = getRoom?.data?.data
+  const totalPagination = getRoom?.data?.total
 
 
+
+  const handleDeleteRoom = (id: number) => {
+    setDeleteId(id)
+  }
 
 
   return (
@@ -114,10 +92,10 @@ const RoomPage = () => {
             </TableHeader>
 
             <TableBody className="">
-              {mockRooms.map((item) => (
+              {roomData?.map((item) => (
                 <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                   <TableCell>
-                    <Image src={item.avatar} alt="photo" width={60} height={60} className="object-cover rounded-lg" />
+                    <Image src={item.photo} alt="photo" width={60} height={60} className="object-cover rounded-lg w-[50px] h-[40px]" />
                   </TableCell>
 
                   <TableCell>
@@ -125,17 +103,20 @@ const RoomPage = () => {
                   </TableCell>
 
                   <TableCell>
-                    {item.pcCount}
+                    {item.no_of_pc}
                   </TableCell>
 
                   <TableCell>
-                    {item.pricePerHour}
+                    {item.price}
                   </TableCell>
 
                   <TableCell>
                     <div className="flex justify-center gap-3">
                       <button
-                        onClick={() => setIsDeleteRoom(!isDeleteRoom)}
+                        onClick={() => {
+                          setIsDeleteRoom(!isDeleteRoom),
+                            handleDeleteRoom(item?.id)
+                        }}
                         className="cursor-pointer">
                         <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 18C2.45 18 1.97933 17.8043 1.588 17.413C1.19667 17.0217 1.00067 16.5507 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8043 17.021 14.413 17.413C14.0217 17.805 13.5507 18.0007 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14Z" fill="#EB4335" />
@@ -161,6 +142,27 @@ const RoomPage = () => {
       </div>
 
 
+      {/* pagination component */}
+      <div className="bg-transparent border border-gray-800 my-4 rounded-lg p-2 ">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+
+
       {/* modal component(Add_ROOM) */}
       <CustomModal
         open={isAddRoom}
@@ -168,7 +170,10 @@ const RoomPage = () => {
         className={"p-4 max-h-[0vh]"}
         maxWidth={" md:!max-w-[60vw] xl:!max-w-[40vw]"}
       >
-        <AddNewRoom />
+        <AddNewRoom
+          open={isAddRoom}
+          setIsOpen={setIsAddRoom}
+        />
       </CustomModal>
 
 
@@ -195,6 +200,7 @@ const RoomPage = () => {
         <DeleteRoom
           open={isDeleteRoom}
           setIsOpen={setIsDeleteRoom}
+          deleteId={deleteId ?? 0}
         />
       </CustomModal>
     </div>
