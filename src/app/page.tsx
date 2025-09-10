@@ -66,7 +66,7 @@ export default function LoginPage() {
         if (subscription_status) {
           Cookies.set('subscription_status', subscription_status);
         }
-        router.push("/home?loginVerify=true")
+        router.push("/home")
       } else {
         toast.error(res?.messages)
       }

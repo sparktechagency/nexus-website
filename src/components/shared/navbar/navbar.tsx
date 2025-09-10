@@ -36,10 +36,10 @@ export default function Navbar() {
             router.push('/profile')
         }
        else if (value === "Logout") {
+           router.push('/')
             Cookies.remove('token');
             Cookies.remove('role');
             Cookies.remove('subscription_status');
-            router.push('/')
         }
         else if (value === "User History") {
             router.push('/user-list')

@@ -4,14 +4,24 @@
 import CustomModal from "@/components/modal/customModal"
 import EditProfileModal from "@/components/modal/edit-profile-modal"
 import { Button } from "@/components/ui/button"
+import { useGetProfileApiQuery } from "@/redux/website/profile/profileApi"
 import { Mail, MapPin, Phone, Clock, Gamepad2, User } from "lucide-react"
 import Image from "next/image"
 import { ChangeEvent, useRef, useState } from "react"
 
+
 export default function WebProfilePage() {
   const [isEdit, setIsEdit] = useState(false)
-  const [profileImage, setProfileImage] = useState("https://randomuser.me/api/portraits/women/2.jpg")
+
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // get profile 
+  const { data: getProfile, isLoading } = useGetProfileApiQuery()
+  const profileData = getProfile?.data
+  const [profileImage, setProfileImage] = useState(profileData?.avatar)
+  console.log(profileData)
+
+
 
   const handleImageClick = () => {
     fileInputRef.current?.click()
@@ -119,24 +129,37 @@ export default function WebProfilePage() {
                   />
 
                   <div className="absolute -top-2 -right-2 text-2xl">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g clipPath="url(#clip0_968_2827)">
-                        <path d="M36.0585 28.0068L38.1739 14.1767L32.7318 19.7095L31.2139 10.0588L24.2872 18.3701L20.0001 6.40625L15.7131 18.3701L8.78632 10.0588L7.2685 19.7095L1.82635 14.1767L3.94176 28.0068V31.7126H36.0585V28.0068Z" fill="#FFDB0C" />
-                        <path d="M36.0585 28.0068L38.1739 14.1767L32.7318 19.7095L31.2139 10.0588L24.2872 18.3701L20.0001 6.40625V31.7126H36.0585V28.0068Z" fill="#FBBF00" />
-                        <path d="M36.058 28.0078H3.94141V35.4196H36.058V28.0078Z" fill="#FFA900" />
-                        <path d="M36.0588 28.0078H20.0001V35.4196H36.0588V28.0078Z" fill="#FF8800" />
-                        <path d="M1.82634 16.0042C2.835 16.0042 3.65268 15.1866 3.65268 14.1779C3.65268 13.1692 2.835 12.3516 1.82634 12.3516C0.81768 12.3516 0 13.1692 0 14.1779C0 15.1866 0.81768 16.0042 1.82634 16.0042Z" fill="#FF8800" />
-                        <path d="M8.78599 11.8851C9.79465 11.8851 10.6123 11.0674 10.6123 10.0588C10.6123 9.0501 9.79465 8.23242 8.78599 8.23242C7.77734 8.23242 6.95966 9.0501 6.95966 10.0588C6.95966 11.0674 7.77734 11.8851 8.78599 11.8851Z" fill="#FF421D" />
-                        <path d="M20.0001 8.23276C21.0088 8.23276 21.8264 7.41508 21.8264 6.40642C21.8264 5.39776 21.0088 4.58008 20.0001 4.58008C18.9914 4.58008 18.1738 5.39776 18.1738 6.40642C18.1738 7.41508 18.9914 8.23276 20.0001 8.23276Z" fill="#DE0418" />
-                        <path d="M38.1736 16.0042C39.1823 16.0042 40 15.1866 40 14.1779C40 13.1692 39.1823 12.3516 38.1736 12.3516C37.165 12.3516 36.3473 13.1692 36.3473 14.1779C36.3473 15.1866 37.165 16.0042 38.1736 16.0042Z" fill="#870215" />
-                        <path d="M31.2142 11.8851C32.2229 11.8851 33.0406 11.0674 33.0406 10.0588C33.0406 9.0501 32.2229 8.23242 31.2142 8.23242C30.2056 8.23242 29.3879 9.0501 29.3879 10.0588C29.3879 11.0674 30.2056 11.8851 31.2142 11.8851Z" fill="#A3021A" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_968_2827">
-                          <rect width="40" height="40" fill="white" />
-                        </clipPath>
-                      </defs>
-                    </svg>
+
+                    {
+                      profileData?.subscription_type === "Free"
+                        ? (<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clipPath="url(#clip0_968_2827)">
+                            <path d="M36.0585 28.0068L38.1739 14.1767L32.7318 19.7095L31.2139 10.0588L24.2872 18.3701L20.0001 6.40625L15.7131 18.3701L8.78632 10.0588L7.2685 19.7095L1.82635 14.1767L3.94176 28.0068V31.7126H36.0585V28.0068Z" fill="#FFDB0C" />
+                            <path d="M36.0585 28.0068L38.1739 14.1767L32.7318 19.7095L31.2139 10.0588L24.2872 18.3701L20.0001 6.40625V31.7126H36.0585V28.0068Z" fill="#FBBF00" />
+                            <path d="M36.058 28.0078H3.94141V35.4196H36.058V28.0078Z" fill="#FFA900" />
+                            <path d="M36.0588 28.0078H20.0001V35.4196H36.0588V28.0078Z" fill="#FF8800" />
+                            <path d="M1.82634 16.0042C2.835 16.0042 3.65268 15.1866 3.65268 14.1779C3.65268 13.1692 2.835 12.3516 1.82634 12.3516C0.81768 12.3516 0 13.1692 0 14.1779C0 15.1866 0.81768 16.0042 1.82634 16.0042Z" fill="#FF8800" />
+                            <path d="M8.78599 11.8851C9.79465 11.8851 10.6123 11.0674 10.6123 10.0588C10.6123 9.0501 9.79465 8.23242 8.78599 8.23242C7.77734 8.23242 6.95966 9.0501 6.95966 10.0588C6.95966 11.0674 7.77734 11.8851 8.78599 11.8851Z" fill="#FF421D" />
+                            <path d="M20.0001 8.23276C21.0088 8.23276 21.8264 7.41508 21.8264 6.40642C21.8264 5.39776 21.0088 4.58008 20.0001 4.58008C18.9914 4.58008 18.1738 5.39776 18.1738 6.40642C18.1738 7.41508 18.9914 8.23276 20.0001 8.23276Z" fill="#DE0418" />
+                            <path d="M38.1736 16.0042C39.1823 16.0042 40 15.1866 40 14.1779C40 13.1692 39.1823 12.3516 38.1736 12.3516C37.165 12.3516 36.3473 13.1692 36.3473 14.1779C36.3473 15.1866 37.165 16.0042 38.1736 16.0042Z" fill="#870215" />
+                            <path d="M31.2142 11.8851C32.2229 11.8851 33.0406 11.0674 33.0406 10.0588C33.0406 9.0501 32.2229 8.23242 31.2142 8.23242C30.2056 8.23242 29.3879 9.0501 29.3879 10.0588C29.3879 11.0674 30.2056 11.8851 31.2142 11.8851Z" fill="#A3021A" />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0_968_2827">
+                              <rect width="40" height="40" fill="white" />
+                            </clipPath>
+                          </defs>
+                        </svg>)
+                        : profileData?.subscription_type === "Basic"
+                          ? 'basic icon'
+                          : profileData?.subscription_type === "Standard"
+                            ? 'stand icon'
+                            : profileData?.subscription_type === "Premium"
+                              ? 'premium iocn'
+                              : ''
+                    }
+
+
 
                   </div>
                   <div className="bg-white absolute -bottom-0 -right-2  rounded-full p-1">
@@ -166,42 +189,45 @@ export default function WebProfilePage() {
                     <User className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Full Name</span>
                   </div>
-                  <span className="text-white text-sm">Suuu Ronaldo</span>
+                  <span className="text-white text-sm">{profileData?.name}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Mail className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Email</span>
                   </div>
-                  <span className="text-white text-sm">ronaldo69@gmail.com</span>
+                  <span className="text-white text-sm">{profileData?.email}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Gamepad2 className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Gaming Zone Name</span>
                   </div>
-                  <span className="text-white text-sm">Bermuda Gaming Zone</span>
+                  <span className="text-white text-sm">{profileData?.gaming_zone_name}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Operating Hours</span>
                   </div>
-                  <span className="text-white text-sm">10:00 AM - 09:00 PM</span>
+                  <div className="text-white text-sm flex items-center">{profileData?.opening_time}
+                    <p className="px-2">-</p>
+                    {profileData?.closing_time}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Location</span>
                   </div>
-                  <span className="text-white text-sm">5/9 Los Angeles, USA</span>
+                  <span className="text-white text-sm">{profileData?.address}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 text-white mr-3" />
                     <span className="text-white text-sm">Contact</span>
                   </div>
-                  <span className="text-white text-sm">+992 365 45565</span>
+                  <span className="text-white text-sm">{profileData?.phone}</span>
                 </div>
               </div>
 
@@ -225,7 +251,7 @@ export default function WebProfilePage() {
 
           {/* Right Column - Reviews */}
           <div className="space-y-3">
-            {reviews.map((review, index) => (
+            {reviews?.map((review, index) => (
               <div key={index} className="bg-[#1a1b3a]/60 rounded-xl p-4 border border-gray-800/50">
                 <div className="flex items-start gap-3">
 
