@@ -20,6 +20,7 @@ export const baseApi = createApi({
     "auth",
     "room",
     "profileTag",
+    "usrList",
   ],
   endpoints: () => ({}),
 });

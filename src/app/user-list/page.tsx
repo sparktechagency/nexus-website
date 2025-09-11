@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useGetUserListApiQuery } from "@/redux/website/userList/userListApi"
 
 interface User {
     id: string
@@ -130,7 +131,10 @@ const UserList = () => {
     const [searchText, setSearchText] = useState("")
 
 
+    const { data: getUserList } = useGetUserListApiQuery(null)
+const userListData = getUserList?.data?.data
 
+console.log(userListData)
 
 
     const getStatusColor = (status: string) => {
@@ -190,23 +194,23 @@ const UserList = () => {
                         </TableHeader>
                         
                         <TableBody className="">
-                            {mockUsers.map((user) => (
-                                <TableRow key={user.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
+                            {userListData.map((item) => (
+                                <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                                     <TableCell>
                                         <div className="flex items-center gap-3">
-                                            <Image src={user.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
-                                            <span className=" font-medium">{user.name}</span>
+                                            <Image src={item.avatar} alt="item photo" width={50} height={50} className="object-cover rounded-full" />
+                                            <span className=" font-medium">{item.name}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="">{user.email}</TableCell>
+                                    <TableCell className="">{item.email}</TableCell>
                                     <TableCell>
-                                        {user.room}
+                                        {item.room}
                                     </TableCell>
-                                    <TableCell className="">{user.days}</TableCell>
-                                    <TableCell className="">{user.duration}</TableCell>
-                                    <TableCell className=" font-medium">{user.payment}</TableCell>
+                                    <TableCell className="">{item.days_of_playing}</TableCell>
+                                    <TableCell className="">{item.duration}</TableCell>
+                                    <TableCell className=" font-medium">{item.payment}</TableCell>
                                     <TableCell>
-                                        <Badge className={`${getStatusColor(user.status)} rounded-full text-xs px-2 `}>{user.status}</Badge>
+                                        <Badge className={`${getStatusColor(item.added_by)} rounded-full text-xs px-2 `}>{item.added_by}</Badge>
                                     </TableCell>
                                 </TableRow>
                             ))}
