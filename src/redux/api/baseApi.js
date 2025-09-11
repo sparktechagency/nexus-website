@@ -21,6 +21,7 @@ export const baseApi = createApi({
     "room",
     "profileTag",
     "usrList",
+    "promo",
   ],
   endpoints: () => ({}),
 });

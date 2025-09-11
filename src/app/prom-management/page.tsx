@@ -9,114 +9,35 @@ import CustomModal from "@/components/modal/customModal"
 import AddNewPromo from "@/components/modal/add-new-promo"
 import EditPromo from "@/components/modal/edit-promo"
 import AddPromoInfo from "@/components/modal/add-promo-info"
+import { useDeletePromoApiMutation, useGetUserListApiQuery, useStatusChangePromoApiMutation } from "@/redux/website/promo/promoApi";
+import toast from "react-hot-toast"
 
-interface PromoCode {
-    id: string
-    code: string
-    validateDate: string
-    percentage: number
-    minimumAmount: number
-    status: boolean
+interface PromoCodeProps {
+    id: number
+    promo_code: string
+    validate_date: string
+    percentage: number | string
+    minimum_amount: number
+    is_active: boolean
 }
 
-const mockPromoData: PromoCode[] = [
-    {
-        id: "1",
-        code: "SAVE20",
-        validateDate: "04/30/24",
-        percentage: 5,
-        minimumAmount: 500.0,
-        status: true,
-    },
-    {
-        id: "2",
-        code: "WINTER24",
-        validateDate: "12/31/24",
-        percentage: 8,
-        minimumAmount: 750.0,
-        status: true,
-    },
-    {
-        id: "3",
-        code: "SPECIAL",
-        validateDate: "01/01/24",
-        percentage: 8,
-        minimumAmount: 456.0,
-        status: true,
-    },
-    {
-        id: "4",
-        code: "SUMMER",
-        validateDate: "02/28/24",
-        percentage: 2,
-        minimumAmount: 320.0,
-        status: true,
-    },
-    {
-        id: "5",
-        code: "FALLSAVE",
-        validateDate: "03/31/24",
-        percentage: 10,
-        minimumAmount: 310.0,
-        status: true,
-    },
-    {
-        id: "6",
-        code: "HOLIDAY",
-        validateDate: "04/30/24",
-        percentage: 2,
-        minimumAmount: 470.0,
-        status: true,
-    },
-    {
-        id: "7",
-        code: "NEWCUST",
-        validateDate: "08/31/24",
-        percentage: 30,
-        minimumAmount: 890.0,
-        status: true,
-    },
-    {
-        id: "8",
-        code: "LOYALTY",
-        validateDate: "08/31/24",
-        percentage: 50,
-        minimumAmount: 695.0,
-        status: true,
-    },
-    {
-        id: "9",
-        code: "FLASH500",
-        validateDate: "07/25/24",
-        percentage: 2,
-        minimumAmount: 480.0,
-        status: true,
-    },
-    {
-        id: "10",
-        code: "FLASH500",
-        validateDate: "07/25/24",
-        percentage: 2,
-        minimumAmount: 480.0,
-        status: true,
-    },
-    {
-        id: "11",
-        code: "FLASH500",
-        validateDate: "07/25/24",
-        percentage: 2,
-        minimumAmount: 480.0,
-        status: true,
-    },
-]
+
 
 export default function PromoManagement() {
     const router = useRouter()
     const [isAddPromo, setIsAddPromo] = useState<boolean>(false)
     const [isEditPromo, setIsEditPromo] = useState<boolean>(false)
     const [isAddPromoInof, setIsAddPromoInof] = useState<boolean>(false)
+    const [viewPromoId, setViewPromoId] = useState<number | null>(null)
 
 
+    const { data: getPromo, refetch } = useGetUserListApiQuery({ skip: true, });
+    const promoData: PromoCodeProps[] = getPromo?.data?.data
+
+
+    const [deletePromoApi] = useDeletePromoApiMutation();
+
+    const [statusChangePromoApi] = useStatusChangePromoApiMutation()
 
 
 
@@ -125,6 +46,47 @@ export default function PromoManagement() {
         router.push("/home")
     }
 
+
+    // delete promo
+    const handleDeletePromo = async (id: number) => {
+        try {
+            const res = await deletePromoApi(id).unwrap();
+
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+    }
+
+    // view details promo
+    const handleViewDetails = (id: number) => {
+        setViewPromoId(id)
+    }
+
+
+    const handleSwitchChange = async () => {
+        // try {
+        //     const res = await statusChangePromoApi({
+        //         id: itemId,
+        //         is_active: newStatus
+        //     }).unwrap();
+        //     console.log(res)
+        //     if (res?.status === 'success') {
+        //         await refetch()
+        //     }
+        // } catch (errors: any) {
+        //     if (errors) {
+        //         toast.error(errors.data?.message)
+        //     }
+        // }
+        console.log('click')
+    };
 
 
 
@@ -173,31 +135,42 @@ export default function PromoManagement() {
                     <Table>
                         <TableHeader className="border-none">
                             <TableRow className="border-none hover:bg-transparent cursor-pointer">
-                                <TableHead className="text-[#ffff] font-bold text-lg">Promo Code</TableHead>
-                                <TableHead className="text-[#ffff] font-bold text-lg">Validate Date</TableHead>
-                                <TableHead className="text-[#ffff] font-bold text-lg">Percentage</TableHead>
-                                <TableHead className="text-[#ffff] font-bold text-lg">Minimum Amount</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg text-center">Promo Code</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg text-center">Validate Date</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg text-center">Percentage</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg text-center">Minimum Amount</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Status</TableHead>
-                                <TableHead className="text-[#ffff] font-bold text-lg">Actions</TableHead>
+                                <TableHead className="text-[#ffff] font-bold text-lg text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockPromoData.map((promo) => (
-                                <TableRow key={promo.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
-                                    <TableCell className="font-medium text-white">{promo.code}</TableCell>
-                                    <TableCell className="text-gray-300">{promo.validateDate}</TableCell>
-                                    <TableCell className="text-gray-300">{promo.percentage}%</TableCell>
-                                    <TableCell className="text-gray-300">${promo.minimumAmount.toFixed(2)}</TableCell>
+                            {promoData?.map((item) => (
+                                <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
+                                    <TableCell className="font-medium text-white text-center">{item.promo_code}</TableCell>
+                                    <TableCell className="text-gray-300 text-center ">{item.validate_date}</TableCell>
+                                    <TableCell className="text-gray-300 text-center">{item.percentage}%</TableCell>
+                                    <TableCell className="text-gray-300 text-center">${item.minimum_amount}</TableCell>
+
+
                                     <TableCell>
+
                                         <Switch
-                                            className="data-[state=checked]:bg-green-600"
+                                            checked={item.is_active}
+                                            className="data-[state=checked]:bg-green-600 cursor-pointer"
                                         />
                                     </TableCell>
+
+
+
+
                                     <TableCell>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-4 justify-center">
                                             {/* add info */}
                                             <svg
-                                                onClick={() => setIsAddPromoInof(!isAddPromoInof)}
+                                                onClick={() => {
+                                                    setIsAddPromoInof(!isAddPromoInof);
+                                                    handleViewDetails(item.id)
+                                                }}
                                                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <mask id="mask0_1114_432" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
                                                     <rect width="24" height="24" fill="#D9D9D9" />
@@ -207,9 +180,21 @@ export default function PromoManagement() {
                                                 </g>
                                             </svg>
 
+                                            {/* Delete */}
+                                            <svg
+                                                onClick={() => handleDeletePromo(item.id)}
+                                                className="cursor-pointer"
+                                                width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3 18C2.45 18 1.97933 17.8043 1.588 17.413C1.19667 17.0217 1.00067 16.5507 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8043 17.021 14.413 17.413C14.0217 17.805 13.5507 18.0007 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14Z" fill="#EB4335" />
+                                            </svg>
+
+
                                             {/* Edit  */}
                                             <svg
-                                                onClick={() => setIsEditPromo(!isEditPromo)}
+                                                onClick={() => {
+                                                    setIsEditPromo(!isEditPromo);
+                                                    handleViewDetails(item.id)
+                                                }}
                                                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6.414 15.8902L16.556 5.74822L15.142 4.33422L5 14.4762V15.8902H6.414ZM7.243 17.8902H3V13.6472L14.435 2.21222C14.6225 2.02475 14.8768 1.91943 15.142 1.91943C15.4072 1.91943 15.6615 2.02475 15.849 2.21222L18.678 5.04122C18.8655 5.22875 18.9708 5.48306 18.9708 5.74822C18.9708 6.01338 18.8655 6.26769 18.678 6.45522L7.243 17.8902ZM3 19.8902H21V21.8902H3V19.8902Z" fill="#1E88E5" />
                                             </svg>
@@ -248,11 +233,12 @@ export default function PromoManagement() {
                 <EditPromo
                     open={isEditPromo}
                     setIsOpen={setIsEditPromo}
+                    updatePromoId={viewPromoId}
                 />
             </CustomModal>
 
 
-            {/* modal component(ADD_PROMO_INFO) */}
+            {/* modal component(ADD_PROMO_INFO_DETAILS) */}
             <CustomModal
                 open={isAddPromoInof}
                 setIsOpen={setIsAddPromoInof}
@@ -262,6 +248,7 @@ export default function PromoManagement() {
                 <AddPromoInfo
                     open={isAddPromoInof}
                     setIsOpen={setIsAddPromoInof}
+                    viewPromoId={viewPromoId}
                 />
             </CustomModal>
         </div>

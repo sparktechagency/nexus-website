@@ -2,16 +2,24 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { useViewDetailsPromoApiQuery } from "@/redux/website/promo/promoApi";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 interface AddPromoInfoProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+    viewPromoId: number | null;
 }
 
-const AddPromoInfo = ({ open, setIsOpen }: AddPromoInfoProps) => {
+const AddPromoInfo = ({ open, setIsOpen,viewPromoId }: AddPromoInfoProps) => {
     const contentRef = useRef<HTMLDivElement | null>(null);
     const [isScrollable, setIsScrollable] = useState(false);
+
+const { data:viewDetailsPromo } = useViewDetailsPromoApiQuery(viewPromoId);
+const singlePromoData = viewDetailsPromo?.data
+
+
+
 
     useEffect(() => {
         const el = contentRef.current;
@@ -49,15 +57,16 @@ const AddPromoInfo = ({ open, setIsOpen }: AddPromoInfoProps) => {
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
       `}</style>
 
-            <div className="text-[#fff]">
-                <h1 className="text-center text-[24px] py-4">Info</h1>
+            <div className="text-[#fff] xl:p-8">
+                <h1 className="text-center text-[24px] py-4">Information</h1>
                 <div className="w-full rounded-xl border-none shadow-lg">
                     <div className="space-y-6">
                         <p className="text-xl font-bold">About promo</p>
                         <div ref={contentRef}
                             className={`${isScrollable ? "border border-gray-700 rounded-2xl p-4  h-[250px] overflow-y-auto custom-scrollbar" : "border border-gray-700 rounded-2xl p-4  h-[250px] "}`}>
 
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&rsquo;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                            <p className=" overflow-hidden custom-scrollbar">
+                                {singlePromoData?.about}
                             </p>
 
                         </div>
