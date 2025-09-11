@@ -4,21 +4,24 @@ import { useForm } from "react-hook-form"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { UploadCloud,X } from "lucide-react"
+import { UploadCloud, X } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
+import { useEditProfileApiMutation } from "@/redux/website/profile/profileApi"
+import toast from "react-hot-toast"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 type FormValues = {
-    roomImage: FileList
-    gamingZoneName: string
-    openingTime: string
-    closingTime: string
-    location: string
-    fullName: string
-    contactNumber: string
+    photo: FileList
+    gaming_zone_name: string
+    opening_time: string
+    closing_time: string
+    address: string
+    name: string
+    phone: string
 }
 
-export default function EditProfileModal() {
+export default function EditProfileModal({ open, setIsOpen }: { open: boolean, setIsOpen: (open: boolean) => void }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
@@ -30,20 +33,17 @@ export default function EditProfileModal() {
         formState: { errors },
     } = useForm<FormValues>()
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (file) {
-            setSelectedFile(file)
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string)
-            }
-            reader.readAsDataURL(file)
 
-            // Update form value
-            const fileList = event.target.files
+    const [editProfileApi, { isLoading }] = useEditProfileApiMutation()
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            setImagePreview(URL.createObjectURL(file));
+            const fileList = event.target.files;
             if (fileList) {
-                setValue("roomImage", fileList)
+                setValue("photo", fileList);
             }
         }
     }
@@ -51,21 +51,46 @@ export default function EditProfileModal() {
     const removeImage = () => {
         setImagePreview(null)
         setSelectedFile(null)
-        setValue("roomImage", {} as FileList)
+        setValue("photo", {} as FileList)
     }
 
 
 
-    const onSubmit = (data: FormValues) => {
-        console.log("Form Data:", data)
-        console.log("Selected File:", selectedFile)
-        reset()
-        setImagePreview(null)
-        setSelectedFile(null)
+    const onSubmit = async (data: FormValues) => {
+        const formData = new FormData();
+        if (selectedFile) {
+            formData.append("photo", selectedFile)
+        }
+        formData.append("name", data.name)
+        formData.append("gaming_zone_name", data.gaming_zone_name)
+        formData.append("opening_time", data.opening_time)
+        formData.append("closing_time", data.closing_time)
+        formData.append("address", data.address)
+        formData.append("phone", data.phone)
+
+        try {
+            const res = await editProfileApi(formData).unwrap();
+            console.log(res)
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                setIsOpen(!open)
+                reset()
+                setImagePreview(null)
+                setSelectedFile(null)
+                setValue("photo", {} as FileList)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+
     }
 
     return (
-        <div className="text-[#ffff]">
+        <div className="text-[#ffff] xl:p-8">
             <h1 className="text-center text-[24px] py-4 text-[#ffff]">Edit profile</h1>
 
             <form
@@ -75,8 +100,8 @@ export default function EditProfileModal() {
                 <div className="space-y-6">
                     {/* Gaming Zone Upload */}
                     <div className="space-y-2">
-                        <Label htmlFor="roomImage" className="text-base font-medium">
-                          Gaming Zone
+                        <Label htmlFor="photo" className="text-base font-medium">
+                            Gaming Zone
                         </Label>
 
                         {imagePreview ? (
@@ -97,11 +122,11 @@ export default function EditProfileModal() {
                                         <X className=" h-4 w-4" />
                                     </button>
                                 </div>
-                           
+
                             </div>
                         ) : (
                             <label
-                                htmlFor="roomImage"
+                                htmlFor="photo"
                                 className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg  bg-[#5E5E5E33]/80 text-gray-400 transition-colors hover:bg-[#5E5E5E33]/60"
                             >
                                 <UploadCloud className="h-8 w-8" />
@@ -111,13 +136,13 @@ export default function EditProfileModal() {
 
                         <input
                             type="file"
-                            id="roomImage"
+                            id="photo"
                             className="hidden"
                             accept="image/*"
-                            // {...register("roomImage", { required: "Room image is required" })}
+                            // {...register("photo", { required: "Room image is required" })}
                             onChange={handleImageChange}
                         />
-                        {errors.roomImage && <p className="text-red-500 text-sm">{errors.roomImage.message}</p>}
+                        {errors.photo && <p className="text-red-500 text-sm">{errors.photo.message}</p>}
                     </div>
 
                     {/* Gaming Zone Name */}
@@ -128,44 +153,46 @@ export default function EditProfileModal() {
                         <Input
                             id="gaming-zone-name"
                             placeholder="Enter the name of the room"
-                            {...register("gamingZoneName", { required: true })}
+                            {...register("gaming_zone_name", { required: true })}
                             className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
-                        {errors.gamingZoneName && (
+                        {errors.gaming_zone_name && (
                             <span className="text-red-500 text-sm">Required</span>
                         )}
                     </div>
 
                     {/* Opening & Closing Time */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="openingTime" className="text-white text-sm">
+                            <Label htmlFor="opening_time" className="text-white text-sm">
                                 Opening Time
                             </Label>
                             <div className="relative">
                                 <Input
-                                    id="openingTime"
-                                    type="time"
-                                    {...register("openingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    id="opening_time"
+                                    type="tex"
+                                    placeholder="Enter the opening time(10.00 AM)"
+                                    {...register("opening_time")}
+                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
                                 />
                             </div>
-                            {errors.openingTime && <p className="text-red-400 text-xs mt-1">{errors.openingTime.message}</p>}
+                            {errors.opening_time && <p className="text-red-400 text-xs mt-1">{errors.opening_time.message}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="closingTime" className="text-white text-sm">
+                            <Label htmlFor="closing_time" className="text-white text-sm">
                                 Closing Time
                             </Label>
                             <div className="relative">
                                 <Input
-                                    id="closingTime"
-                                    type="time"
-                                    {...register("closingTime")}
-                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 [&::-webkit-calendar-picker-indicator]:invert"
+                                    id="closing_time"
+                                    type="tex"
+                                    placeholder="Enter the closing time(10.00 AM)"
+                                    {...register("closing_time")}
+                                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
                                 />
                             </div>
-                            {errors.closingTime && <p className="text-red-400 text-xs mt-1">{errors.closingTime.message}</p>}
+                            {errors.closing_time && <p className="text-red-400 text-xs mt-1">{errors.closing_time.message}</p>}
                         </div>
                     </div>
 
@@ -177,10 +204,10 @@ export default function EditProfileModal() {
                         <Input
                             id="location"
                             placeholder="Enter the Location"
-                            {...register("location", { required: true })}
+                            {...register("address", { required: true })}
                             className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                         />
-                        {errors.location && (
+                        {errors.address && (
                             <span className="text-red-500 text-sm">Required</span>
                         )}
                     </div>
@@ -194,10 +221,10 @@ export default function EditProfileModal() {
                             <Input
                                 id="full-name"
                                 placeholder="Enter your full name"
-                                {...register("fullName", { required: true })}
+                                {...register("name", { required: true })}
                                 className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
                             />
-                            {errors.fullName && (
+                            {errors.name && (
                                 <span className="text-red-500 text-sm">Required</span>
                             )}
                         </div>
@@ -205,15 +232,22 @@ export default function EditProfileModal() {
                             <Label htmlFor="contact-number" className="text-base font-medium">
                                 Contact Number
                             </Label>
-                            <Input
-                                id="contact-number"
+                                <Input
+                                id="phone"
                                 type="tel"
+                                maxLength={11}
                                 placeholder="Enter the contact number"
-                                {...register("contactNumber", { required: true })}
-                                className="rounded-lg border-none bg-[#5E5E5E33]/80 md:py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500"
+                                {...register("phone", {
+                                    required: "phone number is required",
+                                    pattern: {
+                                        value: /^[0-9]{10,15}$/,
+                                        message: "Please enter a valid phone number",
+                                    },
+                                })}
                             />
-                            {errors.contactNumber && (
-                                <span className="text-red-500 text-sm">Required</span>
+                            {errors.phone && (
+                                <p className="text-red-500 text-sm">{errors.phone.message}</p>
                             )}
                         </div>
                     </div>
@@ -227,7 +261,9 @@ export default function EditProfileModal() {
                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                         }}
                     >
-                        Save Changes
+                     {
+                        isLoading ? <CustomButtonLoader /> : "Save Changes"
+                     }
                     </Button>
                     <Button
                         type="button"

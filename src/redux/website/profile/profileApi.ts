@@ -18,9 +18,25 @@ const profileApi = baseApi.injectEndpoints({
             }),
             providesTags: ['profileTag'],
         }),
+        editProfileApi: builder.mutation({
+            query: (editProfileInfo) => ({
+                url: `/edit-profile`,
+                method: "POST",
+                body:editProfileInfo,
+            }),
+            invalidatesTags: ['profileTag'],
+        }),
+        editSinglePhotoProfileApi: builder.mutation({
+            query: (photoChange) => ({
+                url: `/edit-profile-picture`,
+                method: "POST",
+                body:photoChange,
+            }),
+            invalidatesTags: ['profileTag'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const { useGetProfileApiQuery,useGetRatingProfileApiQuery } = profileApi;
+export const { useGetProfileApiQuery,useGetRatingProfileApiQuery,useEditProfileApiMutation,useEditSinglePhotoProfileApiMutation } = profileApi;
