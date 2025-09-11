@@ -11,120 +11,19 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useGetUserListApiQuery } from "@/redux/website/userList/userListApi"
 
-interface User {
+interface UserListProps {
     id: string
     name: string
     email: string
     avatar: string
     room: string
-    days: number
+    days_of_playing: number
     duration: string
     payment: string
-    status: "User" | "Yourself"
+    added_by: string
 }
 
-const mockUsers: User[] = [
-    {
-        id: "1",
-        name: "Abir",
-        email: "abir39@gmail.com",
-        room: "VIP",
-        days: 2,
-        duration: "5 Hours",
-        payment: "$5642",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "2",
-        name: "Moksudul",
-        email: "user123@example.com",
-        room: "Console",
-        days: 1,
-        duration: "1 Hour",
-        payment: "$1000",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "3",
-        name: "Moksudul",
-        email: "user123@example.com",
-        room: "Console",
-        days: 1,
-        duration: "1 Hour",
-        payment: "$2000",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "4",
-        name: "Moksudul",
-        email: "user123@example.com",
-        room: "Console",
-        days: 1,
-        duration: "1 Hour",
-        payment: "$3000",
-        status: "Yourself",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "5",
-        name: "Arjun",
-        email: "hello@creativeoutlook.com",
-        room: "Bootcamp",
-        days: 3,
-        duration: "10 Hours",
-        payment: "$4000",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "6",
-        name: "Sito",
-        email: "info@innovativevideos.com",
-        room: "P95",
-        days: 10,
-        duration: "25 Hours",
-        payment: "$5000",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "7",
-        name: "Sito",
-        email: "info@innovativevideos.com",
-        room: "P95",
-        days: 10,
-        duration: "26 Hours",
-        payment: "$5000",
-        status: "Yourself",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "8",
-        name: "Kiran",
-        email: "support@techsolutions.com",
-        room: "Console",
-        days: 8,
-        duration: "18 Hours",
-        payment: "$7000",
-        status: "Yourself",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-        id: "9",
-        name: "Kiran",
-        email: "support@techsolutions.com",
-        room: "P95",
-        days: 6,
-        duration: "12 Hours",
-        payment: "$8000",
-        status: "User",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
 
-]
 
 const UserList = () => {
     const router = useRouter()
@@ -132,9 +31,8 @@ const UserList = () => {
 
 
     const { data: getUserList } = useGetUserListApiQuery(null)
-const userListData = getUserList?.data?.data
+const userListData: UserListProps[] = getUserList?.data?.data
 
-console.log(userListData)
 
 
     const getStatusColor = (status: string) => {
@@ -194,7 +92,7 @@ console.log(userListData)
                         </TableHeader>
                         
                         <TableBody className="">
-                            {userListData.map((item) => (
+                            {userListData?.map((item) => (
                                 <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                                     <TableCell>
                                         <div className="flex items-center gap-3">
