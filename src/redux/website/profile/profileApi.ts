@@ -11,9 +11,16 @@ const profileApi = baseApi.injectEndpoints({
             }),
             providesTags: ['profileTag'],
         }),
+        getRatingProfileApi: builder.query({
+            query: () => ({
+                url: `/get-provider-rating`,
+                method: "GET",
+            }),
+            providesTags: ['profileTag'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const { useGetProfileApiQuery } = profileApi;
+export const { useGetProfileApiQuery,useGetRatingProfileApiQuery } = profileApi;
