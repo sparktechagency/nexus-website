@@ -128,13 +128,13 @@ export default function WebProfilePage() {
 
       <div className="min-h-screen bg-[#0a0b1e] text-white p-4">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-evenly gap-3 xl:gap-10">
+          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-evenly gap-3 xl:gap-10 ">
             <h2 className="text-white md:text-2xl font-bold xl:mb-6">Basic info</h2>
 
-            <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-4">
-              <Link href="mailto:someone@example.com">
+            <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-4 ">
+              <Link href="mailto:someone@example.com" className="w-fit">
                 <Button
-                  className="w-[130px] md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                  className="w-[130px] cursor-pointer md:py-6 rounded-full  text-white font-semibold transition-all duration-200"
                   style={{
                     background:
                       "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
