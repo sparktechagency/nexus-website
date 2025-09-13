@@ -14,9 +14,6 @@ import cookies  from 'js-cookie'
 
 // Wrap the component that uses useSearchParams in Suspense
 const HomePageContent = () => {
-  // const searchParams = useSearchParams()
-  // const showSubscription = searchParams.get("showSubscription")
-  // const loginVerify = searchParams.get("loginVerify")
   const [isSubscription, setIsSubscription] = useState(false)
 
 const modalVerify = cookies.get("subscription_status")
@@ -31,6 +28,8 @@ const modalVerify = cookies.get("subscription_status")
     }
   }, [modalVerify])
 
+
+  
   return (
     <div className='px-4 md:px-6 lg:px-8 mb-6 '>
       {/* Main Content Grid */}

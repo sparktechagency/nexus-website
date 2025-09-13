@@ -64,7 +64,7 @@ const EditProfile = ({ open, setIsOpen }: { open: boolean, setIsOpen: (value: bo
   }
 
   return (
-    <div className="text-[#fff] p-8">
+    <div className="text-[#fff] xl:p-8">
       <h1 className="text-center md:text-2xl font-semibold pb-4">
         Change Your Password
       </h1>

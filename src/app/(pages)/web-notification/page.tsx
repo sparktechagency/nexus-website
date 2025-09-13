@@ -2,74 +2,64 @@
 "use client"
 
 import type React from "react"
-import { Crown } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
+import { useGetWebNotificationApiQuery, useSingleWebNotificationApiMutation } from "@/redux/website/notification/webNotificationApi"
+import Image from "next/image"
+import toast from "react-hot-toast"
+
+
 
 interface NotificationItem {
     id: string
-    type: "booking" | "premium" | "cancellation" | "reschedule"
-    user?: {
-        name: string
-        avatar: string
-    }
+    image: string
+    title: string
     message: string
     time: string
-    icon?: React.ReactNode
-    read_at: string | null
+    is_read: boolean
+    created_time: string
 }
 
-const notifications: NotificationItem[] = [
-    {
-        id: "1",
-        type: "booking",
-        user: {
-            name: "Sourav",
-            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        message: "Sourav booked a seat in your gaming zone.",
-        time: "09:00 AM",
-        read_at: null
-    },
-    {
-        id: "2",
-        type: "reschedule",
-        user: {
-            name: "Sazzat Hossain",
-            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        message: "Sazzat Hossain has rescheduled the seat booking at your Arena.",
-        time: "09:00 AM",
-        read_at: "2025-08-11T10:00:00Z"
-    },
-    {
-        id: "3",
-        type: "premium",
-        message: "Successfully activate the premium subscription plan.",
-        time: "09:00 AM",
-        icon: <Crown className="w-8 h-8 text-yellow-400" />,
-        read_at: null
-    },
-    {
-        id: "4",
-        type: "cancellation",
-        user: {
-            name: "Sazzat Hossain",
-            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        message: "Sazzat Hossain has cancelled the seat booking at your Arena.",
-        time: "09:00 AM",
-        read_at: "2025-08-11T09:30:00Z"
-    },
-]
+
 
 
 const WebNotificationPage = () => {
     const router = useRouter()
 
+
+    const { data: getNotification } = useGetWebNotificationApiQuery({
+        skip: true,
+    })
+    const notificationData: NotificationItem[] = getNotification?.data?.notifications?.data
+
+
+    const [singleNotification] = useSingleWebNotificationApiMutation()
+
+
+
+    // Handle single notification
+    const handleNotificationId = async (id: string) => {
+        try {
+            const res = await singleNotification(id).unwrap();
+            console.log(res)
+
+            if (res?.status === true) {
+                toast.success(res?.message)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+    }
+
+
     const handleNotificationBack = () => {
         router.push('/home')
     }
+
+
     return (
         <div className="px-4 md:px-6 lg:px-8 mb-6  text-white">
             {/* Header */}
@@ -84,6 +74,7 @@ const WebNotificationPage = () => {
                 <h1 className="text-2xl font-semibold">Notifications</h1>
             </div>
 
+
             {/* Subtitle */}
             <div className="p-4 pb-2">
                 <p className="text-slate-400 text-sm">
@@ -91,34 +82,35 @@ const WebNotificationPage = () => {
                 </p>
             </div>
 
+            <div className="flex justify-end">
+                <button className="bg-gray-700 hover:bg-gray-800 cursor-pointer border border-gray-800 py-2 px-4 rounded-full  font-semibold xl:mx-5">Mark all as read</button>
+            </div>
             {/* Notifications List */}
             <div className="px-4 pt-4 space-y-4 ">
-                {notifications.map((notification) => (
-                    <div key={notification.id} className={`flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.read_at === null ? '' : 'bg-[#1e182d]'}`}>
-                        {/* Avatar or Icon */}
-                        <div className="flex-shrink-0">
-                            {notification.user ? (
-                                <Avatar className="w-10 h-10">
-                                    <AvatarImage src={notification.user.avatar || "/placeholder.svg"} alt={notification.user.name} />
-                                    <AvatarFallback className="bg-slate-700 text-white">
-                                        {notification.user.name.charAt(0)}
-                                    </AvatarFallback>
-                                </Avatar>
-                            ) : (
-                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
-                                    {notification.icon}
-                                </div>
-                            )}
-                        </div>
+                {notificationData?.map((notification) => (
+                    <div key={notification.id}
+                        onClick={() => handleNotificationId(notification.id)}
+                        className={`cursor-pointer flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-gray-700' : 'bg-gray-900'}`}>
+                        <Image
+                            src={notification?.image}
+                            alt="photo"
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                        />
+
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-slate-200 text-sm leading-relaxed">{notification.message}</p>
+                            <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-slate-200 text-sm leading-relaxed">{notification.id}</p>
                         </div>
 
                         {/* Time */}
                         <div className="flex-shrink-0">
-                            <span className="text-slate-400 text-xs">{notification.time}</span>
+                            <span className="text-slate-400 text-xs">{notification.created_time}</span>
                         </div>
                     </div>
                 ))}

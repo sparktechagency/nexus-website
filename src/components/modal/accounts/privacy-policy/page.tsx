@@ -3,7 +3,8 @@
 import { useGetPrivacyPolicyApiQuery } from "@/redux/website/accounts/accountApi";
 import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
-import CustomButtonLoaderTwo from "../loader/CustomButtonLoaderTwo";
+import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo";
+
 
 
 const PrivacyPolicy = () => {
@@ -59,7 +60,7 @@ const PrivacyPolicy = () => {
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
       `}</style>
 
-            <div className="text-[#fff] pb-4">
+            <div className="text-[#fff] pb-4 xl:p-8 ">
                 <h1 className="text-center md:text-2xl font-semibold pb-4">Privacy Policy</h1>
 
                 <div

@@ -23,6 +23,7 @@ export const baseApi = createApi({
     "usrList",
     "promo",
     "account",
+    "notification",
   ],
   endpoints: () => ({}),
 });
