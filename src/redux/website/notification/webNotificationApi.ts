@@ -16,9 +16,16 @@ const webNotificationApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['notification'],
         }),
+        markAllWebNotificationApi: builder.mutation({
+            query: () => ({
+                url: `/mark-all-notification`,
+                method: "POST",
+            }),
+            invalidatesTags: ['notification'],
+        }),
     }),
-       overrideExisting: true
+    overrideExisting: true
 })
 
 
-export const { useGetWebNotificationApiQuery ,useSingleWebNotificationApiMutation} = webNotificationApi;
+export const { useGetWebNotificationApiQuery, useSingleWebNotificationApiMutation,useMarkAllWebNotificationApiMutation } = webNotificationApi;

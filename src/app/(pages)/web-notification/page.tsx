@@ -3,7 +3,7 @@
 
 import type React from "react"
 import { useRouter } from "next/navigation"
-import { useGetWebNotificationApiQuery, useSingleWebNotificationApiMutation } from "@/redux/website/notification/webNotificationApi"
+import { useGetWebNotificationApiQuery, useMarkAllWebNotificationApiMutation, useSingleWebNotificationApiMutation } from "@/redux/website/notification/webNotificationApi"
 import Image from "next/image"
 import toast from "react-hot-toast"
 
@@ -33,6 +33,8 @@ const WebNotificationPage = () => {
 
 
     const [singleNotification] = useSingleWebNotificationApiMutation()
+    const [markAllWebNotificationApi] = useMarkAllWebNotificationApiMutation()
+
 
 
 
@@ -55,10 +57,29 @@ const WebNotificationPage = () => {
     }
 
 
+    const handleMarkAllNotification = async () => {
+        console.log('click')
+
+        try {
+            const res = await markAllWebNotificationApi(null).unwrap();
+            console.log(res)
+
+            if (res?.status === true) {
+                toast.success(res?.message)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+    }
+
+
     const handleNotificationBack = () => {
         router.push('/home')
     }
-
 
     return (
         <div className="px-4 md:px-6 lg:px-8 mb-6  text-white">
@@ -83,14 +104,20 @@ const WebNotificationPage = () => {
             </div>
 
             <div className="flex justify-end">
-                <button className="bg-gray-700 hover:bg-gray-800 cursor-pointer border border-gray-800 py-2 px-4 rounded-full  font-semibold xl:mx-5">Mark all as read</button>
+                <button
+                    onClick={handleMarkAllNotification}
+                    className="bg-gray-700 hover:bg-gray-800 cursor-pointer border border-gray-800 py-2 px-4 rounded-full  font-semibold xl:mx-5">Mark all as read</button>
             </div>
+
+
+
             {/* Notifications List */}
             <div className="px-4 pt-4 space-y-4 ">
                 {notificationData?.map((notification) => (
                     <div key={notification.id}
-                        onClick={() => handleNotificationId(notification.id)}
-                        className={`cursor-pointer flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-gray-700' : 'bg-gray-900'}`}>
+                        onClick={() => !notification?.is_read && handleNotificationId(notification.id)}
+
+                        className={` flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-transparent cursor-default' : 'bg-gray-900 cursor-pointer'}`}>
                         <Image
                             src={notification?.image}
                             alt="photo"
