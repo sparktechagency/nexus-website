@@ -1,17 +1,9 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useGetWebDashboardHomeApiQuery } from "@/redux/website/home/webHomePageApi"
 import { Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, TooltipProps } from "recharts"
 
-const data = [
-  { name: "Sat\n19 Oct", revenue: 30000 },
-  { name: "Sun\n20 Oct", revenue: 42000 },
-  { name: "Mon\n21 Oct", revenue: 35000 },
-  { name: "Tue\n22 Oct", revenue: 28000 },
-  { name: "Wed\n23 Oct", revenue: 32000 },
-  { name: "Thu\n24 Oct", revenue: 45000 },
-  { name: "Fri\n25 Oct", revenue: 20000 },
-]
 
 
 type CustomTooltipProps = TooltipProps<number, string> & {
@@ -26,11 +18,15 @@ type CustomTooltipProps = TooltipProps<number, string> & {
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const date = label.split("\n")[1] || label // Extract date from label
+    const date = label?.split("\n")[1] || label // Extract date from label
+
+    // Dynamically display more data from the payload if available
+    const revenue = payload[0].value
+
     return (
-      <div className="bg-[#1e1829]p-3 rounded-lg shadow-md text-white text-sm border border-gray-700">
-        <p className="font-bold">${payload[0].value / 1000}k</p>
-        <p className="text-gray-400">{date}, 2025</p>
+        <div className="bg-[#1e1829] p-3 rounded-lg shadow-md text-white text-sm border border-gray-700">
+        <p className="text-gray-400">{date}</p>
+        <p className="text-gray-400">Revenue: ${revenue}</p> {/* Additional Data */}
       </div>
     )
   }
@@ -40,6 +36,20 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
 
 export default function WeeklyRevenueGraph() {
+
+    const {data:getDashboard} = useGetWebDashboardHomeApiQuery({
+    skip:true
+  })
+const dashboardData = getDashboard?.data?.weekly_revenue_analytics
+
+const chartData = dashboardData
+    ? dashboardData.map((item: { day: string; revenue: number }) => ({
+        name: item?.day, // 'name' is used in XAxis
+        revenue: item?.revenue,
+      }))
+    : []
+
+
   return (
     <Card className="bg-[#1e1829] text-white border-none rounded-xl shadow-lg h-full">
       <CardHeader>
@@ -48,7 +58,7 @@ export default function WeeklyRevenueGraph() {
       <CardContent className="h-[300px] md:h-[350px] lg:h-[400px] xl:h-[350px] pb-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
-            data={data}
+            data={chartData}
             margin={{
               top: 10,
               right: 30,
@@ -80,9 +90,9 @@ export default function WeeklyRevenueGraph() {
             <YAxis
               axisLine={false}
               tickLine={false}
-              tickFormatter={(value) => `${value / 1000}k`}
+              tickFormatter={(value) => `${value}`}
               tick={{ fill: "#A0A0B0", fontSize: 12 }}
-              domain={[0, 60000]}
+              // domain={[0, 60000]}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#A0A0B0", strokeDasharray: "3 3" }} />
             <Area

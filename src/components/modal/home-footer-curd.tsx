@@ -1,54 +1,63 @@
 
-
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useGetWebDashboardHomeApiQuery } from "@/redux/website/home/webHomePageApi"
 import { Clock } from "lucide-react"
 import Image from "next/image"
 
+
 export default function HomeFooterCurd() {
+
+    const { data: getDashboard } = useGetWebDashboardHomeApiQuery({
+        skip: true
+    })
+    const todayScheduleData = getDashboard?.data?.today_schedule
+    const lastPaymentData = getDashboard?.data?.last_payment
+    const upcomingBookingData = getDashboard?.data?.upcoming_booking
+
+
+
+
     return (
         <div className=" bg-black py-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
                 {/* Todays Schedule Card */}
-                <Card className="col-span-1 bg-[#191829] text-white rounded-2xl border-none shadow-lg">
+                <Card
+                    className="col-span-1 h-fit bg-[#191829] text-white rounded-2xl border-none shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between pb-4">
                         <CardTitle className="text-xl font-semibold text-white">Todays Schedule</CardTitle>
                         <Clock className="h-6 w-6 text-white" />
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-end gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo1.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
-                                <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
-                            </div>
-                            <span className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-sm font-semibold">VIP</span>
-                        </div>
-                        <div className="flex items-end gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo2.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Neymar De Junior</p>
-                                <p className="text-textMediumGray text-sm">10:00 AM - 11:00 AM</p>
-                            </div>
-                            <span className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-sm font-semibold">Bootcamp</span>
-                        </div>
-                    </CardContent>
+                    {
+                        todayScheduleData?.map((item, index) => {
+                            return (
+                                <CardContent
+                                    key={index}
+                                    className="space-y-4">
+                                    <div className="flex items-end gap-4 bg-[#121421] p-3 rounded-xl">
+                                        <Image
+                                            src={item?.user?.avatar}
+                                            alt="photo"
+                                            width={48}
+                                            height={48}
+                                            className="rounded-md object-cover flex-shrink-0"
+                                        />
+                                        <div className="flex-1">
+                                            <p className="text-xs md:text-base font-medium">{item?.user?.name}</p>
+                                            <div className="text-textMediumGray text-sm">{item?.starting_time} <span>-</span> {item?.ending_time}</div>
+                                        </div>
+                                        <span className="bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text text-sm font-semibold">{item?.room?.name}</span>
+                                    </div>
+                                </CardContent>
+                            )
+                        })
+                    }
                 </Card>
 
+
                 {/* Last Payment Card */}
-                <Card className="col-span-1 bg-[#191829] text-white rounded-2xl border-none shadow-lg">
+                <Card
+                    className="col-span-1 h-fit bg-[#191829] text-white rounded-2xl border-none shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between pb-4">
                         <CardTitle className="text-xl font-semibold text-white">Last Payment</CardTitle>
                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,46 +65,40 @@ export default function HomeFooterCurd() {
                         </svg>
 
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo1.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
-                                <p className="text-textMediumGray text-sm">$564.00</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">Bootcamp</span>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo1.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
-                                <p className="text-textMediumGray text-sm">$645.00</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <p className="text-textMediumGray text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">VIP</span>
-                            </div>
-                        </div>
-                    </CardContent>
+                    {
+                        lastPaymentData?.map((item, index) => {
+                            return (
+                                <CardContent
+                                    key={index}
+                                    className="space-y-4">
+                                    <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
+                                        <Image
+                                            src={item?.user?.avatar}
+                                            alt="Angkara Messi"
+                                            width={48}
+                                            height={48}
+                                            className="rounded-md object-cover flex-shrink-0"
+                                        />
+                                        <div className="flex-1">
+                                            <p className="text-xs md:text-base font-medium">{item?.user?.name}</p>
+                                            <p className="text-textMediumGray text-sm">${item?.total}</p>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <p className="text-textMediumGray text-sm">{item?.mark_complete_date}</p>
+                                            <span className="text-purpleAccent text-xs md:text-sm font-semibold">{item?.room?.name}</span>
+                                        </div>
+                                    </div>
+
+
+                                </CardContent>
+                            )
+                        })
+                    }
                 </Card>
 
+
                 {/* Upcoming Booking Card */}
-                <Card className="col-span-1 bg-[#191829] text-white rounded-2xl border-none shadow-lg">
+                <Card className="col-span-1 h-fit bg-[#191829] text-white rounded-2xl border-none shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between pb-4">
                         <CardTitle className="text-xl font-semibold text-white">Upcoming Booking</CardTitle>
                         <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,42 +106,33 @@ export default function HomeFooterCurd() {
                         </svg>
 
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo1.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
-                                <p className="text-xs md:text-sm">10:00 AM - 11:00 AM</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <p className="text-xs md:text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">VIP</span>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
-                            <Image
-                                src="/home/photo1.png"
-                                alt="Angkara Messi"
-                                width={48}
-                                height={48}
-                                className="rounded-md object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <p className="text-xs md:text-base font-medium">Angkara Messi</p>
-                                <p className="text-xs md:text-sm">10:00 AM - 11:00 AM</p>
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <p className="text-xs md:text-sm">12/25/2025</p>
-                                <span className="text-purpleAccent text-xs md:text-sm font-semibold">Bootcamp</span>
-                            </div>
-                        </div>
-                    </CardContent>
+                    {
+                        upcomingBookingData?.map((item, index) => {
+                            return (
+                                <CardContent
+                                    key={index}
+                                    className="space-y-4">
+                                    <div className="flex items-center gap-4 bg-[#121421] p-3 rounded-xl">
+                                        <Image
+                                            src={item?.user?.avatar}
+                                            alt="photo"
+                                            width={48}
+                                            height={48}
+                                            className="rounded-md object-cover flex-shrink-0"
+                                        />
+                                        <div className="flex-1">
+                                            <p className="text-xs md:text-base font-medium">{item?.user?.name}</p>
+                                            <div className="text-xs md:text-sm">{item?.starting_time} <span>-</span> {item?.ending_time}</div>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <p className="text-xs md:text-sm">{item?.booking_date}</p>
+                                            <span className="text-purpleAccent text-xs md:text-sm font-semibold">{item?.room?.name}</span>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            )
+                        })
+                    }
                 </Card>
             </div>
         </div>

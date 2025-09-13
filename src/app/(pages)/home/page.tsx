@@ -9,36 +9,49 @@ import WeeklyBookingGraph from "@/components/weekly-booking-graph"
 import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
-import cookies  from 'js-cookie'
+import cookies from 'js-cookie'
+import { useGetWebDashboardHomeApiQuery } from '@/redux/website/home/webHomePageApi'
+import { skip } from 'node:test'
 
 
 // Wrap the component that uses useSearchParams in Suspense
 const HomePageContent = () => {
   const [isSubscription, setIsSubscription] = useState(false)
 
-const modalVerify = cookies.get("subscription_status")
-
-
+  const modalVerify = cookies.get("subscription_status")
 
   useEffect(() => {
     if (modalVerify === "active") {
       setIsSubscription(false)
-    }else{
+    } else {
       setIsSubscription(true)
     }
   }, [modalVerify])
 
 
+  const {data:getDashboard} = useGetWebDashboardHomeApiQuery({
+    skip:true
+  })
+const curdData = getDashboard?.data
+
+
   
+
+
+
+
+
   return (
     <div className='px-4 md:px-6 lg:px-8 mb-6 '>
       {/* Main Content Grid */}
       <main className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ">
         {/* Summary Cards */}
-        <DashboardSummaryCard title="Total Room" value="26" icon="Room" iconBgColor="bg-icon-blue" />
-        <DashboardSummaryCard title="Upcoming Bookings" value="26" icon="Booking" iconBgColor="bg-icon-orange" />
-        <DashboardSummaryCard title="Revenue" value="$5642.00" icon="Revenue" iconBgColor="bg-icon-green" />
-        <DashboardSummaryCard title="Average Rating" value="4.5" icon="AverageRating" iconBgColor="bg-icon-purple" />
+        <DashboardSummaryCard title="Total Room" value={curdData?.total_room} icon="Room" iconBgColor="bg-icon-blue"/>
+
+        <DashboardSummaryCard title="Upcoming Bookings" value={curdData?.upcoming_bookings} icon="Booking" iconBgColor="bg-icon-orange" />
+        <DashboardSummaryCard title="Revenue" value={curdData?.revenue} icon="Revenue" iconBgColor="bg-icon-green" />
+
+        <DashboardSummaryCard title="Average Rating" value={curdData?.average_rating} icon="AverageRating" iconBgColor="bg-icon-purple" />
 
         {/* Graphs */}
         <div className="lg:col-span-2 xl:col-span-2 ">

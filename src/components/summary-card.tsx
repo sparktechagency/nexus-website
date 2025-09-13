@@ -19,7 +19,7 @@ const IconMap: { [key: string]: LucideIcon | React.FC<React.SVGProps<SVGSVGEleme
   AverageRating:AverageRatingIcon,
 }
 
-export default function SummaryCard({ title, value, icon, iconBgColor }: SummaryCardProps) {
+export default function SummaryCard({ title, value, icon, iconBgColor, }: SummaryCardProps) {
   const IconComponent = IconMap[icon]
 
   return (

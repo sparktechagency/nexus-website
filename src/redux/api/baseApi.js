@@ -24,6 +24,7 @@ export const baseApi = createApi({
     "promo",
     "account",
     "notification",
+    "webDashboard",
   ],
   endpoints: () => ({}),
 });

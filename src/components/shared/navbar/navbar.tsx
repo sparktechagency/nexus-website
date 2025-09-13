@@ -139,8 +139,6 @@ export default function Navbar() {
                     </div>
 
 
-
-
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center space-x-1 md:space-x-2 cursor-pointer focus:outline-none bg-[#292531] p-2 md:p-3 rounded-full">
 
@@ -208,10 +206,6 @@ export default function Navbar() {
                     </DropdownMenu>
                 </div>
             </nav>
-
-
-
-
 
 
             {/* modal component(TERMS_AND_CONDITION) */}
