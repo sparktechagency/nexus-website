@@ -22,6 +22,7 @@ export const baseApi = createApi({
     "profileTag",
     "usrList",
     "promo",
+    "account",
   ],
   endpoints: () => ({}),
 });

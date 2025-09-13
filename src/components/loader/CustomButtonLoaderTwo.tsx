@@ -1,6 +1,6 @@
 const CustomButtonLoaderTwo = () => {
     return (
-        <div className="h-screen flex justify-center items-center">
+        <div className=" flex justify-center items-center">
             <div className="flex items-center justify-center space-x-2">
 
                 <svg

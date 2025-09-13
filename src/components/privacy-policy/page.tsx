@@ -1,10 +1,20 @@
 "use client"
 
+import { useGetPrivacyPolicyApiQuery } from "@/redux/website/accounts/accountApi";
 import React, { useEffect, useRef, useState } from "react";
+import moment from "moment";
+import CustomButtonLoaderTwo from "../loader/CustomButtonLoaderTwo";
+
 
 const PrivacyPolicy = () => {
     const contentRef = useRef<HTMLDivElement | null>(null);
     const [isScrollable, setIsScrollable] = useState(false);
+
+    const { data: getPrivacyPolicyData,isLoading } = useGetPrivacyPolicyApiQuery("Privacy Policy");
+    const privacyPolicyContent = getPrivacyPolicyData?.data[0]
+
+    console.log(privacyPolicyContent)
+
 
     useEffect(() => {
         const el = contentRef.current;
@@ -27,8 +37,12 @@ const PrivacyPolicy = () => {
     }, []);
 
 
+    if(isLoading){
+         return <div className="h-[400px] flex justify-center items-center">
+        <CustomButtonLoaderTwo />
+    </div>
+    }
 
-    
     return (
         <>
             <style>{`
@@ -68,67 +82,12 @@ const PrivacyPolicy = () => {
 
 
                         </div>
-                        <span className="xl:text-[21px] font-medium">Updated July 17, 2025</span>
+                        <span className="xl:text-xl font-medium">Updated {privacyPolicyContent?.updated_at ? moment(privacyPolicyContent?.updated_at).format('LL') : ''}
+                        </span>
                     </div>
-
-                    <div className="space-y-8">
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">1. Introduction</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">2. Information We Collect</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">3. Data Security</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
+                    <div>
+                        <h2 className="text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: privacyPolicyContent?.text }} />
                     </div>
-                    
-                    <div className="space-y-8">
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">1. Introduction</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">2. Information We Collect</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-lg font-semibold mb-4">3. Data Security</h2>
-                            <p className="text-gray-300 leading-relaxed">
-                                Lorem ipsum dolor sit amet consectetur. Volutpat purus nunc tellus lorem adipiscing. Convallis at mi
-                                dictumst nulla amet. Ipsum consequat vel donec ut amet ante semper. Amet tempus tellus aliquam volutpat
-                                enim dolor tristique.
-                            </p>
-                        </section>
-                    </div>
-
                 </div>
             </div>
         </>

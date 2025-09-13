@@ -9,7 +9,7 @@ import CustomModal from "@/components/modal/customModal";
 import TermsAndCondition from "@/components/terms-and-condition/page";
 import { usePathname, useRouter } from "next/navigation";
 import PrivacyPolicy from "@/components/privacy-policy/page";
-import EditProfile from "@/components/edit-profile/page";
+import EditProfile from "@/components/modal/accounts/page";
 import Link from "next/link";
 import Cookies from 'js-cookie';
 
@@ -26,17 +26,17 @@ export default function Navbar() {
         if (value === "Home") {
             router.push('/home')
         }
-       else if (value === "Rooms") {
+        else if (value === "Rooms") {
             router.push('/room')
         }
-       else if (value === "Bookings") {
+        else if (value === "Bookings") {
             router.push('/booking')
         }
-       else if (value === "Profile") {
+        else if (value === "Profile") {
             router.push('/profile')
         }
-       else if (value === "Logout") {
-           router.push('/')
+        else if (value === "Logout") {
+            router.push('/')
             Cookies.remove('token');
             Cookies.remove('role');
             Cookies.remove('subscription_status');
@@ -230,7 +230,10 @@ export default function Navbar() {
                 className={"p-4 max-h-[0vh]"}
                 maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
-                <EditProfile />
+                <EditProfile
+                    open={isProfile}
+                    setIsOpen={setIsProfile}
+                />
             </CustomModal>
         </div>
     )

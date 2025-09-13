@@ -8,39 +8,63 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Lock, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useChangePasswordApiMutation } from "@/redux/website/accounts/accountApi"
+import toast from "react-hot-toast"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 type CreateNewPasswordInputs = {
-  currentPassword: string
-  password: string
-  retypePassword: string
+  current_password: string
+  new_password: string
+  retype_password: string
 }
 
-const EditProfile = () => {
+const EditProfile = ({ open, setIsOpen }: { open: boolean, setIsOpen: (value: boolean) => void }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showRetypePassword, setShowRetypePassword] = useState(false)
-
   const router = useRouter()
+
+
+  const [changePassword, { isLoading }] = useChangePasswordApiMutation()
+
 
   const {
     register,
     handleSubmit,
-    reset,
     watch,
     formState: { errors },
   } = useForm<CreateNewPasswordInputs>()
 
-  const passwordValue = watch("password")
+  const passwordValue = watch("new_password")
 
-  const onSubmit: SubmitHandler<CreateNewPasswordInputs> = (data) => {
-    console.log("Form Values:", data)
+  const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
+    const formData = new FormData()
+    formData.append("current_password", data.current_password)
+    formData.append("new_password", data.new_password)
+    formData.append("retype_password", data.retype_password)
 
-    reset()
-    router.push("/home") // navigate after form submission
+    try {
+      const res = await changePassword(formData).unwrap();
+
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+        router.push("/home") // navigate after form submission
+        setIsOpen(!open)
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors: any) {
+      if (errors) {
+        toast.error(errors.data?.message)
+      }
+    }
+
+
+
   }
 
   return (
-    <div className="text-[#fff]">
+    <div className="text-[#fff] p-8">
       <h1 className="text-center md:text-2xl font-semibold pb-4">
         Change Your Password
       </h1>
@@ -55,17 +79,17 @@ const EditProfile = () => {
           <div className="space-y-6 px-6 pb-6 pt-10">
             {/* Current Password */}
             <div className="grid gap-2">
-              <Label htmlFor="currentPassword" className="text-[#ffff]">
+              <Label htmlFor="current_password" className="text-[#ffff]">
                 Current Password
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  id="currentPassword"
+                  id="current_password"
                   type={showCurrentPassword ? "text" : "password"}
                   placeholder="********"
                   className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  {...register("currentPassword", {
+                  {...register("current_password", {
                     required: "Current password is required",
                   })}
                 />
@@ -83,26 +107,26 @@ const EditProfile = () => {
                   )}
                 </button>
               </div>
-              {errors.currentPassword && (
+              {errors.current_password && (
                 <p className="text-red-500 text-sm">
-                  {errors.currentPassword.message}
+                  {errors.current_password.message}
                 </p>
               )}
             </div>
 
             {/* New Password */}
             <div className="grid gap-2">
-              <Label htmlFor="password" className="text-[#ffff]">
+              <Label htmlFor="new_password" className="text-[#ffff]">
                 New Password
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  id="password"
+                  id="new_password"
                   type={showPassword ? "text" : "password"}
                   placeholder="********"
                   className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  {...register("password", {
+                  {...register("new_password", {
                     required: "Password is required",
                   })}
                 />
@@ -118,26 +142,26 @@ const EditProfile = () => {
                   )}
                 </button>
               </div>
-              {errors.password && (
+              {errors.new_password && (
                 <p className="text-red-500 text-sm">
-                  {errors.password.message}
+                  {errors.new_password.message}
                 </p>
               )}
             </div>
 
             {/* Retype Password */}
             <div className="space-y-2">
-              <Label htmlFor="retypePassword" className="text-[#ffff]">
+              <Label htmlFor="retype_password" className="text-[#ffff]">
                 Retype Password
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  id="retypePassword"
+                  id="retype_password"
                   type={showRetypePassword ? "text" : "password"}
                   placeholder="********"
                   className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  {...register("retypePassword", {
+                  {...register("retype_password", {
                     required: "Please confirm your password",
                     validate: (value) =>
                       value === passwordValue || "Passwords do not match",
@@ -157,9 +181,9 @@ const EditProfile = () => {
                   )}
                 </button>
               </div>
-              {errors.retypePassword && (
+              {errors.retype_password && (
                 <p className="text-red-500 text-sm">
-                  {errors.retypePassword.message}
+                  {errors.retype_password.message}
                 </p>
               )}
             </div>
@@ -173,7 +197,7 @@ const EditProfile = () => {
                   "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
               }}
             >
-              Update
+              {isLoading ? <CustomButtonLoader /> : "Update"}
             </Button>
           </div>
         </form>

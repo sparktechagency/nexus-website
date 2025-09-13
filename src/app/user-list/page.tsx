@@ -83,7 +83,6 @@ const userListData: UserListProps[] = getUserList?.data?.data
                             <TableRow className="border-none hover:bg-transparent cursor-pointer">
                                 <TableHead className="text-[#ffff] font-bold text-lg">User</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Contact</TableHead>
-                                <TableHead className="text-[#ffff] font-bold text-lg">Room</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Number of Days</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Duration</TableHead>
                                 <TableHead className="text-[#ffff] font-bold text-lg">Payment</TableHead>
@@ -101,9 +100,6 @@ const userListData: UserListProps[] = getUserList?.data?.data
                                         </div>
                                     </TableCell>
                                     <TableCell className="">{item.email}</TableCell>
-                                    <TableCell>
-                                        {item.room}
-                                    </TableCell>
                                     <TableCell className="">{item.days_of_playing}</TableCell>
                                     <TableCell className="">{item.duration}</TableCell>
                                     <TableCell className=" font-medium">{item.payment}</TableCell>
