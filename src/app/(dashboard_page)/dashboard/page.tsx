@@ -5,6 +5,8 @@ import { useState } from "react"
 import { CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { useGetDashboardHomeApiQuery } from "@/redux/dashboard/dashboardHome/dashboardHomeApi"
+
 
 
 const revenueData = [
@@ -27,7 +29,22 @@ const monthlyRevenueData = [
 export default function DashboardPage() {
   const [timeframe, setTimeframe] = useState<"weekly" | "monthly">("weekly")
 
-  const currentData = timeframe === "weekly" ? revenueData : monthlyRevenueData
+
+
+  const {data:getDashboard} = useGetDashboardHomeApiQuery({
+    skip: true,
+  })
+  const dashboardData = getDashboard?.data?.revenues_statistics
+
+  const activeUserData = getDashboard?.data?.active_users
+  const totalProviderData = getDashboard?.data?.total_providers
+  const totalRevenuesData = getDashboard?.data?.total_revenues
+
+    // const currentData = timeframe === "weekly" ? revenueData : monthlyRevenueData
+  const currentData = timeframe === "weekly" ? dashboardData : [] 
+
+
+  console.log(activeUserData,totalProviderData,totalRevenuesData)
 
   return (
     <div className="pt-4">
@@ -81,7 +98,7 @@ export default function DashboardPage() {
 
                 <div className="flex items-center ">
                   <div>
-                    <p className="text-2xl font-bold text-white">356k</p>
+                    <p className="text-2xl font-bold text-white">{activeUserData}</p>
                     <p className="text-sm text-slate-400 pt-4">Active users</p>
                   </div>
                 </div>
@@ -102,7 +119,7 @@ export default function DashboardPage() {
 
                 <div className="flex items-center ">
                   <div>
-                    <p className="text-2xl font-bold text-white">$55845.00</p>
+                    <p className="text-2xl font-bold text-white">{totalProviderData}</p>
                     <p className="text-sm text-slate-400 pt-4">Total Providers</p>
                   </div>
                 </div>
@@ -127,7 +144,7 @@ export default function DashboardPage() {
 
                 <div className="flex items-center ">
                   <div>
-                    <p className="text-2xl font-bold text-white">$55845.00</p>
+                    <p className="text-2xl font-bold text-white">{totalRevenuesData}</p>
                     <p className="text-sm text-slate-400 pt-4">Revenues</p>
                   </div>
                 </div>
@@ -142,7 +159,7 @@ export default function DashboardPage() {
 
 
         {/* Revenue Chart */}
-        <div className="min-h-[480px] p-4 rounded-lg bg-[#1a1624]">
+           <div className="min-h-[480px] p-4 rounded-lg bg-[#1a1624]">
           <div className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div>
               <CardTitle className="text-lg font-medium text-slate-300">Static analysis</CardTitle>
@@ -153,10 +170,7 @@ export default function DashboardPage() {
                 variant={timeframe === "weekly" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setTimeframe("weekly")}
-                className={`${timeframe === "weekly"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700"
-                  }`}
+                className={`${timeframe === "weekly" ? "bg-blue-600 text-white hover:bg-blue-700" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}
               >
                 Weekly
               </Button>
@@ -164,15 +178,13 @@ export default function DashboardPage() {
                 variant={timeframe === "monthly" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setTimeframe("monthly")}
-                className={`${timeframe === "monthly"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700"
-                  }`}
+                className={`${timeframe === "monthly" ? "bg-blue-600 text-white hover:bg-blue-700" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}
               >
                 Monthly
               </Button>
             </div>
           </div>
+
           <div className="pb-6">
             <div className="h-84">
               <ResponsiveContainer width="100%" height="100%">
@@ -207,7 +219,7 @@ export default function DashboardPage() {
                   />
                   <Area
                     type="monotone"
-                    dataKey="value"
+                    dataKey="revenue"
                     stroke="#06b6d4"
                     strokeWidth={2}
                     fill="url(#colorRevenue)"
@@ -219,6 +231,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   )

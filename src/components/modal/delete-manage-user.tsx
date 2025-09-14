@@ -3,15 +3,37 @@
 
 
 import { Button } from "@/components/ui/button"
+import { useDeleteUserApiMutation, useGetUserApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi";
+import { skip } from "node:test";
 import { Dispatch, SetStateAction } from "react";
+import toast from "react-hot-toast";
 
 interface DeleteManageUserProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+    deleteId: string | number
 }
 
 
-const DeleteManageUser = ({ open, setIsOpen }: DeleteManageUserProps) => {
+const DeleteManageUser = ({ open, setIsOpen, deleteId }: DeleteManageUserProps) => {
+
+    const [deleteUserApi,] = useDeleteUserApiMutation()
+    // Fetch user list with refetch option
+    const { refetch } = useGetUserApiQuery({})
+
+    const handleDeletRole = async () => {
+        try {
+            const res = await deleteUserApi({ id: deleteId }).unwrap();
+            console.log(res)
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                refetch()
+            }
+        } catch (errors) {
+            console.log(errors)
+        }
+    }
+
     return (
         <div className="text-[#fff]">
             <h1 className="text-center text-3xl font-bold py-4">Delete User</h1>
@@ -23,7 +45,10 @@ const DeleteManageUser = ({ open, setIsOpen }: DeleteManageUserProps) => {
 
             <div className="flex justify-center items-center gap-4 mb-8 mt-16">
                 <Button
-                    onClick={() => setIsOpen(!open)}
+                    onClick={() => {
+                        setIsOpen(!open),
+                            handleDeletRole()
+                    }}
                     className="w-[40%] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                     style={{
                         background:

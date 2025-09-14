@@ -1,8 +1,10 @@
 
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
 import Image from "next/image"
 import Link from "next/link"
+
 
 const userData = [
     {
@@ -42,6 +44,10 @@ const userData = [
         price: "$3047",
     },
 ]
+
+
+
+
 
 const ManageUserPage = () => {
     return (

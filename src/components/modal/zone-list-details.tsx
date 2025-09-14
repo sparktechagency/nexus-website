@@ -3,36 +3,44 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
+import { useGetZoonDetailsApiQuery } from "@/redux/dashboard/zoonListing/zoonListingApi";
 
 interface ZoneListProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+    viewDetailsId : string | number;
 }
 
 
-export default function ZoneListDetails({ open, setIsOpen }: ZoneListProps) {
+export default function ZoneListDetails({ open, setIsOpen,viewDetailsId }: ZoneListProps) {
+
+const {data:getzoonDetails} = useGetZoonDetailsApiQuery(viewDetailsId)
+const zoonDetailsData = getzoonDetails?.data
+
+console.log(zoonDetailsData)
+
     return (
         <div className=" text-white">
             {/* Image */}
-            <div className="">
+            <div className="flex justify-center">
                 <Image
-                    src="/zone1.png" // Replace with your image path
-                    alt="Turbo Gaming Zone"
+                    src={zoonDetailsData?.avatar} // Replace with your image path
+                    alt="photo"
                     width={500}
                     height={500}
-                    className="object-cover rounded-lg w-full"
+                    className="max-w-[200px] object-cover rounded-lg w-full"
                 />
             </div>
 
             {/* Content */}
             <div className="p-4">
-                <h2 className="text-lg font-bold">Turbo Gaming Zone</h2>
+                <h2 className="text-lg font-bold">{zoonDetailsData?.gaming_zone_name}</h2>
                 <div className="flex items-center justify-between mt-2 text-sm text-gray-300">
                     <div className="flex items-center gap-2">
                         <MapPin size={16} />
-                        <span>Los Angeles, USA</span>
+                        <span>{zoonDetailsData?.address}</span>
                     </div>
-                    <span>10:00 AM - 08:00 PM</span>
+                    <span>{zoonDetailsData?.opening_time} - {zoonDetailsData?.closing_time}</span>
                 </div>
             </div>
             

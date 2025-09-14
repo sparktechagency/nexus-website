@@ -160,6 +160,10 @@ const BookingPage = () => {
     const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
     const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
 
+
+
+
+
     const filteredBookings = sampleBookings.filter(
         (booking) => booking.gameType === selectedGameType && booking.status === selectedStatus,
     )
@@ -311,6 +315,9 @@ const BookingPage = () => {
                     ))}
                 </div>
             </Card>
+
+
+
 
             {/* modal component(ADD_ROOM) */}
             <CustomModal

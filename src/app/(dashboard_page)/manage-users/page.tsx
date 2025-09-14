@@ -9,79 +9,29 @@ import Image from "next/image"
 import CustomModal from "@/components/modal/customModal"
 import DeleteManageUser from "@/components/modal/delete-manage-user"
 import { useRouter } from "next/navigation"
+import { useGetUserApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 
 interface User {
-  id: string
+  id: string | number
   name: string
   email: string
   role: "User" | "Provider"
   avatar: string
 }
 
-const users: User[] = [
-  {
-    id: "1",
-    name: "Liam Carter",
-    email: "savannahguyen@gmail.com",
-    role: "User",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "2",
-    name: "Ava Thompson",
-    email: "savannahguyen@gmail.com",
-    role: "Provider",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "3",
-    name: "Noah Patel",
-    email: "savannahguyen@gmail.com",
-    role: "Provider",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "4",
-    name: "Mia Chen",
-    email: "savannahguyen@gmail.com",
-    role: "User",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "5",
-    name: "Ethan Kim",
-    email: "savannahguyen@gmail.com",
-    role: "Provider",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "6",
-    name: "Sophia Martinez",
-    email: "savannahguyen@gmail.com",
-    role: "User",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "7",
-    name: "Lucas Johnson",
-    email: "savannahguyen@gmail.com",
-    role: "Provider",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "8",
-    name: "Isabella Lee",
-    email: "savannahguyen@gmail.com",
-    role: "User",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-]
+
 
 const ManageUserPage = () => {
   const [searchText, setSearchText] = useState("")
   const [isDelete, setIsDelete] = useState(false)
   const router = useRouter()
+  const [deleteId, setDeleteId] = useState<string | number>('')
 
+
+  const { data: getUser } = useGetUserApiQuery({
+    skip: true
+  })
+  const userData: User[] = getUser?.data?.data
 
 
 
@@ -94,6 +44,11 @@ const ManageUserPage = () => {
       router.push('/manage-provider')
     }
   }
+
+  const handleDeleteUser = (id: string | number) => {
+    setDeleteId(id)
+  }
+
 
 
   return (
@@ -119,7 +74,7 @@ const ManageUserPage = () => {
 
         {/* User List */}
         <div className="space-y-2">
-          {users.map((user) => (
+          {userData?.map((user) => (
             <div
               key={user.id}
               className="grid grid-cols-12 gap-4 items-center px-4 py-4 "
@@ -145,7 +100,10 @@ const ManageUserPage = () => {
               <div className="col-span-4 flex justify-end gap-2">
                 {/* delete */}
                 <svg
-                  onClick={() => setIsDelete(!isDelete)}
+                  onClick={() => {
+                    setIsDelete(!isDelete),
+                      handleDeleteUser(user?.id)
+                  }}
                   className="cursor-pointer"
                   width="43" height="44" viewBox="0 0 43 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect y="0.5" width="43" height="43" rx="12" fill="white" />
@@ -181,6 +139,7 @@ const ManageUserPage = () => {
         <DeleteManageUser
           open={isDelete}
           setIsOpen={setIsDelete}
+          deleteId={deleteId}
         />
       </CustomModal>
     </div>

@@ -10,6 +10,11 @@ import { Button } from "@/components/ui/button"
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useLoginApiMutation } from "@/redux/authontication/authApi"
+import toast from "react-hot-toast"
+import Cookies from 'js-cookie';
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
+
 
 
 type LoginFormInputs = {
@@ -29,11 +34,48 @@ const DashboardLoginPage = () => {
     formState: { errors, isSubmitting }
   } = useForm<LoginFormInputs>()
 
+
+
+
+  const [loginApi, { isLoading }] = useLoginApiMutation()
+
   // Handle form submit
-  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    console.log("Form Data:", data)
-    router.push("/dashboard")
-    reset()
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data: any) => {
+
+    const formData = new FormData();
+    formData.append("email", data?.email);
+    formData.append("password", data?.password);
+
+    try {
+      const res = await loginApi(formData).unwrap();
+
+
+      const token = res?.data?.access_token
+      const role = res?.data?.user?.role
+      const subscription_status = res?.data?.user?.subscription_status
+
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+        if (token) {
+          Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
+        }
+
+        if (role) {
+          Cookies.set('role', role);
+        }
+        if (subscription_status) {
+          Cookies.set('subscription_status', subscription_status);
+        }
+
+        router.push("/dashboard")
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors: any) {
+      if (errors) {
+        toast.error(errors?.data?.message)
+      }
+    }
   }
 
 
@@ -102,7 +144,7 @@ const DashboardLoginPage = () => {
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
-                        value: 6,
+                        value: 4,
                         message: "Password must be at least 6 characters"
                       }
                     })}
@@ -131,14 +173,13 @@ const DashboardLoginPage = () => {
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
                 className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                 style={{
                   background:
                     "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                 }}
               >
-                {isSubmitting ? "Loading..." : "Sign In"}
+                {isLoading ? <CustomButtonLoader /> : "Sign In"}
               </Button>
 
             </CardContent>

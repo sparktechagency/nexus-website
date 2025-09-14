@@ -1,13 +1,13 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import cookies  from "js-cookie";
+import cookies from "js-cookie";
 
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://103.186.20.114:8011/api",
     // prepareHeaders: (headers, { getState }) => {
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       const token = cookies.get("token");
       // console.log("9 baseApi", token);
       if (token) {
@@ -25,7 +25,16 @@ export const baseApi = createApi({
     "promo",
     "account",
     "notification",
+    "webBooking",
     "webDashboard",
+    "dashboardHome",
+    "manageUser",
+    "zoonListing",
+    "transition",
+    "subscription",
+    "personalDetails",
+    "dashboardTermsAndCondition",
+    "dashboardPrivacyPolicy",
   ],
   endpoints: () => ({}),
 });
