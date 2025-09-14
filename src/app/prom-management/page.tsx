@@ -22,13 +22,19 @@ interface PromoCodeProps {
 }
 
 
-
 export default function PromoManagement() {
     const router = useRouter()
     const [isAddPromo, setIsAddPromo] = useState<boolean>(false)
     const [isEditPromo, setIsEditPromo] = useState<boolean>(false)
     const [isAddPromoInof, setIsAddPromoInof] = useState<boolean>(false)
     const [viewPromoId, setViewPromoId] = useState<number | null>(null)
+
+
+
+
+
+
+
 
 
     const { data: getPromo, refetch } = useGetUserListApiQuery({ skip: true, });
@@ -70,23 +76,22 @@ export default function PromoManagement() {
     }
 
 
-    const handleSwitchChange = async () => {
-        // try {
-        //     const res = await statusChangePromoApi({
-        //         id: itemId,
-        //         is_active: newStatus
-        //     }).unwrap();
-        //     console.log(res)
-        //     if (res?.status === 'success') {
-        //         await refetch()
-        //     }
-        // } catch (errors: any) {
-        //     if (errors) {
-        //         toast.error(errors.data?.message)
-        //     }
-        // }
-        console.log('click')
+    // Function to handle status change
+   const handleChangeStatus = async (id: number, currentStatus: boolean) => {
+        try {
+            const newStatus = !currentStatus;
+            const res = await statusChangePromoApi({ id, is_active: newStatus }).unwrap();
+            if (res?.status === 'success') {
+                toast.success(res?.message || 'Promo status updated successfully');
+                refetch();
+            } else {
+                toast.error(res?.message || 'Failed to update promo status');
+            }
+        } catch (error: any) {
+            toast.error(error?.data?.message || 'An error occurred while updating status');
+        }
     };
+
 
 
 
@@ -153,9 +158,9 @@ export default function PromoManagement() {
 
 
                                     <TableCell>
-
                                         <Switch
                                             checked={item.is_active}
+                                            onCheckedChange={() => handleChangeStatus(item.id, item.is_active)}
                                             className="data-[state=checked]:bg-green-600 cursor-pointer"
                                         />
                                     </TableCell>
