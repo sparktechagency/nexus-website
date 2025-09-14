@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useRef, useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -30,10 +30,8 @@ interface EditPromoProps {
 }
 
 const EditPromo = ({ open, setIsOpen, updatePromoId }: EditPromoProps) => {
-    const contentRef = useRef<HTMLTextAreaElement | null>(null);
-    const [isScrollable, setIsScrollable] = useState<boolean>(false);
-    const { register, handleSubmit, setValue, reset } = useForm<PromoFormValues>();
-    const [startDate, setStartDate] = useState(new Date());
+    const { register, handleSubmit, setValue, } = useForm<PromoFormValues>();
+    const [startDate, setStartDate] = useState<Date | null>(new Date());
 
 
     const { data: singlePromo, isLoading } = useViewDetailsPromoApiQuery(updatePromoId);
@@ -54,31 +52,15 @@ const EditPromo = ({ open, setIsOpen, updatePromoId }: EditPromoProps) => {
         setValue("minimum_amount", singlePromoData?.minimum_amount);
         setValue("about", singlePromoData?.about);
 
-    }, [singlePromoData]);
+    }, [singlePromoData, setValue]);
 
 
-    useEffect(() => {
-        const el = contentRef.current;
-        if (!el) return;
-        const MAX = 620;
 
-        const check = () => setIsScrollable(el.scrollHeight > MAX);
-        check(); // initial
-
-        const ro = new ResizeObserver(check);
-        ro.observe(el);
-        window.addEventListener("resize", check);
-
-        return () => {
-            ro.disconnect();
-            window.removeEventListener("resize", check);
-        };
-    }, []);
 
     const onSubmit = async (data: PromoFormValues) => {
 
         // Format to yyyy-mm-dd
-        const dateStr = startDate;
+        const dateStr = startDate || new Date()
         const date = new Date(dateStr);
         const formattedDate = date.toISOString().split('T')[0];
 
@@ -144,7 +126,9 @@ const EditPromo = ({ open, setIsOpen, updatePromoId }: EditPromoProps) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2 w-full">
                                 <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
-                                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full rounded-lg  focus:outline-none focus:border-none" />
+                                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+                                    wrapperClassName="w-full"
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="percentage" className="text-base font-medium">Percentage</Label>

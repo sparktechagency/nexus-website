@@ -44,7 +44,7 @@ export default function CreateNewPasswordPage() {
 
 
 
-    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
+    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data : any) => {
         const formData = new FormData();
 
         formData.append("current_password", data?.current_password);

@@ -9,7 +9,7 @@ import { useEditSinglePhotoProfileApiMutation, useGetProfileApiQuery, useGetRati
 import { Mail, MapPin, Phone, Clock, Gamepad2, User } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 
 
@@ -58,7 +58,7 @@ export default function WebProfilePage() {
     fileInputRef.current?.click()
   }
 
-  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: any) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -78,7 +78,6 @@ export default function WebProfilePage() {
 
     try {
       const res = await editSinglePhotoProfile(formData).unwrap();
-      console.log(res)
       if (res?.status === 'success') {
         toast.success(res?.message)
         await refetchProfile()
@@ -86,7 +85,7 @@ export default function WebProfilePage() {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
+    } catch (errors:any ) {
       if (errors) {
         toast.error(errors.data?.message)
       }

@@ -39,7 +39,7 @@ const WebNotificationPage = () => {
 
 
     // Handle single notification
-    const handleNotificationId = async (id: string) => {
+    const handleNotificationId = async (id: string | any) => {
         try {
             const res = await singleNotification(id).unwrap();
             console.log(res)

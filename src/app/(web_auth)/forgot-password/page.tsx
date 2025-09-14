@@ -32,7 +32,6 @@ const [forgotPasswordApi, { isLoading }] = useForgotPasswordApiMutation()
 
     const {
         register,
-        reset,
         handleSubmit,
         formState: { errors, isSubmitting }
     } = useForm<ForgotInput>()

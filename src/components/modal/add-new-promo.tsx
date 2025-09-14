@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useRef, useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAddPromoApiMutation } from "@/redux/website/promo/promoApi";
 import toast from "react-hot-toast";
-import { format } from "path";
 import CustomButtonLoader from "../loader/CustomButtonLoader";
 
 
@@ -30,33 +29,16 @@ interface AddNewPromoProps {
 
 
 const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
-    const contentRef = useRef<HTMLTextAreaElement | null>(null);
-    const [isScrollable, setIsScrollable] = useState<boolean>(false);
-    const { register, handleSubmit, reset } = useForm<PromoFormValues>();
-    const [startDate, setStartDate] = useState(new Date());
+    const { register, handleSubmit } = useForm<PromoFormValues>();
+    const [startDate, setStartDate] = useState<Date | null>(new Date());
 
 
 
     const [addPromoApi, { isLoading }] = useAddPromoApiMutation();
 
 
-    useEffect(() => {
-        const el = contentRef.current;
-        if (!el) return;
-        const MAX = 620;
 
-        const check = () => setIsScrollable(el.scrollHeight > MAX);
-        check(); // initial
 
-        const ro = new ResizeObserver(check);
-        ro.observe(el);
-        window.addEventListener("resize", check);
-
-        return () => {
-            ro.disconnect();
-            window.removeEventListener("resize", check);
-        };
-    }, []);
 
 
 
@@ -65,7 +47,7 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
     const onSubmit = async (data: PromoFormValues) => {
 
         // Format to yyyy-mm-dd
-        const dateStr = startDate;
+        const dateStr = startDate || new Date()
         const date = new Date(dateStr);
         const formattedDate = date.toISOString().split('T')[0];
 
@@ -129,8 +111,11 @@ const AddNewPromo = ({ open, setIsOpen }: AddNewPromoProps) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2 w-full">
                                 <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
-                                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full rounded-lg  focus:outline-none focus:border-none" />
+                                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+                                    wrapperClassName="w-full"
+                                />
                             </div>
+
                             <div className="space-y-2">
                                 <Label htmlFor="percentage" className="text-base font-medium">Percentage</Label>
                                 <Input

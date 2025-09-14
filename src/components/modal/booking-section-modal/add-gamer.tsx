@@ -1,5 +1,7 @@
+"use client"
+
 import { Button } from '@/components/ui/button'
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,12 +9,14 @@ import * as z from "zod"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   contactNumber: z.string().min(1, "Contact number is required"),
   date: z.string().min(1, "Date is required"),
-  startingTime: z.string().min(1, "Starting time is required"),
+  opening_time: z.string().min(1, "Starting time is required"),
   pcNumber: z.string().min(1, "Please select a PC number"),
   duration: z.string().min(1, "Please select a duration"),
 })
@@ -25,6 +29,8 @@ interface AddGamerProps {
 }
 
 const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+
   const {
     register,
     handleSubmit,
@@ -37,7 +43,7 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
       email: "",
       contactNumber: "",
       date: "",
-      startingTime: "",
+      opening_time: "",
       pcNumber: "",
       duration: "",
     },
@@ -45,9 +51,33 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
 
   const onSubmit = async (data: FormData) => {
     console.log("Form submitted:", data)
-    
+
+    const dateStr = startDate || new Date()
+    const date = new Date(dateStr);
+    const formattedDate = date.toISOString().split('T')[0];
+
+    // const formData = new FormData();
+    // formData.append("promo_code", data.promo_code);
+
+    // try {
+    //   const res = await addPromoApi(formData).unwrap();
+    //   console.log(res)
+    //   if (res?.status === 'success') {
+    //     toast.success(res?.message)
+    //     setIsOpen(!open)
+    //   } else {
+    //     toast.error(res?.messages)
+    //   }
+    // } catch (errors: any) {
+    //   if (errors) {
+    //     toast.error(errors.data?.message)
+    //   }
+    // }
+
+
+
     setIsOpen(!open)
-    reset()
+    // reset()
   }
 
   const handleCancel = () => {
@@ -56,7 +86,7 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
   }
 
   return (
-    <div>
+    <div className='xl:p-8'>
       <h1 className="text-center text-[24px] py-4">Add Gamer</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -95,35 +125,37 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
           {errors.contactNumber && <p className="text-red-400 text-xs mt-1">{errors.contactNumber.message}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="date" className="text-white text-sm">
-            Date
-          </Label>
-          <div className="relative">
-            <Input
-              id="date"
-              type="date"
-              {...register("date")}
-              className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 border-gray-700 text-white  [&::-webkit-calendar-picker-indicator]:invert"
-            />
-          </div>
-          {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date.message}</p>}
+
+
+
+        <div className="space-y-2 w-full">
+          <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
+          <DatePicker 
+
+          selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33]/80 p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+           wrapperClassName="w-full" 
+          />
         </div>
 
+
+
         <div className="space-y-2">
-          <Label htmlFor="startingTime" className="text-white text-sm">
+          <Label htmlFor="opening_time" className="text-white text-sm">
             Starting time
           </Label>
           <div className="relative">
             <Input
-              id="startingTime"
-              type="time"
-              {...register("startingTime")}
+              id="opening_time"
+              type="tex"
+              placeholder="Enter the opening time(10.00 AM)"
+              {...register("opening_time")}
               className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
-          {errors.startingTime && <p className="text-red-400 text-xs mt-1">{errors.startingTime.message}</p>}
+          {errors.opening_time && <p className="text-red-400 text-xs mt-1">{errors.opening_time.message}</p>}
         </div>
+
+
 
         <div className="space-y-2">
           <Label htmlFor="pcNumber" className="text-white text-sm">

@@ -18,6 +18,7 @@ type RoomFormValues = {
     opening_time: string
     closing_time: string
     address: string
+  
 }
 
 interface RegisterFormInputs {
@@ -67,7 +68,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
         setValue("roomImage", {} as FileList)
     }
 
-    const onSubmit = async (data: RoomFormValues) => {
+    const onSubmit = async (data: any) => {
 
         const formData = new FormData();
 
@@ -87,10 +88,6 @@ export default function RegisterModal({ registerData }: { registerData: Register
             formData.append("gaming_zone", collectPhoto);
         }
 
-        // formData.forEach((value, key) => {
-        //     console.log(key, value);
-        // });
-
 
         try {
             const res = await registerApi(formData).unwrap();
@@ -102,9 +99,9 @@ export default function RegisterModal({ registerData }: { registerData: Register
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
+        } catch (errors:any) {
             if (errors) {
-                toast.error(errors.data?.message)
+                toast.error(errors.data?.message )
             }
         }
 

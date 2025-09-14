@@ -33,13 +33,12 @@ export default function LoginPage() {
   // React Hook Form setup
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<LoginFormInputs>()
 
   // Handle form submit
-  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data : any) => {
 
     const formData = new FormData();
     formData.append("email", data?.email);

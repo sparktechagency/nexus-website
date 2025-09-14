@@ -6,6 +6,7 @@ export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://103.186.20.114:8011/api",
+    // prepareHeaders: (headers, { getState }) => {
     prepareHeaders: (headers, { getState }) => {
       const token = cookies.get("token");
       // console.log("9 baseApi", token);

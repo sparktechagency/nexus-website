@@ -54,7 +54,7 @@ export default function PromoManagement() {
 
 
     // delete promo
-    const handleDeletePromo = async (id: number) => {
+    const handleDeletePromo = async (id: number | any) => {
         try {
             const res = await deletePromoApi(id).unwrap();
 
@@ -77,18 +77,20 @@ export default function PromoManagement() {
 
 
     // Function to handle status change
-   const handleChangeStatus = async (id: number, currentStatus: boolean) => {
+    const handleChangeStatus = async (id: number, currentStatus: boolean) => {
         try {
             const newStatus = !currentStatus;
             const res = await statusChangePromoApi({ id, is_active: newStatus }).unwrap();
             if (res?.status === 'success') {
-                toast.success(res?.message || 'Promo status updated successfully');
+                toast.success(res?.message)
                 refetch();
             } else {
-                toast.error(res?.message || 'Failed to update promo status');
+                toast.error(res?.messages)
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message || 'An error occurred while updating status');
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
         }
     };
 

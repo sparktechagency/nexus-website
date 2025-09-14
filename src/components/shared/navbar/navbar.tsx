@@ -13,6 +13,7 @@ import Cookies from 'js-cookie';
 import TermsAndCondition from "@/components/modal/accounts/terms-and-condition/page";
 import PrivacyPolicy from "@/components/modal/accounts/privacy-policy/page";
 import { useGetWebNotificationApiQuery } from "@/redux/website/notification/webNotificationApi";
+import { useGetProfileApiQuery } from "@/redux/website/profile/profileApi";
 
 
 export default function Navbar() {
@@ -29,6 +30,9 @@ export default function Navbar() {
     });
     const notificationCount = getNotification?.data?.unread_notifications_count || 0
 
+
+  const { data: getProfile } = useGetProfileApiQuery(null)
+  const profileData = getProfile?.data
 
 
 
@@ -143,13 +147,15 @@ export default function Navbar() {
                         <DropdownMenuTrigger className="flex items-center space-x-1 md:space-x-2 cursor-pointer focus:outline-none bg-[#292531] p-2 md:p-3 rounded-full">
 
                             <div className="relative">
-                                <Image
-                                    src="/home/photo1.png"
-                                    alt="Angkara Messi"
+                             {
+                                profileData?.avatar && <Image
+                                    src={profileData?.avatar}
+                                    alt="photo"
                                     width={30}
                                     height={30}
                                     className="w-[15px] h-[15px] md:w-[30px] md:h-[30px] rounded-full object-cover flex-shrink-0"
                                 />
+                             }
 
                                 <svg
                                     className="w-[10px] h-[10px] md:w-[15px] md:h-[15px] absolute -top-2 md:-top-2.5 -right-1"
@@ -174,7 +180,9 @@ export default function Navbar() {
 
                             </div>
 
-                            <span className="text-xs md:text-xl md:font-medium">Md. Jusef</span>
+                            {
+                                profileData?.name && <span className="text-xs md:text-xl md:font-medium">{profileData?.name}</span>
+                            }
                             <ChevronDown className="md:w-4 md:h-4 text-gray-300" />
                         </DropdownMenuTrigger>
 

@@ -33,19 +33,19 @@ interface RoomProps {
 
 
 const RoomPage = () => {
-  const [isAddRoom, setIsAddRoom] = useState(false)
-  const [isEditRoom, setIsEditRoom] = useState(false)
-  const [isDeleteRoom, setIsDeleteRoom] = useState(false)
+  const [isAddRoom, setIsAddRoom] = useState<boolean>(false)
+  const [isEditRoom, setIsEditRoom] = useState<boolean>(false)
+  const [isDeleteRoom, setIsDeleteRoom] = useState<boolean>(false)
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [editId, setEditId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [page, setPage] = useState(10)
 
-  const { data: getRoom, refetch } = useGetRoomApiQuery({ per_page: page, page: currentPage })
+  const { data: getRoom,  } = useGetRoomApiQuery({ per_page: page, page: currentPage })
   const roomData: RoomProps[] = getRoom?.data?.data
-  const totalPagination = getRoom?.data?.total
 
 
+console.log('tsting perpass-- roomPage------', setCurrentPage,setPage) 
 
   const handleDeleteRoom = (id: number) => {
     setDeleteId(id)

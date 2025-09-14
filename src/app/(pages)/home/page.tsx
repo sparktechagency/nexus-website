@@ -7,11 +7,10 @@ import SubscriptionModal from '@/components/modal/subscriptionModal'
 import DashboardSummaryCard from "@/components/summary-card"
 import WeeklyBookingGraph from "@/components/weekly-booking-graph"
 import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
-import { useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 import cookies from 'js-cookie'
 import { useGetWebDashboardHomeApiQuery } from '@/redux/website/home/webHomePageApi'
-import { skip } from 'node:test'
+
 
 
 // Wrap the component that uses useSearchParams in Suspense
