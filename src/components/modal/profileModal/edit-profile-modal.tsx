@@ -5,9 +5,9 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { UploadCloud, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useEditProfileApiMutation } from "@/redux/website/profile/profileApi"
+import { useEditProfileApiMutation, useGetProfileApiQuery } from "@/redux/website/profile/profileApi"
 import toast from "react-hot-toast"
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
@@ -35,6 +35,28 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
 
 
     const [editProfileApi, { isLoading }] = useEditProfileApiMutation()
+    const { data: getProfile } = useGetProfileApiQuery({
+        skip: true
+    })
+    const profileData = getProfile?.data
+
+
+
+
+    // DEFAULT DATA SHOW
+    useEffect(() => {
+        setValue("name", profileData?.name);
+        setValue("gaming_zone_name", profileData?.gaming_zone_name);
+        setValue("opening_time", profileData?.opening_time);
+        setValue("closing_time", profileData?.closing_time);
+        setValue("address", profileData?.address);
+        setValue("phone", profileData?.phone);
+        if (profileData?.avatar) {
+            setImagePreview(profileData?.avatar);
+        }
+
+    }, [profileData, setValue]);
+
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -47,6 +69,8 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
             }
         }
     }
+
+
 
     const removeImage = () => {
         setImagePreview(null)
@@ -70,7 +94,6 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
 
         try {
             const res = await editProfileApi(formData).unwrap();
-            console.log(res)
             if (res?.status === 'success') {
                 toast.success(res?.message)
                 setIsOpen(!open)
@@ -232,7 +255,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                             <Label htmlFor="contact-number" className="text-base font-medium">
                                 Contact Number
                             </Label>
-                                <Input
+                            <Input
                                 id="phone"
                                 type="tel"
                                 maxLength={11}
@@ -261,9 +284,9 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                         }}
                     >
-                     {
-                        isLoading ? <CustomButtonLoader /> : "Save Changes"
-                     }
+                        {
+                            isLoading ? <CustomButtonLoader /> : "Save Changes"
+                        }
                     </Button>
                     <Button
                         type="button"
