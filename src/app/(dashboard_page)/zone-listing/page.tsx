@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -10,6 +10,7 @@ import CustomModal from "@/components/modal/customModal"
 import ZoneListDetails from "@/components/modal/zone-list-details"
 import { useGetZoonListApiQuery } from "@/redux/dashboard/zoonListing/zoonListingApi"
 import DashboardLoader from "@/components/DashboardLoader"
+import CustomPagination from "@/components/customPagination/CustomPagination"
 
 
 interface Provider {
@@ -28,21 +29,28 @@ const ZoneListingPage = () => {
   const [searchText, setSearchText] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetailsId, setViewDetailsId] = useState<string | number>('')
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(6)
 
 
-  const { data: getZoonList ,isLoading} = useGetZoonListApiQuery({
-    skip: true
-  })
-  const zoonListData : Provider[] = getZoonList?.data?.data
 
+  const { data: getZoonList, refetch, isLoading } = useGetZoonListApiQuery({ per_page: perPage, role: searchText, page: currentPage })
+  const zoonListData: Provider[] = getZoonList?.data?.data
+  const totalItems = getZoonList?.data?.total
+  const totalPages = Math.ceil(totalItems / perPage)
 
   const handleViewDetails = (id: string | number) => {
     setViewDetailsId(id)
   }
 
-if(isLoading){
-  return <DashboardLoader />
-}
+
+  useEffect(() => {
+    refetch();
+  }, [searchText, currentPage, perPage, refetch]);
+
+  if (isLoading) {
+    return <DashboardLoader />
+  }
 
   return (
     <div className="text-[#fff] mb-6 pt-4">
@@ -112,6 +120,13 @@ if(isLoading){
       </div>
 
 
+      {/* PAGINATION COMPONENT */}
+      <CustomPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
+
       {/* modal component(VIEW_DETAILS) */}
       <CustomModal
         open={isOpen}
@@ -122,7 +137,7 @@ if(isLoading){
         <ZoneListDetails
           open={isOpen}
           setIsOpen={setIsOpen}
-          viewDetailsId = {viewDetailsId}
+          viewDetailsId={viewDetailsId}
         />
       </CustomModal>
     </div>
