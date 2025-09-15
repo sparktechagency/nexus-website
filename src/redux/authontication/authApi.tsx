@@ -51,7 +51,8 @@ const authApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['auth'],
         }),
-    })
+    }),
+    overrideExisting : true
 })
 
 

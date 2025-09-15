@@ -39,7 +39,7 @@ const ManageUserPage = () => {
 
 
 
-  const { data: getUser, isLoading, refetch } = useGetUserApiQuery({ per_page: perPage, role: searchText, page: currentPage })
+  const { data: getUser, isLoading, refetch } = useGetUserApiQuery({ per_page: perPage, role: searchText,search:searchText, page: currentPage })
   const userData: User[] = getUser?.data?.data
   const totalItems = getUser?.data?.total
   const totalPages = Math.ceil(totalItems / perPage)

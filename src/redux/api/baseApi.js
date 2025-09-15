@@ -33,8 +33,7 @@ export const baseApi = createApi({
     "transition",
     "subscription",
     "personalDetails",
-    "dashboardTermsAndCondition",
-    "dashboardPrivacyPolicy",
+    "dashboardSetting",
   ],
   endpoints: () => ({}),
 });

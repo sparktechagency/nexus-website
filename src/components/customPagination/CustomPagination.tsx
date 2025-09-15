@@ -71,7 +71,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ currentPage, totalP
 }
       `}
             </style>
-            <div className='flex justify-end'>
+            <div className='flex justify-end py-4'>
                 <ResponsivePaginationComponent
                     current={currentPage}
                     total={totalPages}

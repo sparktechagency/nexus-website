@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
     const { data: getPrivacyPolicyData,isLoading } = useGetPrivacyPolicyApiQuery("Privacy Policy");
     const privacyPolicyContent = getPrivacyPolicyData?.data[0]
 
-    console.log(privacyPolicyContent)
+    // console.log(privacyPolicyContent)
 
 
     useEffect(() => {

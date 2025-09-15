@@ -30,7 +30,7 @@ const ZoneListingPage = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetailsId, setViewDetailsId] = useState<string | number>('')
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(6)
+  const [perPage, setPerPage] = useState(8)
 
 
 

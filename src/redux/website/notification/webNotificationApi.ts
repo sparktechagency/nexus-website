@@ -3,8 +3,8 @@ import { baseApi } from "@/redux/api/baseApi";
 const webNotificationApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getWebNotificationApi: builder.query({
-            query: () => ({
-                url: `/notifications`,
+            query: ({ per_page, page }) => ({
+                url: `/notifications?per_page=${per_page}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['notification'],
@@ -28,4 +28,4 @@ const webNotificationApi = baseApi.injectEndpoints({
 })
 
 
-export const { useGetWebNotificationApiQuery, useSingleWebNotificationApiMutation,useMarkAllWebNotificationApiMutation } = webNotificationApi;
+export const { useGetWebNotificationApiQuery, useSingleWebNotificationApiMutation, useMarkAllWebNotificationApiMutation } = webNotificationApi;

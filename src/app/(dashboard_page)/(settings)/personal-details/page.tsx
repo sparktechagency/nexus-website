@@ -10,10 +10,12 @@ import { X } from "lucide-react"
 
 
 type RoomFormValues = {
+  photo: FileList
   roomImage: FileList
   fullName: string
-  contactNumber: string
+  phone: string
   location: string
+
 }
 
 export default function PersonalDetailsPage() {
@@ -30,17 +32,11 @@ export default function PersonalDetailsPage() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      setSelectedFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-
-      // Update form value
-      const fileList = event.target.files
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      const fileList = event.target.files;
       if (fileList) {
-        setValue("roomImage", fileList)
+        setValue("photo", fileList);
       }
     }
   }
@@ -48,17 +44,13 @@ export default function PersonalDetailsPage() {
   const removeImage = () => {
     setImagePreview(null)
     setSelectedFile(null)
-    setValue("roomImage", {} as FileList)
+    setValue("photo", {} as FileList)
   }
 
   const onSubmit = (data: RoomFormValues) => {
     console.log("Form Data:", data)
     console.log("Selected File:", selectedFile)
 
-    // If you want to reset after submit
-    // reset()
-    // setImagePreview(null)
-    // setSelectedFile(null)
   }
   return (
     <div className="w-full mt-4 bg-[#211935] backdrop-blur-sm rounded-xl">
@@ -133,26 +125,42 @@ export default function PersonalDetailsPage() {
             )}
           </div>
 
+
+
+
+
+
           <div>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
-                type="tel"
+                id="phone"
+                type="number"  // Change input type to text
+                maxLength={11} // Now maxLength will work
                 placeholder="Contact number"
-                {...register("contactNumber", {
-                  required: "Contact number is required",
-
+                {...register("phone", {
+                  required: "Phone is required",
+                  pattern: {
+                    value: /^[0-9]{10,11}$/,  // Adjust the pattern as necessary
+                    message: "Please enter a valid phone number",
+                  },
                 })}
-                className={`rounded-lg border-none bg-[#5E5E5E33]/80 px-8 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500 ${errors.contactNumber ? "mb-1" : "mb-0"
-                  }`}
+                className={`rounded-lg border-none bg-[#5E5E5E33]/80 px-8 py-6 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-purple-500 ${errors.phone ? "mb-1" : "mb-0"}`}
               />
             </div>
-            {errors.contactNumber && (
-              <p className="text-red-400 text-sm ml-8 mt-1">{errors.contactNumber.message}</p>
+            {errors.phone && (
+              <p className="text-red-400 text-sm ml-8 mt-1">{errors.phone.message}</p>
             )}
           </div>
 
+
+
+
+
           <div>
+
+
+
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
