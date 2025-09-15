@@ -83,7 +83,7 @@ const DashboardLoginPage = () => {
 
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-screen flex justify-center items-center ">
       <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
         <div
           className="w-full bg-[#1c1629] backdrop-blur-sm shadow-2xl rounded-xl"

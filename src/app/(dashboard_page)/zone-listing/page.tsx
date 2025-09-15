@@ -9,6 +9,8 @@ import Image from "next/image"
 import CustomModal from "@/components/modal/customModal"
 import ZoneListDetails from "@/components/modal/zone-list-details"
 import { useGetZoonListApiQuery } from "@/redux/dashboard/zoonListing/zoonListingApi"
+import DashboardLoader from "@/components/DashboardLoader"
+
 
 interface Provider {
   id: string | number
@@ -28,7 +30,7 @@ const ZoneListingPage = () => {
   const [viewDetailsId, setViewDetailsId] = useState<string | number>('')
 
 
-  const { data: getZoonList } = useGetZoonListApiQuery({
+  const { data: getZoonList ,isLoading} = useGetZoonListApiQuery({
     skip: true
   })
   const zoonListData : Provider[] = getZoonList?.data?.data
@@ -37,6 +39,10 @@ const ZoneListingPage = () => {
   const handleViewDetails = (id: string | number) => {
     setViewDetailsId(id)
   }
+
+if(isLoading){
+  return <DashboardLoader />
+}
 
   return (
     <div className="text-[#fff] mb-6 pt-4">
@@ -70,14 +76,14 @@ const ZoneListingPage = () => {
 
 
             <TableBody>
-              {zoonListData.map((item, index: number) => (
+              {zoonListData?.map((item, index: number) => (
                 <TableRow
                   key={`${item.id}-${index}`}
                   className="text-[#ffff] border-none hover:bg-transparent cursor-pointer"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Image src={item.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
+                      <Image src={item?.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
                       <span className=" font-medium">{item.name}</span>
                     </div>
                   </TableCell>

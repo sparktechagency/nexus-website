@@ -9,32 +9,62 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Lock, Eye, EyeOff } from 'lucide-react'
-import Link from "next/link"
+import toast from "react-hot-toast"
+import { useChangePasswordApiMutation } from "@/redux/authontication/authApi"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
+import { useRouter } from "next/navigation"
 
 
 type CreateNewPasswordInputs = {
-    password: string
-    retypePassword: string
+    current_password: string
+    new_password: string
+    retype_password: string
     terms: boolean
 }
 
 export default function DashboardCreateNewPasswordPage() {
-    const [showPassword, setShowPassword] = useState(false)
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
     const [showRetypePassword, setShowRetypePassword] = useState(false)
+    const [changePasswordApi, { isLoading }] = useChangePasswordApiMutation()
+    const router = useRouter()
+
 
     const {
         register,
         handleSubmit,
-        reset,
         watch,
         formState: { errors }
     } = useForm<CreateNewPasswordInputs>()
 
-    const passwordValue = watch("password")
+    const passwordValue = watch("new_password")
 
-    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = (data) => {
-        console.log("Form Values:", data)
-        reset()
+
+
+
+
+    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data : any) => {
+        const formData = new FormData();
+
+        formData.append("current_password", data?.current_password);
+        formData.append("new_password", data?.new_password);
+        formData.append("retype_password", data?.retype_password);
+
+
+
+        try {
+            const res = await changePasswordApi(formData).unwrap();
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                router.push("/dashboard-login")
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
     }
 
     return (
@@ -65,43 +95,66 @@ export default function DashboardCreateNewPasswordPage() {
 
 
 
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                         <form onSubmit={handleSubmit(onSubmit)}>
                             <CardContent className="space-y-6 px-6 pb-6">
 
                                 {/* Password */}
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password" className="text-[#ffff]">New Password</Label>
+                                    <Label htmlFor="current_password" className="text-[#ffff]">Current Password</Label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                         <Input
-                                            id="password"
-                                            type={showPassword ? "text" : "password"}
+                                            id="current_password"
+                                            type={showCurrentPassword ? "text" : "password"}
                                             placeholder="********"
-                                            className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                                            {...register("password", { required: "Password is required" })}
+                                            className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            {...register("current_password", { required: "Password is required" })}
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
+                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                             className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
                                         >
-                                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            {showCurrentPassword? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
                                     </div>
-                                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                                    {errors.current_password && <p className="text-red-500 text-sm">{errors.current_password.message}</p>}
+                                </div>
+
+                                {/* new_password */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="new_password" className="text-[#ffff]">New Password</Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            id="new_password"
+                                            type={showNewPassword ? "text" : "password"}
+                                            placeholder="********"
+                                            className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            {...register("new_password", { required: "Password is required" })}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                                        >
+                                            {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                    {errors.new_password && <p className="text-red-500 text-sm">{errors.new_password.message}</p>}
                                 </div>
 
                                 {/* Retype Password */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="retypePassword" className="text-[#ffff]">Retype Password</Label>
+                                    <Label htmlFor="retype_password" className="text-[#ffff]">Retype Password</Label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                         <Input
-                                            id="retypePassword"
+                                            id="retype_password"
                                             type={showRetypePassword ? "text" : "password"}
                                             placeholder="********"
-                                            className="pl-10 pr-10 py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                                            {...register("retypePassword", {
+                                            className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
+                                            {...register("retype_password", {
                                                 required: "Please confirm your password",
                                                 validate: value =>
                                                     value === passwordValue || "Passwords do not match"
@@ -115,7 +168,7 @@ export default function DashboardCreateNewPasswordPage() {
                                             {showRetypePassword ? <EyeOff className="h-4 w-4 " /> : <Eye className="h-4 w-4" />}
                                         </button>
                                     </div>
-                                    {errors.retypePassword && <p className="text-red-500 text-sm">{errors.retypePassword.message}</p>}
+                                    {errors.retype_password && <p className="text-red-500 text-sm">{errors.retype_password.message}</p>}
                                 </div>
 
 
@@ -123,15 +176,14 @@ export default function DashboardCreateNewPasswordPage() {
                                 {/* Submit */}
                                 <Button
                                     type="submit"
-                                    className="w-full py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
+                                    className="w-full md:py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
                                     style={{
                                         background:
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                                    }}
-                                >
-                                    <Link href="/dashboard-login">
-                                        Update
-                                    </Link>
+                                    }}>
+                                    {
+                                        isLoading ? <CustomButtonLoader /> : "Update"
+                                    }
                                 </Button>
                             </CardContent>
                         </form>

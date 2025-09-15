@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Mail } from 'lucide-react'
 import Link from "next/link"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
+import { useForgotPasswordApiMutation } from "@/redux/authontication/authApi"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 
 type ForgotInput = {
@@ -16,22 +20,37 @@ type ForgotInput = {
 }
 
 export default function DashboardForgotPasswordPage() {
+    const router = useRouter()
+
+const [forgotPasswordApi, { isLoading }] = useForgotPasswordApiMutation()
 
     const {
         register,
-        reset,
         handleSubmit,
         formState: { errors, isSubmitting }
     } = useForm<ForgotInput>()
 
 
-
-
     // Handle form submit
     const onSubmit: SubmitHandler<ForgotInput> = async (data) => {
-        console.log("Form Data:", data)
+        const formData = new FormData();
 
-        reset()
+        formData.append("email", data.email);
+
+        try {
+            const res = await forgotPasswordApi(formData).unwrap();
+            console.log(res)
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                router.push(`/dashboard-verify-otp?email=${formData.get('email')}&text=forgot-password`)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
     }
 
     return (
@@ -90,7 +109,6 @@ export default function DashboardForgotPasswordPage() {
 
 
                                 {/* Submit Button */}
-                                <Link href="/dashboard-verify-otp">
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
@@ -100,8 +118,10 @@ export default function DashboardForgotPasswordPage() {
                                                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                         }}
                                     >
-                                        {isSubmitting ? "Loading..." : "Get Code"}
-                                    </Button></Link>
+                                    {
+                                            isLoading ? <CustomButtonLoader /> : "Get Code"
+                                        }
+                                    </Button>
 
 
                                 <Link href="/dashboard-login">

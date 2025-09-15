@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -10,6 +10,11 @@ import CustomModal from "@/components/modal/customModal"
 import DeleteManageUser from "@/components/modal/delete-manage-user"
 import { useRouter } from "next/navigation"
 import { useGetUserApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
+
+import DashboardLoader from "@/components/DashboardLoader"
+import CustomPagination from "@/components/customPagination/CustomPagination"
+
+
 
 interface User {
   id: string | number
@@ -27,12 +32,17 @@ const ManageUserPage = () => {
   const router = useRouter()
   const [deleteId, setDeleteId] = useState<string | number>('')
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(6)
 
-  const { data: getUser } = useGetUserApiQuery({
-    skip: true
-  })
+
+
+
+
+  const { data: getUser,isLoading,refetch } = useGetUserApiQuery({ per_page: perPage, role: searchText, page: currentPage })
   const userData: User[] = getUser?.data?.data
-
+  const totalItems = getUser?.data?.total
+ const totalPages = Math.ceil(totalItems / perPage)
 
 
 
@@ -50,8 +60,18 @@ const ManageUserPage = () => {
   }
 
 
+  useEffect(() => {
+    refetch();
+  }, [searchText, currentPage, perPage, refetch]);
+
+
+  if(isLoading){
+    return <DashboardLoader />
+  }
+
 
   return (
+    <>
     <div className="text-[#fff] mb-6 pt-4 ">
 
       <div className="h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
@@ -64,6 +84,8 @@ const ManageUserPage = () => {
             className="pl-10 bg-[#28242f]  py-6 rounded-full  border-none focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0"
           />
         </div>
+
+        
 
         {/* Table Header */}
         <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium text-slate-300 ">
@@ -129,6 +151,14 @@ const ManageUserPage = () => {
 
 
 
+      {/* PAGINATION COMPONENT */}
+     <CustomPagination 
+     currentPage={currentPage}
+     totalPages={totalPages}
+     setCurrentPage={setCurrentPage}
+     />
+
+
       {/* modal component(DELETE_USER) */}
       <CustomModal
         open={isDelete}
@@ -143,7 +173,10 @@ const ManageUserPage = () => {
         />
       </CustomModal>
     </div>
+    </>
   )
 }
 
 export default ManageUserPage
+
+

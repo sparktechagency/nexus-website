@@ -5,8 +5,8 @@ import { baseApi } from "@/redux/api/baseApi";
 const manageUserApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getUserApi: builder.query({
-            query: () => ({
-                url: `/admin/user-lists`,
+            query: ({per_page,page,role}) => ({
+                url: `/admin/user-lists?per_page=${per_page}&role=${role}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['manageUser'],

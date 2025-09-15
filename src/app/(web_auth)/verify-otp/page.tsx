@@ -18,6 +18,7 @@ import toast from "react-hot-toast"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useForgotPasswordApiMutation, useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
 import Cookies from 'js-cookie';
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 export default function VerifyOtPPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
@@ -99,7 +100,7 @@ export default function VerifyOtPPage() {
                 if (text === 'sign-up') {
                     router.push(`/`)
                 }
-                else if (text === 'forgot-password[') {
+                else if (text === 'forgot-password') {
                     router.push(`/`)
                 }
                 else {
@@ -250,7 +251,9 @@ export default function VerifyOtPPage() {
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                     }}
                                 >
-                                    Verify
+                                    {
+                                        isLoading ? <CustomButtonLoader /> : "Verify"
+                                    }
                                 </Button>
 
 

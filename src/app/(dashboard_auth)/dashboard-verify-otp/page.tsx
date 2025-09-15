@@ -15,10 +15,31 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import toast from "react-hot-toast"
+import Cookies from 'js-cookie';
+import { useRouter, useSearchParams } from "next/navigation"
+import { useForgotPasswordApiMutation, useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 export default function DashboardVerifyOtpPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const [verifyOtpApi, { isLoading }] = useVerifyOtpApiMutation()
+    const [forgotPasswordApi] = useForgotPasswordApiMutation()
+
+
+    const email = searchParams.get('email')
+
+
+
+
+
+
+
+
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
         const value = e.target.value
@@ -49,9 +70,68 @@ export default function DashboardVerifyOtpPage() {
         }
     }
 
-    const handleVerify = () => {
+    // verify otp code function
+    const handleVerify = async () => {
         const fullOtp = otp.join("")
-        console.log("Verifying OTP:", fullOtp)
+        const formData = new FormData();
+        if (email) {
+            formData.append("email", email);
+        }
+        formData.append("otp", fullOtp);
+
+        try {
+            const res = await verifyOtpApi(formData).unwrap();
+            const token = res?.data?.access_token
+            const role = res?.data?.user?.role
+            const subscription_status = res?.data?.user?.subscription_status
+
+
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+                if (token) {
+                    Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
+                }
+                if (role) {
+                    Cookies.set('role', role);
+                }
+                if (subscription_status) {
+                    Cookies.set('subscription_status', subscription_status);
+                }
+                else {
+                    router.push(`/dashboard-create-new-password?email=${email}`)
+                }
+
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+    }
+
+    // send again otp code function
+    const handleSendAgainOtp = async () => {
+        const formData = new FormData();
+
+        if (email) {
+            formData.append("email", email);
+        }
+
+        try {
+            const res = await forgotPasswordApi(formData).unwrap();
+            if (res?.status === 'success') {
+                toast.success(res?.message)
+            } else {
+                toast.error(res?.messages)
+            }
+        } catch (errors: any) {
+            if (errors) {
+                toast.error(errors.data?.message)
+            }
+        }
+
     }
 
     return (
@@ -112,7 +192,9 @@ export default function DashboardVerifyOtpPage() {
                                         ))}
                                     </div>
                                     <div className="text-right text-sm">
-                                        <Button variant="link" className="cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline">
+                                        <Button
+                                            onClick={handleSendAgainOtp}
+                                            variant="link" className="cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline">
                                             Send again
                                         </Button>
                                     </div>
@@ -130,9 +212,9 @@ export default function DashboardVerifyOtpPage() {
                                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                                     }}
                                 >
-                                    <Link href="dashboard-create-new-password">
-                                        Verify
-                                    </Link>
+                                    {
+                                        isLoading ? <CustomButtonLoader /> : "Verify"
+                                    }
                                 </Button>
 
 
