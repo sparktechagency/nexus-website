@@ -1,9 +1,14 @@
 import { baseApi } from "@/redux/api/baseApi";
 
+interface WebNotificationQueryParams {
+  per_page?: number;
+  page?: number;
+}
+
 const webNotificationApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getWebNotificationApi: builder.query({
-            query: ({ per_page, page }) => ({
+            query: ({ per_page = 8, page = 1 }: WebNotificationQueryParams = {}) => ({
                 url: `/notifications?per_page=${per_page}&page=${page}`,
                 method: "GET",
             }),

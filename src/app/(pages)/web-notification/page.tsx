@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation"
 import { useGetWebNotificationApiQuery, useMarkAllWebNotificationApiMutation, useSingleWebNotificationApiMutation } from "@/redux/website/notification/webNotificationApi"
 import Image from "next/image"
 import toast from "react-hot-toast"
+import { useEffect, useState } from "react"
+import DashboardLoader from "@/components/DashboardLoader"
+import CustomPagination from "@/components/customPagination/CustomPagination"
 
 
 
@@ -24,12 +27,14 @@ interface NotificationItem {
 
 const WebNotificationPage = () => {
     const router = useRouter()
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(8)
 
 
-    const { data: getNotification } = useGetWebNotificationApiQuery({
-        skip: true,
-    })
+    const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage ?? 5, page: currentPage ?? 1 })
     const notificationData: NotificationItem[] = getNotification?.data?.notifications?.data
+    const totalItems = getNotification?.data?.notifications?.total
+    const totalPages = Math.ceil(totalItems / perPage)
 
 
     const [singleNotification] = useSingleWebNotificationApiMutation()
@@ -81,6 +86,14 @@ const WebNotificationPage = () => {
         router.push('/home')
     }
 
+    useEffect(() => {
+        refetch();
+    }, [currentPage, perPage, refetch]);
+
+    if (isLoading) {
+        return <DashboardLoader />
+    }
+
     return (
         <div className="px-4 md:px-6 lg:px-8 mb-6  text-white">
             {/* Header */}
@@ -118,13 +131,15 @@ const WebNotificationPage = () => {
                         onClick={() => !notification?.is_read && handleNotificationId(notification.id)}
 
                         className={` flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-transparent cursor-default' : 'bg-gray-900 cursor-pointer'}`}>
-                        <Image
+                        {
+                            notification?.image && <Image
                             src={notification?.image}
                             alt="photo"
                             width={40}
                             height={40}
                             className="rounded-full"
                         />
+                        }
 
 
                         {/* Content */}
@@ -142,6 +157,15 @@ const WebNotificationPage = () => {
                     </div>
                 ))}
             </div>
+
+
+
+            {/* PAGINATION COMPONENT */}
+            <CustomPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
         </div>
     )
 }

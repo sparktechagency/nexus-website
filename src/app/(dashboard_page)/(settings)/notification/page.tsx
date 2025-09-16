@@ -27,7 +27,7 @@ const NotificationPage = () => {
 
 
 
-    const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage, page: currentPage })
+    const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage ?? 5, page: currentPage ?? 1 })
     const notificationData: NotificationItem[] = getNotification?.data?.notifications?.data
     const totalItems = getNotification?.data?.notifications?.total
     const totalPages = Math.ceil(totalItems / perPage)

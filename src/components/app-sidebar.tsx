@@ -25,7 +25,7 @@ import {
 } from "./custom-icons"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-
+import Cookies from 'js-cookie';
 
 
 export const data = {
@@ -95,7 +95,10 @@ export const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
 
-  const handleNavigate = () => {
+  const handleLogout = () => {
+    Cookies.remove('token');
+    Cookies.remove('role');
+    Cookies.remove('subscription_status');
     router.push('/dashboard-login')
   }
 
@@ -127,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter className="bg-[#0c0827]">
         <Button
-          onClick={handleNavigate}
+          onClick={handleLogout}
           className="w-full py-6 rounded-lg cursor-pointer text-white font-semibold transition-all duration-200"
           style={{
             background:

@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
@@ -21,6 +21,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import DashboardLoader from "@/components/DashboardLoader"
+import CustomPagination from "@/components/customPagination/CustomPagination"
 
 
 interface RoomProps {
@@ -39,13 +41,15 @@ const RoomPage = () => {
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [editId, setEditId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [page, setPage] = useState(10)
+  const [perPage, setPerPage] = useState(8)
 
-  const { data: getRoom,  } = useGetRoomApiQuery({ per_page: page, page: currentPage })
+  const { data: getRoom,isLoading,refetch } = useGetRoomApiQuery({ per_page: perPage, page: currentPage })
   const roomData: RoomProps[] = getRoom?.data?.data
+  const totalItems = getRoom?.data?.total
+  const totalPages = Math.ceil(totalItems / perPage)
 
 
-console.log('tsting perpass-- roomPage------', setCurrentPage,setPage) 
+
 
   const handleDeleteRoom = (id: number) => {
     setDeleteId(id)
@@ -53,6 +57,14 @@ console.log('tsting perpass-- roomPage------', setCurrentPage,setPage)
   const handleUpdateRoom = (id: number) => {
     setEditId(id)
   }
+
+  useEffect(() => {
+        refetch();
+    }, [currentPage, perPage, refetch]);
+
+    if (isLoading) {
+        return <DashboardLoader />
+    }
 
 
   return (
@@ -131,7 +143,7 @@ console.log('tsting perpass-- roomPage------', setCurrentPage,setPage)
                       <button
                         onClick={() => {
                           setIsEditRoom(!isEditRoom),
-                          handleUpdateRoom(item?.id)
+                            handleUpdateRoom(item?.id)
                         }}
                         className="cursor-pointer">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -149,25 +161,12 @@ console.log('tsting perpass-- roomPage------', setCurrentPage,setPage)
       </div>
 
 
-      {/* pagination component */}
-      <div className="bg-transparent border border-gray-800 my-4 rounded-lg p-2 ">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+     {/* PAGINATION COMPONENT */}
+            <CustomPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+            />
 
 
       {/* modal component(Add_ROOM) */}
