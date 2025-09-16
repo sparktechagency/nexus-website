@@ -142,13 +142,13 @@ export default function Navbar() {
                     <div className="relative cursor-pointer">
                         <svg
                             onClick={handleNotification}
-                            className=" w-[20px] h-[20px] md:w-[45px] md:h-[45px]  rounded-full" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            className=" w-[30px] h-[30px] md:w-[45px] md:h-[45px]  rounded-full" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect width="56" height="56" rx="24" fill="#5E5E5E" fillOpacity="0.2" />
                             <path fillRule="evenodd" clipRule="evenodd" d="M21 34C20.8296 33.9999 20.662 33.9562 20.5132 33.8732C20.3644 33.7902 20.2393 33.6705 20.1498 33.5256C20.0602 33.3806 20.0092 33.2152 20.0015 33.0449C19.9938 32.8747 20.0298 32.7054 20.106 32.553L22 28.764V26C22 22.272 24.55 19.14 28 18.252C31.45 19.14 34 22.272 34 26V28.764L35.894 32.553C35.9701 32.7054 36.0061 32.8747 35.9984 33.0449C35.9907 33.2152 35.9397 33.3806 35.8502 33.5256C35.7606 33.6705 35.6355 33.7902 35.4867 33.8732C35.3379 33.9562 35.1703 33.9999 35 34H21Z" fill="black" fillOpacity="0.2" />
                             <path d="M32 34C32 35.0608 31.5785 36.0782 30.8284 36.8284C30.0782 37.5785 29.0608 38 28 38C26.9391 38 25.9217 37.5785 25.1715 36.8284C24.4214 36.0782 24 35.0608 24 34M21 34C20.8296 33.9999 20.662 33.9562 20.5132 33.8732C20.3644 33.7902 20.2393 33.6705 20.1498 33.5256C20.0602 33.3806 20.0092 33.2152 20.0015 33.0449C19.9938 32.8747 20.0298 32.7054 20.106 32.553L22 28.763V26C22 22.272 24.55 19.14 28 18.252C31.45 19.14 34 22.272 34 26V28.764L35.894 32.553C35.9701 32.7054 36.0061 32.8747 35.9984 33.0449C35.9907 33.2152 35.9397 33.3806 35.8502 33.5256C35.7606 33.6705 35.6355 33.7902 35.4867 33.8732C35.3379 33.9562 35.1703 33.9999 35 34H21Z" stroke="#C2C2C2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
 
-                        <p className="absolute -top-1 left-3 md:left-8 text-[6px] md:text-[10px] bg-red-500 p-[2px] md:p-[3px] rounded-full">{notificationCount}</p>
+                        <p className="absolute top-0  right-0 w-[12px] h-[12px] md:w-[18px] md:h-[18px] flex justify-center items-center bg-red-500  text-[6px] md:text-[10px] rounded-full">{notificationCount}</p>
                     </div>
 
 
@@ -216,8 +216,14 @@ export default function Navbar() {
                             </div>
 
                             {
-                                profileData?.name && <span className="text-[8px] md:text-xl md:font-medium">{profileData?.name}</span>
+                                profileData?.name && <span className="text-[8px] md:text-xl md:font-medium hidden lg:block">{profileData?.name}</span>
                             }
+
+                            {profileData?.name && (
+                                <span className="text-[8px] md:text-xl md:font-medium lg:hidden">
+                                    {profileData.name.length > 15 ? `${profileData.name.slice(0, 15)}...` : profileData.name}
+                                </span>
+                            )}
                             <ChevronDown className="md:w-4 md:h-4 text-gray-300" />
                         </DropdownMenuTrigger>
 

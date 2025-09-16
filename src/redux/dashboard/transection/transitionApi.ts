@@ -4,16 +4,16 @@ import { baseApi } from "@/redux/api/baseApi";
 
 const transitionApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        Api: builder.query({
+        getTransitionApi: builder.query({
             query: () => ({
-                url: ``,
+                url: `/admin/transactions`,
                 method: "GET",
             }),
             providesTags: ['transition'],
         }),
     }),
-       overrideExisting: true
+    overrideExisting: true
 })
 
 
-export const {  } = transitionApi;
+export const { useGetTransitionApiQuery } = transitionApi;

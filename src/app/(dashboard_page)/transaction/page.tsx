@@ -1,15 +1,13 @@
+"use client"
 
-import {  CardContent } from "@/components/ui/card"
+import { CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PremiumIcon, StandardIcon, StarIcon } from "@/components/custom-icons"
+import { useGetTransitionApiQuery } from "@/redux/dashboard/transection/transitionApi"
 
 
-const planData = [
-  { name: "Basic Plan", count: 120, color: "text-yellow-400", icon: <StarIcon /> },
-  { name: "Standard Plan", count: 120, color: "text-red-400", icon: <StandardIcon /> },
-  { name: "Premium Plan", count: 120, color: "text-yellow-400", icon: <PremiumIcon /> },
-]
+
 
 const subscriptionData = [
   {
@@ -64,15 +62,31 @@ const subscriptionData = [
 
 
 const TransactionPage = () => {
+
+  const { data: getTransition, } = useGetTransitionApiQuery({ skip: true })
+  const totalBasicPlanData = getTransition?.data?.total_basic_plan
+  const totalStandardPlanData = getTransition?.data?.total_standard_plan
+  const totalPremiumPlanData = getTransition?.data?.total_premium_plan
+  const transitionData = getTransition?.data?.transactions?.data
+
+  const planData = [
+    { name: "Basic Plan", count: totalBasicPlanData, color: "text-yellow-400", icon: <StarIcon /> },
+    { name: "Standard Plan", count: totalStandardPlanData, color: "text-red-400", icon: <StandardIcon /> },
+    { name: "Premium Plan", count: totalPremiumPlanData, color: "text-yellow-400", icon: <PremiumIcon /> },
+  ]
+
+
+
+
   return (
     <div className="pt-4">
       <div className=" space-y-4">
-       <div className="bg-[#1a1624] p-4 rounded-lg">
-        <div>
-          <h1 className="text-2xl font-semibold text-white mb-4">Subscription Overview</h1>
-        </div>
+        <div className="bg-[#1a1624] p-4 rounded-lg">
+          <div>
+            <h1 className="text-2xl font-semibold text-white mb-4">Subscription Overview</h1>
+          </div>
 
-    
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {planData.map((plan) => {
               return (

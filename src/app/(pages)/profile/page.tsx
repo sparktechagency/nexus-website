@@ -29,14 +29,14 @@ export default function WebProfilePage() {
   const [isEdit, setIsEdit] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  
+
   // get profile 
   const { data: getProfile } = useGetProfileApiQuery(null)
   const profileData = getProfile?.data
-  
+
   const [profileImage, setProfileImage] = useState(profileData?.avatar || "http://103.186.20.114:8011/uploads/users/default_avatar.png")
-  
-  
+
+
   useEffect(() => {
     if (profileData?.avatar) {
       setProfileImage(profileData.avatar)
@@ -44,7 +44,7 @@ export default function WebProfilePage() {
   }, [profileData?.avatar])
 
   // rating profile data
-  const { data: getRatingProfile,isLoading,refetch: refetchProfile } = useGetRatingProfileApiQuery(null)
+  const { data: getRatingProfile, isLoading, refetch: refetchProfile } = useGetRatingProfileApiQuery(null)
   const ratingProfileData: RatingProfileData[] = getRatingProfile?.data?.data
 
 
@@ -81,11 +81,11 @@ export default function WebProfilePage() {
       if (res?.status === 'success') {
         toast.success(res?.message)
         await refetchProfile()
-     setProfileImage(`${res.data?.avatar || profileData?.avatar}?t=${new Date().getTime()}`)
+        setProfileImage(`${res.data?.avatar || profileData?.avatar}?t=${new Date().getTime()}`)
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors:any ) {
+    } catch (errors: any) {
       if (errors) {
         toast.error(errors.data?.message)
       }
@@ -105,7 +105,7 @@ export default function WebProfilePage() {
 
 
 
-  if(isLoading){
+  if (isLoading) {
     return <CustomButtonLoaderTwo />
   }
 
@@ -319,27 +319,31 @@ export default function WebProfilePage() {
 
 
             {/* Right Column - Reviews */}
-            <div className="space-y-3 md:h-[550px] overflow-y-auto custom-scrollbar">
-              {ratingProfileData?.map((item, index: number) => (
-                <div key={index} className="bg-[#1a1b3a]/60 rounded-xl p-4 border border-gray-800/50">
-                  <div className="flex items-start gap-3">
+            {
+              ratingProfileData?.length > 0 ? <div className="space-y-3 md:h-[550px] overflow-y-auto custom-scrollbar">
+                {ratingProfileData?.map((item, index: number) => (
+                  <div key={index} className="bg-[#1a1b3a]/60 rounded-xl p-4 border border-gray-800/50">
+                    <div className="flex items-start gap-3">
 
-                    <Image
-                      src={item?.user?.avatar}
-                      alt="photo"
-                      className="object-cover rounded-full"
-                      width={50}
-                      height={50}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-white text-sm mb-1">{item?.user?.name}</h3>
-                      <div className="flex items-center gap-0.5 mb-2">{renderStars(item?.rating)}</div>
-                      <p className="text-gray-300 text-xs leading-relaxed">{item?.review}</p>
+                      <Image
+                        src={item?.user?.avatar}
+                        alt="photo"
+                        className="object-cover rounded-full"
+                        width={50}
+                        height={50}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-white text-sm mb-1">{item?.user?.name}</h3>
+                        <div className="flex items-center gap-0.5 mb-2">{renderStars(item?.rating)}</div>
+                        <p className="text-gray-300 text-xs leading-relaxed">{item?.review}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div> : <div className="xl:h-[550px]  w-full rounded-lg flex flex-col justify-center items-center">
+                <p className="xl:text-6xl text-2xl font-bold text-gray-200 uppercase text-center">No data found</p>
+              </div>
+            }
           </div>
         </div>
 

@@ -33,6 +33,8 @@ const NotificationPage = () => {
     const totalPages = Math.ceil(totalItems / perPage)
 
 
+
+
     const [singleNotification] = useSingleWebNotificationApiMutation()
     const [markAllWebNotificationApi] = useMarkAllWebNotificationApiMutation()
 

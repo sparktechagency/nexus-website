@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
+import WebEmptyData from "@/components/WebEmptyData"
 
 
 
@@ -116,56 +117,64 @@ const WebNotificationPage = () => {
                 </p>
             </div>
 
-            <div className="flex justify-end">
-                <button
-                    onClick={handleMarkAllNotification}
-                    className="bg-gray-700 hover:bg-gray-800 cursor-pointer border border-gray-800 py-2 px-4 rounded-full  font-semibold xl:mx-5">Mark all as read</button>
-            </div>
+            {
+                notificationData?.length > 0 && <div className="flex justify-end">
+                    <button
+                        onClick={handleMarkAllNotification}
+                        className="bg-gray-700 hover:bg-gray-800 cursor-pointer border border-gray-800 py-2 px-4 rounded-full  font-semibold xl:mx-5">Mark all as read</button>
+                </div>
+            }
 
 
 
             {/* Notifications List */}
-            <div className="px-4 pt-4 space-y-4 ">
-                {notificationData?.map((notification) => (
-                    <div key={notification.id}
-                        onClick={() => !notification?.is_read && handleNotificationId(notification.id)}
+            {
+                notificationData?.length > 0 ? <div className="px-4 pt-4 space-y-4 ">
+                    {notificationData?.map((notification) => (
+                        <div key={notification.id}
+                            onClick={() => !notification?.is_read && handleNotificationId(notification.id)}
 
-                        className={` flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-transparent cursor-default' : 'bg-gray-900 cursor-pointer'}`}>
-                        {
-                            notification?.image && <Image
-                            src={notification?.image}
-                            alt="photo"
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                        />
-                        }
+                            className={` flex items-center gap-3 py-3  rounded-2xl px-4 ${notification?.is_read ? 'bg-transparent cursor-default' : 'bg-gray-900 cursor-pointer'}`}>
+                            {
+                                notification?.image && <Image
+                                    src={notification?.image}
+                                    alt="photo"
+                                    width={40}
+                                    height={40}
+                                    className="rounded-full"
+                                />
+                            }
 
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                            <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                                <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-slate-200 text-sm leading-relaxed">{notification.id}</p>
+                            </div>
+
+                            {/* Time */}
+                            <div className="flex-shrink-0">
+                                <span className="text-slate-400 text-xs">{notification.created_time}</span>
+                            </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-slate-200 text-sm leading-relaxed">{notification.id}</p>
-                        </div>
+                    ))}
 
-                        {/* Time */}
-                        <div className="flex-shrink-0">
-                            <span className="text-slate-400 text-xs">{notification.created_time}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    {/* PAGINATION COMPONENT */}
+                    <CustomPagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                    />
+                </div> : < WebEmptyData
+                    customStyle={`bg-red-500 text-white `}
+                    style={{
+                        background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                    }}
+                />
+            }
 
-
-
-            {/* PAGINATION COMPONENT */}
-            <CustomPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
-            />
         </div>
     )
 }

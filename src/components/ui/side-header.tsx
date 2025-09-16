@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { pageTitles } from "@/utils/pageTitles";
+import { useGetWebNotificationApiQuery } from "@/redux/website/notification/webNotificationApi";
 
 const SiteHeader = () => {
   const pathname = usePathname();
@@ -12,6 +13,17 @@ const SiteHeader = () => {
     backIcon: undefined,
   };
   const router = useRouter();
+
+
+    const { data: getNotification } = useGetWebNotificationApiQuery(undefined, {
+        pollingInterval: 5000, // Poll every 5 seconds
+        refetchOnFocus: true, // Optionally refetch when the tab gains focus
+    });
+    const notificationCount = getNotification?.data?.unread_notifications_count || 0
+
+
+
+
 
   const handleNotification = () => {
     router.push("/notification");
@@ -39,7 +51,7 @@ const SiteHeader = () => {
       <div className="flex items-center space-x-6">
         <span
           onClick={handleNotification}
-          className="cursor-pointer bg-[#fff] p-1 rounded-md"
+          className="relative cursor-pointer bg-[#fff] p-1 rounded-md"
         >
           {/* Notification SVG */}
           <svg
@@ -70,7 +82,11 @@ const SiteHeader = () => {
               </linearGradient>
             </defs>
           </svg>
+
+
+          <p className="absolute -top-2 left-2 md:left-6 text-[6px] md:text-[10px] bg-red-500 p-[2px] md:p-[3px] rounded-full">{notificationCount}</p>
         </span>
+
       </div>
     </div>
   );

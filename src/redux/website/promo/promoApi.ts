@@ -5,8 +5,8 @@ import { baseApi } from "@/redux/api/baseApi";
 const promoApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getUserListApi: builder.query({
-            query: () => ({
-                url: `/coupons`,
+            query: ({per_page,page}) => ({
+                url: `/coupons?per_page=${per_page}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['promo'],
