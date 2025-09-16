@@ -11,7 +11,7 @@ const PrivacyPolicy = () => {
     const contentRef = useRef<HTMLDivElement | null>(null);
     const [isScrollable, setIsScrollable] = useState(false);
 
-    const { data: getPrivacyPolicyData,isLoading } = useGetPrivacyPolicyApiQuery("Privacy Policy");
+    const { data: getPrivacyPolicyData, isLoading } = useGetPrivacyPolicyApiQuery("Privacy Policy");
     const privacyPolicyContent = getPrivacyPolicyData?.data[0]
 
     // console.log(privacyPolicyContent)
@@ -38,10 +38,10 @@ const PrivacyPolicy = () => {
     }, []);
 
 
-    if(isLoading){
-         return <div className="h-[400px] flex justify-center items-center">
-        <CustomButtonLoaderTwo />
-    </div>
+    if (isLoading) {
+        return <div className="h-[400px] flex justify-center items-center">
+            <CustomButtonLoaderTwo />
+        </div>
     }
 
     return (

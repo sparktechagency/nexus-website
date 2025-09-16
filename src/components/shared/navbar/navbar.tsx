@@ -261,8 +261,8 @@ export default function Navbar() {
             <CustomModal
                 open={isTerms}
                 setIsOpen={setIsTerms}
-                className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[70vw] xl:!max-w-[50vw]"}
+                className={"p-4 "}
+                maxWidth={"md:!max-w-[70vw] xl:!max-w-[40vw]"}
             >
                 <TermsAndCondition />
             </CustomModal>
@@ -272,8 +272,8 @@ export default function Navbar() {
             <CustomModal
                 open={isPrivacy}
                 setIsOpen={setIsPrivacy}
-                className={"p-4 max-h-[0vh]"}
-                maxWidth={"md:!max-w-[70vw] xl:!max-w-[50vw]"}
+               className={"p-4 max-h-[0vh]"}
+                maxWidth={"md:!max-w-[95vw] xl:!max-w-[50vw]"}
             >
                 <PrivacyPolicy />
             </CustomModal>
