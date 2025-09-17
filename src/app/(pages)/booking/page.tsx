@@ -11,9 +11,14 @@ import { Button } from "@/components/ui/button"
 
 type BookingStatus = "Ongoing" | "Upcoming" | "Completed" | "Canceled"
 type GameType = "vip" | "bootcamp" | "ps5"
+
 interface BookingProps {
     id: number | string
     name: string
+}
+interface providerListDataProps {
+    id: number | string
+    pc_no:number
 }
 
 
@@ -223,7 +228,7 @@ const BookingPage = ({
         date: "2025-09-17"
     })
 
-    const providerListData = getProviderList?.data
+    const providerListData:providerListDataProps[] = getProviderList?.data
 
 
 
@@ -324,9 +329,9 @@ const BookingPage = ({
                         <div className="p-4 border-r border-pink-200 bg-card">
                             <h3 className="font-semibold text-card-foreground">Time</h3>
                         </div>
-                        {pcs.map((pc) => (
-                            <div key={pc} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
-                                <h3 className="font-semibold text-card-foreground">{pc}</h3>
+                        {providerListData?.map((item,index:number) => (
+                            <div key={item.id} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
+                                <h3 className="font-semibold text-card-foreground">PC {index+1}</h3>
                             </div>
                         ))}
                     </div>
