@@ -41,9 +41,17 @@ const roomApi = baseApi.injectEndpoints({
             }),
             providesTags: ['room'],
         }),
+        // all room api get for booking section =========================================
+        allRoomGetRoomApi: builder.query({
+            query: () => ({
+                url: `/rooms`,
+                method: "GET",
+            }),
+            providesTags: ['room'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery,useSingleGetRoomApiQuery } = roomApi;
+export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery,useSingleGetRoomApiQuery,useAllRoomGetRoomApiQuery } = roomApi;

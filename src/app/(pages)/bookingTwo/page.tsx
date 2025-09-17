@@ -126,6 +126,10 @@ const colorVariants = {
   orange: "bg-orange-500/80 border-orange-400 text-white",
 }
 
+
+
+
+
 const BookingTwoPage = ({
   pcs = defaultPCs,
   timeSlots = defaultTimeSlots,
@@ -171,17 +175,17 @@ const BookingTwoPage = ({
 
   return (
     <div className={cn("w-full overflow-x-auto", className)}>
-      <div className="min-w-[800px] bg-background border border-border rounded-lg">
+      <div className="min-w-[800px] h-screen bg-gray-100 border border-pink-500 rounded-lg">
         {/* Header */}
         <div
-          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border"
+          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200"
           style={{ "--pc-count": pcs.length } as React.CSSProperties}
         >
-          <div className="p-4 border-r border-border bg-card">
+          <div className="p-4 border-r border-pink-200 bg-card">
             <h3 className="font-semibold text-card-foreground">Time</h3>
           </div>
           {pcs.map((pc) => (
-            <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
+            <div key={pc} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
               <h3 className="font-semibold text-card-foreground">{pc}</h3>
             </div>
           ))}
@@ -192,11 +196,11 @@ const BookingTwoPage = ({
           {timeSlots.map((time,index) => (
             <div
               key={index}
-              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border last:border-b-0 min-h-[60px]"
+              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200 last:border-b-0 min-h-[60px]"
               style={{ "--pc-count": pcs.length } as React.CSSProperties}
             >
               {/* Time column */}
-              <div className="p-4 border-r border-border bg-muted/20 flex items-center">
+              <div className="p-4 border-r border-pink-200 bg-muted/20 flex items-center">
                 <span className="text-sm font-medium text-muted-foreground">{time}</span>
               </div>
 
@@ -207,7 +211,7 @@ const BookingTwoPage = ({
                 const isBookingStart = slotData?.isStart
 
                 return (
-                  <div key={`${pc}-${time}`} className="border-r border-border last:border-r-0 relative min-h-[60px]">
+                  <div key={`${pc}-${time}`} className="border-r border-pink-200 last:border-r-0 relative min-h-[60px]">
                     {isBooked && isBookingStart && (
                       <div
                         className={cn(
