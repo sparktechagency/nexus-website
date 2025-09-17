@@ -126,10 +126,6 @@ const colorVariants = {
   orange: "bg-orange-500/80 border-orange-400 text-white",
 }
 
-
-
-
-
 const BookingTwoPage = ({
   pcs = defaultPCs,
   timeSlots = defaultTimeSlots,
@@ -175,17 +171,17 @@ const BookingTwoPage = ({
 
   return (
     <div className={cn("w-full overflow-x-auto", className)}>
-      <div className="min-w-[800px] h-screen bg-gray-100 border border-pink-500 rounded-lg">
+      <div className="min-w-[800px] bg-background border border-border rounded-lg">
         {/* Header */}
         <div
-          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200"
+          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border"
           style={{ "--pc-count": pcs.length } as React.CSSProperties}
         >
-          <div className="p-4 border-r border-pink-200 bg-card">
+          <div className="p-4 border-r border-border bg-card">
             <h3 className="font-semibold text-card-foreground">Time</h3>
           </div>
           {pcs.map((pc) => (
-            <div key={pc} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
+            <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
               <h3 className="font-semibold text-card-foreground">{pc}</h3>
             </div>
           ))}
@@ -193,14 +189,14 @@ const BookingTwoPage = ({
 
         {/* Time slots grid */}
         <div className="relative">
-          {timeSlots.map((time,index) => (
+          {timeSlots.map((time, index) => (
             <div
               key={index}
-              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200 last:border-b-0 min-h-[60px]"
+              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border last:border-b-0 min-h-[60px]"
               style={{ "--pc-count": pcs.length } as React.CSSProperties}
             >
               {/* Time column */}
-              <div className="p-4 border-r border-pink-200 bg-muted/20 flex items-center">
+              <div className="p-4 border-r border-border bg-muted/20 flex items-center">
                 <span className="text-sm font-medium text-muted-foreground">{time}</span>
               </div>
 
@@ -211,7 +207,7 @@ const BookingTwoPage = ({
                 const isBookingStart = slotData?.isStart
 
                 return (
-                  <div key={`${pc}-${time}`} className="border-r border-pink-200 last:border-r-0 relative min-h-[60px]">
+                  <div key={`${pc}-${time}`} className="border-r border-border last:border-r-0 relative min-h-[60px]">
                     {isBooked && isBookingStart && (
                       <div
                         className={cn(
@@ -246,20 +242,6 @@ const BookingTwoPage = ({
         </div>
       </div>
 
-      {selectedSlot && (
-        <div className="mt-4 p-4 bg-card border border-border rounded-lg">
-          <p className="text-card-foreground">
-            Selected: <span className="font-semibold">{selectedSlot.pc}</span> at{" "}
-            <span className="font-semibold">{selectedSlot.time}</span>
-          </p>
-          <button
-            onClick={() => setSelectedSlot(null)}
-            className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Book This Slot
-          </button>
-        </div>
-      )}
     </div>
   )
 }
