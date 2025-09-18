@@ -52,7 +52,7 @@ const BookingPage = () => {
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Upcoming");
   const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
 
-  const [pcs, setPcs] = useState(["PC 1", "PC 2", "PC 3", "PC 4", "PC 5"])
+  const [pcs, setPcs] = useState([])
   const [timeSlots, setTimeSlots] = useState([
     "10:00 AM",
     "11:00 AM",
@@ -113,28 +113,6 @@ const BookingPage = () => {
       pc_no: "PC 4",
       color: "pink",
     },
-    {
-      id: "5",
-      user: {
-        id: 5,
-        name: "Neymar",
-      },
-      starting_time: "01:00 PM",
-      ending_time: "01:00 PM",
-      pc_no: "PC 2",
-      color: "blue",
-    },
-    {
-      id: "6",
-      user: {
-        id: 6,
-        name: "Neymar",
-      },
-      starting_time: "01:00 PM",
-      ending_time: "04:00 PM",
-      pc_no: "PC 5",
-      color: "blue",
-    }
   ])
 
 
@@ -158,11 +136,13 @@ const BookingPage = () => {
     }
   }, [allRoomData]);
 
+
+
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
       setProviderBookings(providerListData);
-     const newPcs = providerListData.map((item, index) => `PC ${index+1}`);
-    setPcs(newPcs);
+      const newPcs = providerListData.map((item, index) => ` ${index + 1}`);
+      setPcs(newPcs);
     }
   }, [providerListData]);
 
