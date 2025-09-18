@@ -248,3 +248,77 @@ const BookingTwoPage = ({
 
 
 export default BookingTwoPage
+
+
+// =========================
+
+  //  <div className="w-full overflow-x-auto bg-background border border-border rounded-lg">
+  //       {/* Header */}
+  //       <div
+  //         className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border"
+  //         style={{ "--pc-count": pcs.length } as React.CSSProperties}
+  //       >
+  //         <div className="p-4 border-r border-border bg-card">
+  //           <h3 className="font-semibold text-card-foreground">Time</h3>
+  //         </div>
+  //         {pcs.map((pc) => (
+  //           <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
+  //             <h3 className="font-semibold text-card-foreground">{pc}</h3>
+  //           </div>
+  //         ))}
+  //       </div>
+
+  //       {/* Time slots grid */}
+  //       <div className="relative">
+  //         {timeSlots.map((time, index) => (
+  //           <div
+  //             key={index}
+  //             className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border last:border-b-0 min-h-[60px]"
+  //             style={{ "--pc-count": pcs.length } as React.CSSProperties}
+  //           >
+  //             {/* Time column */}
+  //             <div className="p-4 border-r border-border bg-muted/20 flex items-center">
+  //               <span className="text-sm font-medium text-muted-foreground">{time}</span>
+  //             </div>
+
+  //             {/* PC columns */}
+  //             {pcs.map((pc) => {
+  //               const slotData = bookingLayout[pc]?.[time]
+  //               const isBooked = !!slotData
+  //               const isBookingStart = slotData?.isStart
+
+  //               return (
+  //                 <div key={`${pc}-${time}`} className="border-r border-border last:border-r-0 relative min-h-[60px]">
+  //                   {isBooked && isBookingStart && (
+  //                     <div
+  //                       className={cn(
+  //                         "absolute inset-x-1 top-1 rounded-md border-2 p-3 z-10 flex flex-col justify-center bg-red-500",
+  //                         // colorVariants[slotData.booking.color || "blue"],
+  //                       )}
+  //                       style={{
+  //                         height: `${slotData.rowSpan * 60 - 8}px`,
+  //                       }}
+  //                     >
+  //                       <div className="font-semibold text-sm mb-1">{slotData.booking?.user?.name}</div>
+  //                       <div className="text-xs opacity-90">
+  //                         {slotData.booking.starting_time} - {slotData.booking.ending_time}
+  //                       </div>
+  //                     </div>
+  //                   )}
+
+  //                   {!isBooked && (
+  //                     <button
+  //                       onClick={() => handleSlotClick(pc, time)}
+  //                       className={cn(
+  //                         "w-full h-full hover:bg-accent/10 transition-colors",
+  //                         selectedSlot?.pc === pc && selectedSlot?.time === time && "bg-accent/20",
+  //                       )}
+  //                     />
+  //                   )}
+  //                 </div>
+  //               )
+  //             })}
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>

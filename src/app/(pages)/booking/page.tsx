@@ -1,214 +1,3 @@
-// "use client"
-
-// import type React from "react"
-
-// import { useState, useEffect } from "react"
-// import { cn } from "@/lib/utils"
-// import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
-// import { useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi"
-// import { Button } from "@/components/ui/button"
-
-
-// type BookingStatus = "Ongoing" | "Upcoming" | "Completed" | "Canceled"
-// type GameType = "vip" | "bootcamp" | "ps5"
-
-// interface BookingProps {
-//     id: number | string
-//     name: string
-// }
-// interface providerListDataProps {
-//     id: number | string
-//     pc_no: number
-//     starting_time: string
-// }
-
-
-
-// const BookingPage = () => {
-
-//     const [selectedGameType, setSelectedGameType] = useState<GameType | string>('');
-//     const [roomId, setRoomId] = useState<string | number>('');
-//     const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Ongoing")
-//     const [selectedDate, setSelectedDate] = useState("2025-09-17")
-//     const [providerTime, setProviderTime] = useState<string[]>([])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//     // get room api
-//     const { data: getAllRoom, } = useAllRoomGetRoomApiQuery({ skip: true })
-//     const allRoomData: BookingProps[] = getAllRoom?.data?.data
-//     // console.log(allRoomData)
-
-//     const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
-//         room_id: 2,
-//         status: "Upcoming",
-//         date: "2025-09-17"
-//     })
-
-//     const providerListData: providerListDataProps[] = getProviderList?.data
-
-
-
-
-
-//     useEffect(() => {
-//         if (allRoomData && allRoomData.length > 0) {
-//             setSelectedGameType(allRoomData[0]?.name);
-//         }
-//         if (allRoomData && allRoomData.length > 0) {
-//             setRoomId(allRoomData[0]?.id);
-//         }
-//     }, [allRoomData]);
-
-
-//     useEffect(() => {
-//         if (providerListData && providerListData.length > 0) {
-//             const time = providerListData?.map((i) => i.starting_time)
-//             setProviderTime(time)
-//         }
-
-//     }, [providerListData]);
-
-
-
-//     return (
-//         <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
-
-//             {/* Header */}
-//             <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
-//                 <div>
-//                     <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
-//                     <p className="text-gray-400 text-sm">
-//                         You can update your room information from here & also can add a new room.
-//                     </p>
-//                 </div>
-//                 <Button
-//                     // onClick={() => setIsAddRoom(!isAddRoom)}
-//                     className="w-fit px-6 py-2 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
-//                     style={{
-//                         background:
-//                             "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-//                     }}
-//                 >Add Gamer</Button>
-//             </div>
-
-//             <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
-//                 {/* Game Type Filters */}
-//                 <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%] ">
-//                     {
-//                         allRoomData?.map((item) => {
-//                             return (
-//                                 <Button
-//                                     key={item.id}
-//                                     onClick={() => {
-//                                         setSelectedGameType(item?.name);
-//                                         setRoomId(item?.id);
-//                                     }}
-//                                     className={` ${selectedGameType === item?.name
-//                                         ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
-//                                         : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
-//                                         }`}
-//                                 >
-//                                     <span
-//                                         className={`${selectedGameType === item?.name
-//                                             ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
-//                                             : ""
-//                                             }`}
-//                                     >
-//                                         {item?.name?.toUpperCase()}
-//                                     </span>
-//                                 </Button>
-//                             )
-//                         })
-//                     }
-//                 </div>
-
-//                 {/* Status Tabs */}
-//                 <div className="flex flex-wrap gap-8 mb-6 ">
-//                     {(["Ongoing", "Upcoming", "Completed", "Canceled"] as BookingStatus[]).map((status) => (
-//                         <button
-//                             key={status}
-//                             onClick={() => setSelectedStatus(status)}
-//                             className={cn(
-//                                 "pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative",
-//                                 selectedStatus === status
-//                                     ? "cursor-pointer  bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
-//                                     : "text-[##C2C2C2]",
-//                             )}
-//                         >
-//                             {status.charAt(0).toUpperCase() + status.slice(1)}
-//                         </button>
-//                     ))}
-//                 </div>
-//             </div>
-
-
-
-//             {/* BOOKING TABLE */}
-//             <div className={cn("w-full overflow-x-auto",)}>
-//                 <div className="min-w-[800px] xl:min-h-[600px] bg-gray-100 border border-pink-500 ">
-//                     {/* Header */}
-//                     <div
-//                         className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200"
-//                         style={{ "--pc-count": providerListData?.length } as React.CSSProperties}
-//                     >
-//                         <div className="p-4 border-r border-pink-200 bg-card">
-//                             <h3 className="font-semibold text-card-foreground">Time</h3>
-//                         </div>
-
-//                         {providerListData?.map((item, index: number) => (
-//                             <div key={item.id} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
-//                                 <h3 className="font-semibold text-card-foreground">PC {index + 1}</h3>
-//                             </div>
-//                         ))}
-
-//                     </div>
-
-
-
-
-
-//                     {/* Time slots grid */}
-//                     <div className="relative">
-//                         {providerTime?.map((time, index) => (
-//                             <div
-//                                 key={index}
-//                                 className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200 last:border-b-0 min-h-[60px]"
-//                                 style={{ "--pc-count": providerTime?.length } as React.CSSProperties}
-//                             >
-//                                 {/* Time column */}
-//                                 <div className="p-4 border-r border-pink-200 bg-muted/20 flex items-center">
-//                                     <span className="text-sm font-medium text-muted-foreground">{time}</span>
-//                                 </div>
-//                             </div>
-//                         ))}
-//                     </div>
-//                 </div>
-//             </div>
-
-
-//         </div>
-//     )
-// }
-
-
-// export default BookingPage
-
-
-
-
 "use client";
 
 import type React from "react";
@@ -216,10 +5,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
-import { Button } from "@/components/ui/button";
 
 type BookingStatus = "Ongoing" | "Upcoming" | "Completed" | "Canceled";
-type GameType = "vip" | "bootcamp" | "ps5";
 
 interface BookingProps {
   id: number | string;
@@ -228,17 +15,129 @@ interface BookingProps {
 
 interface ProviderBookingProps {
   id: number | string;
-  pc_no: number;
+  pc_no: string | number;
   starting_time: string;
   ending_time: string;
-  user: { id: number; name: string };
+  color: "blue" | "pink" | "green" | "orange" | undefined;
+  user: { id: number | string; name: string };
 }
 
+
+import { useMemo } from "react"
+import { Button } from "@/components/ui/button";
+
+interface Booking {
+  id: number | string;
+  user: {
+    id: number | string;
+    name: string
+  }
+  starting_time: string
+  ending_time: string
+  pc_no: string | number;
+  color?: "blue" | "pink" | "green" | "orange"
+}
+
+const colorVariants = {
+  blue: "bg-blue-500/80 border-blue-400 text-white",
+  pink: "bg-pink-500/80 border-pink-400 text-white",
+  green: "bg-green-500/80 border-green-400 text-white",
+  orange: "bg-orange-500/80 border-orange-400 text-white",
+}
+
+
 const BookingPage = () => {
-  const [selectedGameType, setSelectedGameType] = useState<GameType | string>("");
+  const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Upcoming");
   const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
+
+  const [pcs, setPcs] = useState(["PC 1", "PC 2", "PC 3", "PC 4", "PC 5"])
+  const [timeSlots, setTimeSlots] = useState([
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "01:00 PM",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+    "05:00 PM",
+    "06:00 PM",
+    "07:00 PM",
+    "08:00 PM",
+
+  ])
+
+  const [bookings, setBookings] = useState<ProviderBookingProps[]>([
+    {
+      id: "1",
+      user: {
+        id: 1,
+        name: "Lionel Messi",
+      },
+      starting_time: "10:00 AM",
+      ending_time: "12:00 PM",
+      pc_no: "PC 1",
+      color: "pink",
+    },
+    {
+      id: "2",
+      user: {
+        id: 2,
+        name: "Lionel Messi",
+      },
+      starting_time: "11:00 AM",
+      ending_time: "12:00 PM",
+      pc_no: "PC 2",
+      color: "pink",
+    },
+    {
+      id: "3",
+      user: {
+        id: 3,
+        name: "Lionel Messi",
+      },
+      starting_time: "11:00 AM",
+      ending_time: "02:00 PM",
+      pc_no: "PC 3",
+      color: "blue",
+    },
+    {
+      id: "4",
+      user: {
+        id: 4,
+        name: "Lionel Messi",
+      },
+      starting_time: "12:00 PM",
+      ending_time: "01:00 PM",
+      pc_no: "PC 4",
+      color: "pink",
+    },
+    {
+      id: "5",
+      user: {
+        id: 5,
+        name: "Neymar",
+      },
+      starting_time: "01:00 PM",
+      ending_time: "01:00 PM",
+      pc_no: "PC 2",
+      color: "blue",
+    },
+    {
+      id: "6",
+      user: {
+        id: 6,
+        name: "Neymar",
+      },
+      starting_time: "01:00 PM",
+      ending_time: "04:00 PM",
+      pc_no: "PC 5",
+      color: "blue",
+    }
+  ])
+
+
 
   // get room api
   const { data: getAllRoom } = useAllRoomGetRoomApiQuery({ skip: true });
@@ -247,7 +146,7 @@ const BookingPage = () => {
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
     room_id: roomId,
     status: selectedStatus,
-    date: "2025-09-17",
+    date: "2025-09-18",
   });
 
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
@@ -262,18 +161,57 @@ const BookingPage = () => {
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
       setProviderBookings(providerListData);
+     const newPcs = providerListData.map((item, index) => `PC ${index+1}`);
+    setPcs(newPcs);
     }
   }, [providerListData]);
 
 
-  console.log("providerBookings----------> ",providerBookings)
-  console.log("providerData----------> ",providerListData)
 
-  
+
+  const [selectedSlot, setSelectedSlot] = useState<{ pc: string; time: string } | null>(null)
+
+  // Calculate booking positions and spans
+  const bookingLayout = useMemo(() => {
+    const layout: Record<string, Record<string, { booking: Booking; rowSpan: number; isStart: boolean }>> = {}
+
+    bookings.forEach((booking) => {
+      const startIndex = timeSlots.indexOf(booking.starting_time)
+      const endIndex = timeSlots.indexOf(booking.ending_time)
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const rowSpan = endIndex - startIndex + 1
+
+        for (let i = startIndex; i <= endIndex; i++) {
+          const timeSlot = timeSlots[i]
+          if (!layout[booking.pc_no]) layout[booking.pc_no] = {}
+
+          layout[booking.pc_no][timeSlot] = {
+            booking,
+            rowSpan,
+            isStart: i === startIndex,
+          }
+        }
+      }
+    })
+
+    return layout
+  }, [bookings, timeSlots])
+
+  const handleSlotClick = (pc: string, time: string) => {
+    // Check if slot is already booked
+    const isBooked = bookingLayout[pc]?.[time]
+    if (!isBooked) {
+      setSelectedSlot({ pc, time })
+    }
+  }
+
+
+
 
   return (
     <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
-      {/* Header */}
+
       <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
         <div>
           <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
@@ -288,7 +226,6 @@ const BookingPage = () => {
           Add Gamer
         </Button>
       </div>
-
       {/* Filters */}
       <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
         {/* Game Type Filters */}
@@ -300,18 +237,16 @@ const BookingPage = () => {
                 setSelectedGameType(item?.name);
                 setRoomId(item?.id);
               }}
-              className={`${
-                selectedGameType === item?.name
-                  ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
-                  : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
-              }`}
+              className={`${selectedGameType === item?.name
+                ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
+                : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
+                }`}
             >
               <span
-                className={`${
-                  selectedGameType === item?.name
-                    ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
-                    : ""
-                }`}
+                className={`${selectedGameType === item?.name
+                  ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
+                  : ""
+                  }`}
               >
                 {item?.name?.toUpperCase()}
               </span>
@@ -342,67 +277,64 @@ const BookingPage = () => {
 
 
 
-
-
-
-
-      {/* BOOKING TABLE */}
-      <div className="w-full overflow-x-auto">
-        <div className="min-w-[800px] xl:min-h-[600px] bg-gray-100 border border-pink-500">
-          {/* Header */}
-          <div
-            className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200"
-            style={{ "--pc-count": providerBookings?.length } as React.CSSProperties}
-          >
-            <div className="p-4 border-r border-pink-200 bg-card">
-              <h3 className="font-semibold text-card-foreground">Time</h3>
-            </div>
-
-            {providerBookings?.map((item, index: number) => (
-              <div key={item.id} className="p-4 border-r border-pink-200 last:border-r-0 bg-card text-center">
-                <h3 className="font-semibold text-card-foreground">PC {index + 1}</h3>
-              </div>
-            ))}
+      <div className="w-full overflow-x-auto bg-background border border-border rounded-lg">
+        {/* Header */}
+        <div
+          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border"
+          style={{ "--pc-count": pcs.length } as React.CSSProperties}
+        >
+          <div className="p-4 border-r border-border bg-card">
+            <h3 className="font-semibold text-card-foreground">Time</h3>
           </div>
+          {pcs.map((pc) => (
+            <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
+              <h3 className="font-semibold text-card-foreground">{pc}</h3>
+            </div>
+          ))}
+        </div>
 
+        {/* Time slots grid */}
+        <div className="relative">
+          {timeSlots.map((time, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border last:border-b-0 min-h-[60px]"
+              style={{ "--pc-count": pcs.length } as React.CSSProperties}
+            >
+              {/* Time column */}
+              <div className="p-4 border-r border-border bg-muted/20 flex items-center">
+                <span className="text-sm font-medium text-muted-foreground">{time}</span>
+              </div>
 
+              {/* PC columns */}
+              {pcs.map((pc) => {
+                const slotData = bookingLayout[pc]?.[time]
+                const isBooked = !!slotData
+                const isBookingStart = slotData?.isStart
 
-
-
-
-
-          {/* Time slots grid */}
-          <div className="relative">
-            {providerBookings?.map((booking, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-pink-200 last:border-b-0 min-h-[60px]"
-                style={{ "--pc-count": providerBookings?.length } as React.CSSProperties}
-              >
-                {/* Time column */}
-                <div className="p-4 border-r border-pink-200 bg-muted/20 flex items-center">
-                  <span className="text-sm font-medium text-muted-foreground">{`${booking.starting_time}`}</span>
-                </div>
-
-                {/* Booking Data */}
-                {providerBookings.map((provider) => (
-                  <div
-                    key={provider.id}
-                    className={`p-4 border-r border-pink-200 ${provider.pc_no === booking.pc_no ? "bg-blue-500" : ""}`}
-                  >
-                    {provider.pc_no === booking.pc_no ? (
-                      <div className="flex flex-col text-center rounded-2xl p-2 m-2 text-white">
-                        <span>{provider.user.name}</span>
-                        <span>{`${booking.starting_time} - ${booking.ending_time}`}</span>
+                return (
+                  <div key={`${pc}-${time}`} className="border-r border-border last:border-r-0 relative min-h-[60px]">
+                    {isBooked && isBookingStart && (
+                      <div
+                        className={cn(
+                          "absolute inset-x-1 top-1 rounded-md border-2 p-3 z-10 flex flex-col justify-center",
+                          colorVariants[slotData.booking.color || "blue"],
+                        )}
+                        style={{
+                          height: `${slotData.rowSpan * 60 - 8}px`,
+                        }}
+                      >
+                        <div className="font-semibold text-sm mb-1">{slotData.booking?.user?.name}</div>
+                        <div className="text-xs opacity-90">
+                          {slotData.booking.starting_time} - {slotData.booking.ending_time}
+                        </div>
                       </div>
-                    ) : (
-                      ""
                     )}
                   </div>
-                ))}
-              </div>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
       </div>
     </div>
