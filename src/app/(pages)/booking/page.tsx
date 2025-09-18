@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
 
-type BookingStatus = "Ongoing" | "Upcoming" | "Completed" | "Canceled";
+
 
 interface BookingProps {
   id: number | string;
@@ -52,68 +52,13 @@ const BookingPage = () => {
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Upcoming");
   const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
 
+
+  const [timeSlots, setTimeSlots] = useState([])
+
+
+  const [bookings, setBookings] = useState<ProviderBookingProps[]>([])
   const [pcs, setPcs] = useState([])
-  const [timeSlots, setTimeSlots] = useState([
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-    "05:00 PM",
-    "06:00 PM",
-    "07:00 PM",
-    "08:00 PM",
-
-  ])
-
-  const [bookings, setBookings] = useState<ProviderBookingProps[]>([
-    {
-      id: "1",
-      user: {
-        id: 1,
-        name: "Lionel Messi",
-      },
-      starting_time: "10:00 AM",
-      ending_time: "12:00 PM",
-      pc_no: "PC 1",
-      color: "pink",
-    },
-    {
-      id: "2",
-      user: {
-        id: 2,
-        name: "Lionel Messi",
-      },
-      starting_time: "11:00 AM",
-      ending_time: "12:00 PM",
-      pc_no: "PC 2",
-      color: "pink",
-    },
-    {
-      id: "3",
-      user: {
-        id: 3,
-        name: "Lionel Messi",
-      },
-      starting_time: "11:00 AM",
-      ending_time: "02:00 PM",
-      pc_no: "PC 3",
-      color: "blue",
-    },
-    {
-      id: "4",
-      user: {
-        id: 4,
-        name: "Lionel Messi",
-      },
-      starting_time: "12:00 PM",
-      ending_time: "01:00 PM",
-      pc_no: "PC 4",
-      color: "pink",
-    },
-  ])
+  const numberArray = pcs.map(Number);
 
 
 
@@ -122,9 +67,9 @@ const BookingPage = () => {
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
-    room_id: roomId,
+    room_id: 1,
     status: selectedStatus,
-    date: "2025-09-18",
+    date: "2025-09-20",
   });
 
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
@@ -141,50 +86,25 @@ const BookingPage = () => {
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
       setProviderBookings(providerListData);
+      setBookings(providerListData);
+
       const newPcs = providerListData.map((item, index) => ` ${index + 1}`);
       setPcs(newPcs);
+
+      const timeData = providerListData?.map((item) => item.starting_time)
+      setTimeSlots(timeData)
     }
   }, [providerListData]);
 
 
 
 
-  const [selectedSlot, setSelectedSlot] = useState<{ pc: string; time: string } | null>(null)
 
-  // Calculate booking positions and spans
-  const bookingLayout = useMemo(() => {
-    const layout: Record<string, Record<string, { booking: Booking; rowSpan: number; isStart: boolean }>> = {}
 
-    bookings.forEach((booking) => {
-      const startIndex = timeSlots.indexOf(booking.starting_time)
-      const endIndex = timeSlots.indexOf(booking.ending_time)
+ 
+ 
 
-      if (startIndex !== -1 && endIndex !== -1) {
-        const rowSpan = endIndex - startIndex + 1
 
-        for (let i = startIndex; i <= endIndex; i++) {
-          const timeSlot = timeSlots[i]
-          if (!layout[booking.pc_no]) layout[booking.pc_no] = {}
-
-          layout[booking.pc_no][timeSlot] = {
-            booking,
-            rowSpan,
-            isStart: i === startIndex,
-          }
-        }
-      }
-    })
-
-    return layout
-  }, [bookings, timeSlots])
-
-  const handleSlotClick = (pc: string, time: string) => {
-    // Check if slot is already booked
-    const isBooked = bookingLayout[pc]?.[time]
-    if (!isBooked) {
-      setSelectedSlot({ pc, time })
-    }
-  }
 
 
 
@@ -273,6 +193,9 @@ const BookingPage = () => {
           ))}
         </div>
 
+
+
+
         {/* Time slots grid */}
         <div className="relative">
           {timeSlots.map((time, index) => (
@@ -286,33 +209,18 @@ const BookingPage = () => {
                 <span className="text-sm font-medium text-muted-foreground">{time}</span>
               </div>
 
-              {/* PC columns */}
-              {pcs.map((pc) => {
-                const slotData = bookingLayout[pc]?.[time]
-                const isBooked = !!slotData
-                const isBookingStart = slotData?.isStart
-
-                return (
-                  <div key={`${pc}-${time}`} className="border-r border-border last:border-r-0 relative min-h-[60px]">
-                    {isBooked && isBookingStart && (
-                      <div
-                        className={cn(
-                          "absolute inset-x-1 top-1 rounded-md border-2 p-3 z-10 flex flex-col justify-center",
-                          colorVariants[slotData.booking.color || "blue"],
-                        )}
-                        style={{
-                          height: `${slotData.rowSpan * 60 - 8}px`,
-                        }}
-                      >
-                        <div className="font-semibold text-sm mb-1">{slotData.booking?.user?.name}</div>
-                        <div className="text-xs opacity-90">
-                          {slotData.booking.starting_time} - {slotData.booking.ending_time}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+              {
+                providerListData.map((item, index) => {
+                  return (
+                    <div key={index} className="bg-gray-500 space-y-2 flex flex-col justify-center items-center">
+                      <p className="text-green-500 font-bold">{item?.id}</p>
+                      <p>{item?.user.name}</p>
+                      <p>{item.starting_time} - {item.ending_time}</p>
+                      <p>{item.pc_no}</p>
+                    </div>
+                  )
+                })
+              }
             </div>
           ))}
         </div>
