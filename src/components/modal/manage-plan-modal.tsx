@@ -16,20 +16,28 @@ interface FormData {
     stripe_price_id: string
 }
 
-type ManagePlanModalProps = {
-  open: boolean,
-  setIsOpen: (value: boolean) => void
-  planId: number
+type ManagePlanProps = {
+    open: boolean,
+    setIsOpen: (value: boolean) => void
+    planId: number | string
 }
 
 type SubscriptionProps = {
-    id : number | string
-    name : string
+    id: number | string
+    name: string
 }
 
 
-const ManagePlanModal = ({ open, setIsOpen, planId }:ManagePlanModalProps) => {
-    const [subscriptionType, setSubscriptionType] = useState<SubscriptionProps[]>([])
+type SubscriptionArrayProps = {
+    id: number | string
+    name: string
+    booking_number: string
+    price: string
+    stripe_price_id: string
+}
+
+const ManagePlanModal = ({ open, setIsOpen, planId }: ManagePlanProps) => {
+    const [subscriptionType, setSubscriptionType] = useState<string>("")
 
     const {
         register,
@@ -46,15 +54,16 @@ const ManagePlanModal = ({ open, setIsOpen, planId }:ManagePlanModalProps) => {
     })
 
 
-    const handlePlanChange = (planName) => {
-        setSubscriptionType(planName)
+    const handlePlanChange = (name: string) => {
+        setSubscriptionType(name)
     }
+
 
     // GET API
     const { data: getSubscription, } = useGetSubscriptionApiQuery({ skip: true })
     const subscriptionData = getSubscription?.data
 
-    const findData = subscriptionData.find((item) => item.id === planId)
+    const findData = subscriptionData.find((element: SubscriptionProps) => element.id === planId)
 
 
     // UPDATE API
@@ -69,7 +78,7 @@ const ManagePlanModal = ({ open, setIsOpen, planId }:ManagePlanModalProps) => {
             setValue("stripe_price_id", findData?.stripe_price_id);
             setSubscriptionType(findData.name)
         }
-    }, [findData,setValue])
+    }, [findData, setValue])
 
 
 
@@ -83,7 +92,7 @@ const ManagePlanModal = ({ open, setIsOpen, planId }:ManagePlanModalProps) => {
         formData.append("name", subscriptionType);
         formData.append("type", "recurring"); // STATIC TYPE SEND
         formData.append("booking_number", data?.booking_number);
-        formData.append("stripe_price_id", "prod_SoHLMdbG8xGxQL2");
+        formData.append("stripe_price_id", data.stripe_price_id);
         formData.append("price", data?.price);
         formData.append("_method", "PUT");
 
@@ -119,22 +128,22 @@ const ManagePlanModal = ({ open, setIsOpen, planId }:ManagePlanModalProps) => {
 
             {/* Plan Type Selection */}
             <div className="flex gap-2 mb-8">
-                {subscriptionData?.map((plan) => (
+                {subscriptionData?.map((item: SubscriptionArrayProps) => (
                     <Button
-                        key={plan.id}
-                        onClick={() => handlePlanChange(plan?.name)}
-                        className={`flex-1 ${plan?.name === subscriptionType
+                        key={item.id}
+                        onClick={() => handlePlanChange(item?.name)}
+                        className={`flex-1 ${item?.name === subscriptionType
                             ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-5"
                             : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-5"
                             }`}
                     >
                         <span
-                            className={`${plan?.name === subscriptionType
+                            className={`${item?.name === subscriptionType
                                 ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
                                 : ""
                                 }`}
                         >
-                            {plan?.name}
+                            {item?.name}
                         </span>
                     </Button>
                 ))}

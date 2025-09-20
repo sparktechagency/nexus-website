@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 
 const SubscriptionPage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [planId, setPlanId] = useState('')
+  const [planId, setPlanId] = useState<number | string>('')
 
   const { data: getSubscription, } = useGetSubscriptionApiQuery({ skip: true })
   const subscriptionData = getSubscription?.data
