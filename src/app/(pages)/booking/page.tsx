@@ -67,7 +67,7 @@ const BookingPage = () => {
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
-    room_id: 1,
+    room_id: 3,
     status: selectedStatus,
     date: "2025-09-20",
   });
@@ -95,16 +95,6 @@ const BookingPage = () => {
       setTimeSlots(timeData)
     }
   }, [providerListData]);
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -176,56 +166,53 @@ const BookingPage = () => {
 
 
 
-      <div className="w-full overflow-x-auto bg-background border border-border rounded-lg">
-        {/* Header */}
-        <div
-          className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border"
-          style={{ "--pc-count": pcs.length } as React.CSSProperties}
-        >
-          <div className="p-4 border-r border-border bg-card">
-            <h3 className="font-semibold text-card-foreground">Time</h3>
-          </div>
-          {/* PC NUMBER ==================== */}
-          {pcs.map((pc) => (
-            <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
-              <h3 className="font-semibold text-card-foreground">{pc}</h3>
-            </div>
-          ))}
-        </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+
+
+            <thead>
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 border-r border-gray-200">Time</th>
+                {
+                  pcs.map((item, index) => {
+                    return (
+                      <th key={index} className="px-6 py-4 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
+                        {item}
+                      </th>
+                    )
+                  })
+                }
+              </tr>
+            </thead>
 
 
 
-        {/* Time slots grid */}
-        <div className="relative">
-          {timeSlots.map((time, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-[120px_repeat(var(--pc-count),1fr)] border-b border-border last:border-b-0 min-h-[60px]"
-              style={{ "--pc-count": pcs.length } as React.CSSProperties}
-            >
-              {/* Time column */}
-              <div className="p-4 border-r border-border bg-muted/20 flex items-center">
-                <span className="text-sm font-medium text-muted-foreground">{time}</span>
-              </div>
-
-
-              {
-                providerListData.map((item, index) => {
-                  return (
-                    <div key={index} className="bg-gray-500 space-y-2 flex flex-col justify-center items-center">
-                      <p className="text-green-500 font-bold">{item?.id}</p>
-                      <p>{item?.user.name}</p>
-                      <p>{item.starting_time} - {item.ending_time}</p>
-                      <p>{item.pc_no}</p>
-                    </div>
-                  )
-                })
-              }
-            </div>
-          ))}
+            {/* TABLE BODY */}
+            <tbody>
+              {providerListData?.map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                    }`}
+                >
+                  <td className="px-6 py-4 border-r border-gray-200 ">
+                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">{item.starting_time}</span>
+                  </td>
+                  <td className="flex flex-col bg-gray-400 m-1  text-center px-6 py-4 border border-gray-200">
+                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">PC : {item?.pc_no}</span>
+                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">{item?.user?.name}</span>
+                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">Duration : {item?.duration}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      
+
+
     </div>
   );
 };

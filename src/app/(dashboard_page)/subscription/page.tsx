@@ -3,10 +3,17 @@
 import CustomModal from '@/components/modal/customModal'
 import ManagePlanModal from '@/components/modal/manage-plan-modal'
 import { Button } from '@/components/ui/button'
+import { useGetSubscriptionApiQuery } from '@/redux/dashboard/subscription/subscirptionApi'
 import React, { useState } from 'react'
 
 const SubscriptionPage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [planId, setPlanId] = useState('')
+
+  const { data: getSubscription, } = useGetSubscriptionApiQuery({ skip: true })
+  const subscriptionData = getSubscription?.data
+
+
 
   return (
     <div className='max-w-[50vw] mx-auto pt-8'>
@@ -21,7 +28,9 @@ const SubscriptionPage = () => {
 
           </div>
           <h3 className="text-black text-lg font-semibold mb-1">Basic Plan</h3>
-          <p className="text-black text-sm mb-4">$5643.00/monthly</p>
+          {
+            subscriptionData && <p className="text-black text-sm mb-4">${subscriptionData[0]?.price}/monthly</p>
+          }
 
           <ul className="text-left text-black text-sm space-y-2 mb-6">
             <li>• Up to 5 PC bookings per day.</li>
@@ -30,7 +39,10 @@ const SubscriptionPage = () => {
           </ul>
 
           <Button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen),
+                setPlanId(subscriptionData[0]?.id)
+            }}
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
             Manage plan
           </Button>
@@ -52,7 +64,9 @@ const SubscriptionPage = () => {
 
           </div>
           <h3 className="text-black text-lg font-semibold mb-1">Standard Plan</h3>
-          <p className="text-black text-sm mb-4">$5643.00/monthly</p>
+          {
+            subscriptionData && <p className="text-black text-sm mb-4">${subscriptionData[1]?.price}/monthly</p>
+          }
 
           <ul className="text-left text-black text-sm space-y-2 mb-6">
             <li>• Up to 50 PC bookings per day.</li>
@@ -62,7 +76,11 @@ const SubscriptionPage = () => {
           </ul>
 
           <Button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen),
+                setPlanId(subscriptionData[1]?.id)
+            }
+            }
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
             Manage plan
           </Button>
@@ -95,8 +113,10 @@ const SubscriptionPage = () => {
 
           </div>
           <h3 className="text-black text-lg font-semibold mb-1">Premium Plan</h3>
-          <p className="text-black text-sm mb-4">$5643.00/monthly</p>
+          {
+            subscriptionData && <p className="text-black text-sm mb-4">${subscriptionData[2]?.price}/monthly</p>
 
+          }
           <ul className="text-left text-black text-sm space-y-2 mb-6">
             <li>• Unlimited bookings.</li>
             <li>• Priority placement.</li>
@@ -106,7 +126,10 @@ const SubscriptionPage = () => {
           </ul>
 
           <Button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen),
+              setPlanId(subscriptionData[2]?.id)
+            }}
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
             Manage plan
           </Button>
@@ -124,7 +147,11 @@ const SubscriptionPage = () => {
         className={"p-0 max-h-[0vh]"}
         maxWidth={"md:!max-w-[40vw]"}
       >
-        <ManagePlanModal />
+        <ManagePlanModal
+          open={isOpen}
+          setIsOpen={setIsOpen}
+          planId={planId}
+        />
       </CustomModal>
     </div>
   )

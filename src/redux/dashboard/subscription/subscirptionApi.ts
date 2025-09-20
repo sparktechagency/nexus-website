@@ -4,16 +4,24 @@ import { baseApi } from "@/redux/api/baseApi";
 
 const subscriptionApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        Api: builder.query({
+        getSubscriptionApi: builder.query({
             query: () => ({
-                url: ``,
+                url: `/plans`,
                 method: "GET",
             }),
             providesTags: ['subscription'],
         }),
+        updateSubscriptionApi: builder.mutation({
+            query: ({id, updateSubscriptionInfo}) => ({
+                url: `/admin/plans/${id}`,
+                method: "POST",
+                body:updateSubscriptionInfo
+            }),
+            invalidatesTags: ['subscription'],
+        }),
     }),
-       overrideExisting: true
+    overrideExisting: true
 })
 
 
-export const {  } = subscriptionApi;
+export const { useGetSubscriptionApiQuery, useUpdateSubscriptionApiMutation } = subscriptionApi;

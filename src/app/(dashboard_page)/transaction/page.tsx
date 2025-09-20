@@ -5,6 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PremiumIcon, StandardIcon, StarIcon } from "@/components/custom-icons"
 import { useGetTransitionApiQuery } from "@/redux/dashboard/transection/transitionApi"
+import { useEffect, useState } from "react"
+import DashboardLoader from "@/components/DashboardLoader"
+import CustomPagination from "@/components/customPagination/CustomPagination"
 
 
 
@@ -63,11 +66,22 @@ const subscriptionData = [
 
 const TransactionPage = () => {
 
-  const { data: getTransition, } = useGetTransitionApiQuery({ skip: true })
-  const totalBasicPlanData = getTransition?.data?.total_basic_plan
-  const totalStandardPlanData = getTransition?.data?.total_standard_plan
-  const totalPremiumPlanData = getTransition?.data?.total_premium_plan
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(8)
+
+
+
+  const { data: getTransition, isLoading, refetch, } = useGetTransitionApiQuery({ per_page: perPage, page: currentPage })
+  const totalBasicPlanData = getTransition?.data?.total_basic_plan || 0
+  const totalStandardPlanData = getTransition?.data?.total_standard_plan || 0
+  const totalPremiumPlanData = getTransition?.data?.total_premium_plan || 0
   const transitionData = getTransition?.data?.transactions?.data
+
+  const totalItems = getTransition?.data?.total
+  const totalPages = Math.ceil(totalItems / perPage)
+
+
+console.log(transitionData)
 
   const planData = [
     { name: "Basic Plan", count: totalBasicPlanData, color: "text-yellow-400", icon: <StarIcon /> },
@@ -75,6 +89,14 @@ const TransactionPage = () => {
     { name: "Premium Plan", count: totalPremiumPlanData, color: "text-yellow-400", icon: <PremiumIcon /> },
   ]
 
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, perPage, refetch]);
+
+  if (isLoading) {
+    return <DashboardLoader />
+  }
 
 
 
@@ -120,39 +142,38 @@ const TransactionPage = () => {
 
 
             <TableBody>
-              {subscriptionData.map((subscription) => (
+              {transitionData?.map((item) => (
                 <TableRow
-                  key={subscription.id}
+                  key={item.id}
                   className="text-[#ffff] border-none hover:bg-transparent cursor-pointer"
                 >
                   <TableCell className="pb-6">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={subscription.avatar || "/placeholder.svg"} alt={subscription.provider} />
-                        <AvatarFallback className="bg-slate-700 text-white text-sm">
-                          {subscription.provider.charAt(0)}
-                        </AvatarFallback>
+                        <AvatarImage src={item?.provider?.avatar} alt="photo" />
                       </Avatar>
-                      <span className="text-white font-medium">{subscription.provider}</span>
+                      <span className="text-white font-medium">{item?.provider?.name}</span>
                     </div>
                   </TableCell>
+
+
                   <TableCell className="pb-6">
-                    <span className="text-slate-300">{subscription.contact}</span>
+                    <span className="text-slate-300">{item?.provider?.email}</span>
                   </TableCell>
 
 
 
                   <TableCell >
-                    <button className={`${subscription.planType === "Basic"
+                    <button className={`${item.plan.name === "Basic"
                       ? "bg-[#4a403b] px-3 py-1 rounded-full"
-                      : subscription.planType === "Premium"
+                      : item.plan.name === "Premium"
                         ? "bg-[#472e22] px-3 py-1 rounded-full"
                         : "bg-[#481830] px-3 py-1 rounded-full"
-                      }`}>{subscription.planType}</button>
+                      }`}>{item.plan.name}</button>
                   </TableCell>
 
                   <TableCell className="pb-6">
-                    <span className="text-slate-300">{subscription.date}</span>
+                    <span className="text-slate-300">{item.created_at}</span>
                   </TableCell>
                 </TableRow>
               ))}
@@ -160,6 +181,15 @@ const TransactionPage = () => {
           </Table>
         </div>
       </div>
+
+
+
+      {/* PAGINATION COMPONENT */}
+      <CustomPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   )
 }
