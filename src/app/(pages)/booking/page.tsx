@@ -101,8 +101,7 @@ const BookingPage = () => {
 
 
 
- 
- 
+
 
 
 
@@ -186,13 +185,13 @@ const BookingPage = () => {
           <div className="p-4 border-r border-border bg-card">
             <h3 className="font-semibold text-card-foreground">Time</h3>
           </div>
+          {/* PC NUMBER ==================== */}
           {pcs.map((pc) => (
             <div key={pc} className="p-4 border-r border-border last:border-r-0 bg-card text-center">
               <h3 className="font-semibold text-card-foreground">{pc}</h3>
             </div>
           ))}
         </div>
-
 
 
 
@@ -208,6 +207,7 @@ const BookingPage = () => {
               <div className="p-4 border-r border-border bg-muted/20 flex items-center">
                 <span className="text-sm font-medium text-muted-foreground">{time}</span>
               </div>
+
 
               {
                 providerListData.map((item, index) => {
@@ -225,6 +225,7 @@ const BookingPage = () => {
           ))}
         </div>
       </div>
+      
     </div>
   );
 };
