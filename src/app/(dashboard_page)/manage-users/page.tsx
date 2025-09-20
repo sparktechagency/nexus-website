@@ -48,9 +48,9 @@ const ManageUserPage = () => {
 
 
   const handleNavigate = (value: string) => {
-    if (value === 'User') {
+    if (value === 'USER') {
       router.push('/manage-user')
-    } else if (value === 'Provider') {
+    } else if (value === 'PROVIDER') {
       router.push('/manage-provider')
     }
   }
@@ -73,7 +73,7 @@ const ManageUserPage = () => {
   return (
     <>
       <div className="text-[#fff] mb-6 pt-4 ">
-
+sfdf
         <div className="h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4  bg-transparent" />
