@@ -49,9 +49,9 @@ const ManageUserPage = () => {
 
   const handleNavigate = (value: string) => {
     if (value === 'USER') {
-      router.push('/manage-user')
+      router.push('/dashboard/manage-user')
     } else if (value === 'PROVIDER') {
-      router.push('/manage-provider')
+      router.push('/dashboard/manage-provider')
     }
   }
 

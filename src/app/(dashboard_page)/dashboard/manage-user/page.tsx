@@ -129,7 +129,7 @@ const ManageUserPage = () => {
 
                     <div className="flex justify-between pb-10">
                         <h2 className="text-3xl font-bold ">Providers list who earn money</h2>
-                        <Link href='/manage-user-list'>
+                        <Link href='/dashboard/manage-user-list'>
                             <p className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
                                 View all
                             </p>

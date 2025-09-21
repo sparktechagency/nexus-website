@@ -37,7 +37,7 @@ export const data = {
   projects: [
     {
       name: "Dashboard",
-      url: "dashboard",
+      url: "",
       icon: DashboardIcon,
     },
     {
@@ -71,19 +71,19 @@ export const data = {
         {
           title: "Personal details",
           description: "Update Account Security Credentials",
-          url: "personal-details",
+          url: "dashboard/personal-details",
           icon: SettingIcon,
         },
         {
           title: "Terms & Conditions",
           description: "Legal Policies and Agreements",
-          url: "terms-and-conditions",
+          url: "dashboard/terms-and-conditions",
           icon: SettingIcon,
         },
         {
           title: "Privacy policy",
           description: "Company Information and Background",
-          url: "privacy-policy",
+          url: "dashboard/privacy-policy",
           icon: SettingIcon,
         }
         ,

@@ -26,7 +26,7 @@ const SiteHeader = () => {
 
 
   const handleNotification = () => {
-    router.push("/notification");
+    router.push("/dashboard/notification");
   };
 
   const handleBack = () => {

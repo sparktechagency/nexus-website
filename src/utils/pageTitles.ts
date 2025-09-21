@@ -19,56 +19,56 @@ export const pageTitles: Record<string, PageTitleConfig> = {
     title: "Welcome Pauls,",
     icon: DashboardOverviewIcon,
   },
-  "/manage-users": {
+  "/dashboard/manage-users": {
     title: "Manage User",
     subtitle: "Here you can manage all the users & delete which one you like.",
   },
-  "/manage-user": {
+  "/dashboard/manage-user": {
     title: "User Profile",
     subtitle: "Here you can see details of the user.",
     backIcon:BackIcon,
   },
-  "/manage-user-list": {
+  "/dashboard/manage-user-list": {
     title: "Providers list who earn money",
     backIcon:BackIcon,
   },
 
-  "/manage-provider": {
+  "/dashboard/manage-provider": {
     title: "Service Provider Profile",
     subtitle: "Here you can see progress of the service provider.",
     backIcon:BackIcon,
   },
-  "/manage-provider-list": {
+  "/dashboard/manage-provider-list": {
     title: "Gamers list who book gaming zone",
     backIcon:BackIcon,
   },
 
-  "/zone-listing": {
+  "/dashboard/zone-listing": {
     title: "Zone listing",
     subtitle: "You can see the zone details added by service providers.",
   },
-  "/transaction": {
+  "/dashboard/transaction": {
     title: "Transaction",
     subtitle: "Admin can track the providers who buy the subscription plan",
   },
-  "/subscription": {
+  "/dashboard/subscription": {
     title: "Subscription Plan",
     subtitle: "Manage your subscription play which was created for  service providers.",
     backIcon:BackIcon,
   },
-  "/personal-details": {
+  "/dashboard/personal-details": {
     title: "Personal Details",
     subtitle: "You can update your personal information.",
   },
-  "/terms-and-conditions": {
+  "/dashboard/terms-and-conditions": {
     title: "Terms & Conditions",
     subtitle: "Here you can update terms & conditions for both of users.",
   },
-  "/privacy-policy": {
+  "/dashboard/privacy-policy": {
     title: "Privacy Policy",
     subtitle: "Here you can update privacy policy for both of users.",
   },
-  "/notification": {
+  "/dashboard/notification": {
     title: "Notifications",
     backIcon:BackIcon,
   },
