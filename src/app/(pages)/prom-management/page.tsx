@@ -24,6 +24,11 @@ interface PromoCodeProps {
     is_active: boolean
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
 
 export default function PromoManagement() {
     const router = useRouter()
@@ -32,7 +37,8 @@ export default function PromoManagement() {
     const [isAddPromoInof, setIsAddPromoInof] = useState<boolean>(false)
     const [viewPromoId, setViewPromoId] = useState<number | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
-    const [perPage, setPerPage] = useState(12)
+
+    const perPage = 12
 
 
 
@@ -55,7 +61,7 @@ export default function PromoManagement() {
 
 
     // delete promo
-    const handleDeletePromo = async (id: number | any) => {
+    const handleDeletePromo = async (id: number | string) => {
         try {
             const res = await deletePromoApi(id).unwrap();
 
@@ -64,9 +70,10 @@ export default function PromoManagement() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }
@@ -88,9 +95,10 @@ export default function PromoManagement() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+           const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     };

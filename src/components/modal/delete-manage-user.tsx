@@ -4,7 +4,6 @@
 
 import { Button } from "@/components/ui/button"
 import { useDeleteUserApiMutation, useGetUserApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi";
-import { skip } from "node:test";
 import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
 
@@ -46,7 +45,7 @@ const DeleteManageUser = ({ open, setIsOpen, deleteId }: DeleteManageUserProps) 
             <div className="flex justify-center items-center gap-4 mb-8 mt-16">
                 <Button
                     onClick={() => {
-                        setIsOpen(!open),
+                        setIsOpen(!open);
                             handleDeletRole()
                     }}
                     className="w-[40%] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"

@@ -18,7 +18,7 @@ type RoomFormValues = {
     opening_time: string
     closing_time: string
     address: string
-  
+
 }
 
 interface RegisterFormInputs {
@@ -28,6 +28,15 @@ interface RegisterFormInputs {
     retype_password: string
     terms: boolean
 }
+
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
+
+
 
 export default function RegisterModal({ registerData }: { registerData: RegisterFormInputs }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -68,7 +77,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
         setValue("roomImage", {} as FileList)
     }
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data:RoomFormValues) => {
 
         const formData = new FormData();
 
@@ -99,9 +108,10 @@ export default function RegisterModal({ registerData }: { registerData: Register
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors:any) {
-            if (errors) {
-                toast.error(errors.data?.message )
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
 

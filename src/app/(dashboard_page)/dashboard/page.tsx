@@ -8,24 +8,6 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { useGetDashboardHomeApiQuery } from "@/redux/dashboard/dashboardHome/dashboardHomeApi"
 
 
-
-const revenueData = [
-  { day: "Mon", value: 2000 },
-  { day: "Tue", value: 3200 },
-  { day: "Wed", value: 2800 },
-  { day: "Thu", value: 4500 },
-  { day: "Fri", value: 4200 },
-  { day: "Sat", value: 4400 },
-  { day: "Sun", value: 3800 },
-]
-
-const monthlyRevenueData = [
-  { day: "Week 1", value: 15000 },
-  { day: "Week 2", value: 22000 },
-  { day: "Week 3", value: 18000 },
-  { day: "Week 4", value: 28000 },
-]
-
 export default function DashboardPage() {
   const [timeframe, setTimeframe] = useState<"weekly" | "monthly">("weekly")
 

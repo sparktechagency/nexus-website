@@ -32,7 +32,7 @@ const UserList = () => {
     const router = useRouter()
     const [searchText, setSearchText] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
-    const [perPage, setPerPage] = useState(8)
+    const perPage = 8
 
 
     const { data: getUserList, isLoading, refetch } = useGetUserListApiQuery({ per_page: perPage, search: searchText, page: currentPage })

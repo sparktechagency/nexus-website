@@ -33,7 +33,7 @@ const ManageUserPage = () => {
   const [deleteId, setDeleteId] = useState<string | number>('')
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(6)
+  const perPage = 6
 
 
 
@@ -73,7 +73,7 @@ const ManageUserPage = () => {
   return (
     <>
       <div className="text-[#fff] mb-6 pt-4 ">
-sfdf
+
         <div className="h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6 ">
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4  bg-transparent" />
@@ -123,7 +123,7 @@ sfdf
                   {/* delete */}
                   <svg
                     onClick={() => {
-                      setIsDelete(!isDelete),
+                      setIsDelete(!isDelete);
                         handleDeleteUser(user?.id)
                     }}
                     className="cursor-pointer"

@@ -36,6 +36,12 @@ type SubscriptionArrayProps = {
     stripe_price_id: string
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 const ManagePlanModal = ({ open, setIsOpen, planId }: ManagePlanProps) => {
     const [subscriptionType, setSubscriptionType] = useState<string>("")
 
@@ -78,7 +84,7 @@ const ManagePlanModal = ({ open, setIsOpen, planId }: ManagePlanProps) => {
             setValue("stripe_price_id", findData?.stripe_price_id);
             setSubscriptionType(findData.name)
         }
-    }, [findData, setValue])
+    }, [findData, setValue,subscriptionData])
 
 
 
@@ -107,9 +113,10 @@ const ManagePlanModal = ({ open, setIsOpen, planId }: ManagePlanProps) => {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
 

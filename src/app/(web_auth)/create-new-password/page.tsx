@@ -23,6 +23,12 @@ type CreateNewPasswordInputs = {
     terms: boolean
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function CreateNewPasswordPage() {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
@@ -44,7 +50,7 @@ export default function CreateNewPasswordPage() {
 
 
 
-    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data : any) => {
+    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
         const formData = new FormData();
 
         formData.append("current_password", data?.current_password);
@@ -61,9 +67,10 @@ export default function CreateNewPasswordPage() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }
@@ -106,7 +113,7 @@ export default function CreateNewPasswordPage() {
                 <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
                     <div
                         className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm rounded-xl"
-                    
+
                     >
                         <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
                             <Image
@@ -144,7 +151,7 @@ export default function CreateNewPasswordPage() {
                                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                             className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
                                         >
-                                            {showCurrentPassword? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
                                     </div>
                                     {errors.current_password && <p className="text-red-500 text-sm">{errors.current_password.message}</p>}

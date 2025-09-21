@@ -21,6 +21,13 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForgotPasswordApiMutation, useVerifyOtpApiMutation } from "@/redux/authontication/authApi"
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
+
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function DashboardVerifyOtpPage() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
@@ -104,9 +111,10 @@ export default function DashboardVerifyOtpPage() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }
@@ -126,9 +134,10 @@ export default function DashboardVerifyOtpPage() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+           const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
 

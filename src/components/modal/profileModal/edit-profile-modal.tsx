@@ -21,6 +21,12 @@ type FormValues = {
     phone: string
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function EditProfileModal({ open, setIsOpen }: { open: boolean, setIsOpen: (open: boolean) => void }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -104,9 +110,10 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+             const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
 

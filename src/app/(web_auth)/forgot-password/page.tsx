@@ -19,6 +19,12 @@ type ForgotInput = {
     password: string
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function ForgotPage() {
 const router = useRouter()
 
@@ -53,9 +59,10 @@ const [forgotPasswordApi, { isLoading }] = useForgotPasswordApiMutation()
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }

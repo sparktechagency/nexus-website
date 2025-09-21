@@ -1,7 +1,7 @@
 "use client"
 
 import { CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PremiumIcon, StandardIcon, StarIcon } from "@/components/custom-icons"
 import { useGetTransitionApiQuery } from "@/redux/dashboard/transection/transitionApi"
@@ -9,65 +9,25 @@ import { useEffect, useState } from "react"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
 
+interface transitionProps {
+  id: string
+  provider: {
+    avatar: File
+    name: string
+    email: string
+  }
+  plan: {
+    name: string
+  }
+  created_at: string
 
-
-
-const subscriptionData = [
-  {
-    id: 1,
-    provider: "Abir",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "abid32@gmail.com",
-    planType: "Basic",
-    date: "12/01/23",
-  },
-  {
-    id: 2,
-    provider: "Maksud",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "user123@example.com",
-    planType: "Standard",
-    date: "12/01/23",
-  },
-  {
-    id: 3,
-    provider: "Arjun",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "hello@creativeoutlook.com",
-    planType: "Premium",
-    date: "12/02/23",
-  },
-  {
-    id: 4,
-    provider: "Sita",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "info@innovativeideas.com",
-    planType: "Basic",
-    date: "12/03/23",
-  },
-  {
-    id: 5,
-    provider: "Kiran",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "support@techsolutions.com",
-    planType: "Standard",
-    date: "12/04/23",
-  },
-  {
-    id: 6,
-    provider: "Kiran",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    contact: "support@techsolutions.com",
-    planType: "Premium",
-    date: "12/05/23",
-  },
-]
+}
 
 
 const TransactionPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(8)
+  const perPage = 8
 
 
 
@@ -75,13 +35,13 @@ const TransactionPage = () => {
   const totalBasicPlanData = getTransition?.data?.total_basic_plan || 0
   const totalStandardPlanData = getTransition?.data?.total_standard_plan || 0
   const totalPremiumPlanData = getTransition?.data?.total_premium_plan || 0
-  const transitionData = getTransition?.data?.transactions?.data
+  const transitionData: transitionProps[] = getTransition?.data?.transactions?.data
 
   const totalItems = getTransition?.data?.total
   const totalPages = Math.ceil(totalItems / perPage)
 
 
-console.log(transitionData)
+  console.log(transitionData)
 
   const planData = [
     { name: "Basic Plan", count: totalBasicPlanData, color: "text-yellow-400", icon: <StarIcon /> },

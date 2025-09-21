@@ -12,15 +12,6 @@ import DeleteRoom from "@/components/modal/roomsModal/delete-room"
 import AddNewRoom from "@/components/modal/roomsModal/add-new-room"
 import EditRoom from "@/components/modal/roomsModal/edit-room"
 import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
 import WebEmptyData from "@/components/WebEmptyData"
@@ -42,7 +33,7 @@ const RoomPage = () => {
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [editId, setEditId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [perPage, setPerPage] = useState(8)
+  const perPage = 8
 
   const { data: getRoom, isLoading, refetch } = useGetRoomApiQuery({ per_page: perPage, page: currentPage })
   const roomData: RoomProps[] = getRoom?.data?.data
@@ -132,7 +123,7 @@ const RoomPage = () => {
                       <div className="flex justify-center gap-3">
                         <button
                           onClick={() => {
-                            setIsDeleteRoom(!isDeleteRoom),
+                            setIsDeleteRoom(!isDeleteRoom);
                               handleDeleteRoom(item?.id)
                           }}
                           className="cursor-pointer">
@@ -144,7 +135,7 @@ const RoomPage = () => {
 
                         <button
                           onClick={() => {
-                            setIsEditRoom(!isEditRoom),
+                            setIsEditRoom(!isEditRoom);
                               handleUpdateRoom(item?.id)
                           }}
                           className="cursor-pointer">

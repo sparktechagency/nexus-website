@@ -18,6 +18,12 @@ type CreateNewPasswordInputs = {
   retype_password: string
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 const EditProfile = ({ open, setIsOpen }: { open: boolean, setIsOpen: (value: boolean) => void }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -53,10 +59,11 @@ const EditProfile = ({ open, setIsOpen }: { open: boolean, setIsOpen: (value: bo
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors.data?.message)
-      }
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+            }
     }
 
 

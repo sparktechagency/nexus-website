@@ -23,6 +23,12 @@ type LoginFormInputs = {
   password: string
 }
 
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
@@ -38,7 +44,7 @@ export default function LoginPage() {
   } = useForm<LoginFormInputs>()
 
   // Handle form submit
-  const onSubmit: SubmitHandler<LoginFormInputs> = async (data : any) => {
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
 
     const formData = new FormData();
     formData.append("email", data?.email);
@@ -69,10 +75,11 @@ export default function LoginPage() {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors?.data?.message)
-      }
+    } catch (errors) {
+       const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+            }
     }
 
 

@@ -22,11 +22,17 @@ type RoomFormValues = {
 }
 
 type RoomStateProps = {
-  open : boolean,
-  setIsOpen : (value:boolean)=>void
+  open: boolean,
+  setIsOpen: (value: boolean) => void
 }
 
-const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
+interface ApiError {
+  data: {
+    message: string;
+  };
+}
+
+const AddNewRoom = ({ open, setIsOpen }: RoomStateProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
@@ -83,9 +89,10 @@ const AddNewRoom = ({open,setIsOpen}:RoomStateProps) => {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors.data?.message)
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
       }
     }
   }

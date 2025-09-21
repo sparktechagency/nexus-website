@@ -40,7 +40,7 @@ const SubscriptionPage = () => {
 
           <Button
             onClick={() => {
-              setIsOpen(!isOpen),
+              setIsOpen(!isOpen);
                 setPlanId(subscriptionData[0]?.id)
             }}
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
@@ -77,7 +77,7 @@ const SubscriptionPage = () => {
 
           <Button
             onClick={() => {
-              setIsOpen(!isOpen),
+              setIsOpen(!isOpen);
                 setPlanId(subscriptionData[1]?.id)
             }
             }
@@ -127,7 +127,7 @@ const SubscriptionPage = () => {
 
           <Button
             onClick={() => {
-              setIsOpen(!isOpen),
+              setIsOpen(!isOpen);
               setPlanId(subscriptionData[2]?.id)
             }}
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">

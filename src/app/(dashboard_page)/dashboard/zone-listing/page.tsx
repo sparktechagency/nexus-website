@@ -30,7 +30,7 @@ const ZoneListingPage = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetailsId, setViewDetailsId] = useState<string | number>('')
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(8)
+  const perPage  = 8
 
 
 
@@ -103,7 +103,7 @@ const ZoneListingPage = () => {
                   <TableCell>
                     <svg
                       onClick={() => {
-                        setIsOpen(!isOpen),
+                        setIsOpen(!isOpen);
                           handleViewDetails(item?.id)
                       }}
                       width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

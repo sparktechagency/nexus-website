@@ -25,6 +25,13 @@ interface RatingProfileData {
   created_at: string
 }
 
+
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 export default function WebProfilePage() {
   const [isEdit, setIsEdit] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -58,7 +65,7 @@ export default function WebProfilePage() {
     fileInputRef.current?.click()
   }
 
-  const handleImageChange = async (e: any) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -85,9 +92,10 @@ export default function WebProfilePage() {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors.data?.message)
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
       }
     }
 

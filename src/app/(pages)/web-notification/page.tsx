@@ -23,13 +23,18 @@ interface NotificationItem {
     created_time: string
 }
 
-
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
 
 
 const WebNotificationPage = () => {
     const router = useRouter()
     const [currentPage, setCurrentPage] = useState(1);
-    const [perPage, setPerPage] = useState(8)
+
+    const perPage = 8
 
 
     const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage ?? 5, page: currentPage ?? 1 })
@@ -45,7 +50,7 @@ const WebNotificationPage = () => {
 
 
     // Handle single notification
-    const handleNotificationId = async (id: string | any) => {
+    const handleNotificationId = async (id: string | number) => {
         try {
             const res = await singleNotification(id).unwrap();
             console.log(res)
@@ -55,9 +60,10 @@ const WebNotificationPage = () => {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }
@@ -75,9 +81,10 @@ const WebNotificationPage = () => {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }

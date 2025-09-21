@@ -55,6 +55,7 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
     const dateStr = startDate || new Date()
     const date = new Date(dateStr);
     const formattedDate = date.toISOString().split('T')[0];
+    console.log(formattedDate)
 
     // const formData = new FormData();
     // formData.append("promo_code", data.promo_code);

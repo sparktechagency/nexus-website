@@ -22,6 +22,12 @@ type LoginFormInputs = {
   password: string
 }
 
+interface ApiError {
+  data: {
+    message: string;
+  };
+}
+
 const DashboardLoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
@@ -29,9 +35,8 @@ const DashboardLoginPage = () => {
   // React Hook Form setup
   const {
     register,
-    reset,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<LoginFormInputs>()
 
 
@@ -40,7 +45,7 @@ const DashboardLoginPage = () => {
   const [loginApi, { isLoading }] = useLoginApiMutation()
 
   // Handle form submit
-  const onSubmit: SubmitHandler<LoginFormInputs> = async (data: any) => {
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
 
     const formData = new FormData();
     formData.append("email", data?.email);
@@ -71,9 +76,10 @@ const DashboardLoginPage = () => {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors?.data?.message)
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
       }
     }
   }

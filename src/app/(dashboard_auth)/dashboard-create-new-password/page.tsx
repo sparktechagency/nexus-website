@@ -21,6 +21,12 @@ type CreateNewPasswordInputs = {
     retype_password: string
     terms: boolean
 }
+interface ApiError {
+    data: {
+        message: string;
+    };
+}
+
 
 export default function DashboardCreateNewPasswordPage() {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -43,7 +49,7 @@ export default function DashboardCreateNewPasswordPage() {
 
 
 
-    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data : any) => {
+    const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
         const formData = new FormData();
 
         formData.append("current_password", data?.current_password);
@@ -60,9 +66,10 @@ export default function DashboardCreateNewPasswordPage() {
             } else {
                 toast.error(res?.messages)
             }
-        } catch (errors: any) {
-            if (errors) {
-                toast.error(errors.data?.message)
+        } catch (errors) {
+            const errorValue = errors as ApiError;
+            if (errorValue?.data?.message) {
+                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
         }
     }
@@ -95,7 +102,7 @@ export default function DashboardCreateNewPasswordPage() {
 
 
 
-                         <form onSubmit={handleSubmit(onSubmit)}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <CardContent className="space-y-6 px-6 pb-6">
 
                                 {/* Password */}
@@ -115,7 +122,7 @@ export default function DashboardCreateNewPasswordPage() {
                                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                             className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
                                         >
-                                            {showCurrentPassword? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
                                     </div>
                                     {errors.current_password && <p className="text-red-500 text-sm">{errors.current_password.message}</p>}

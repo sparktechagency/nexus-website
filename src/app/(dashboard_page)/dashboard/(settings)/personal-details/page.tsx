@@ -22,10 +22,15 @@ type RoomFormValues = {
   address: string
 
 }
+interface ApiError {
+  data: {
+    message: string;
+  };
+}
 
 export default function PersonalDetailsPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
 
   const {
     register,
@@ -41,7 +46,7 @@ export default function PersonalDetailsPage() {
   const profileData = getProfile?.data
 
   const [editSinglePhotoProfileApi,] = useEditSinglePhotoProfileApiMutation()
-  const [editProfileApi,{ isLoading: UpdateLoading } ] = useEditProfileApiMutation()
+  const [editProfileApi, { isLoading: UpdateLoading }] = useEditProfileApiMutation()
 
   const [profileImage, setProfileImage] = useState(profileData?.avatar || "http://103.186.20.114:8011/uploads/users/default_avatar.png")
 
@@ -61,7 +66,7 @@ export default function PersonalDetailsPage() {
   }, [profileData?.avatar])
 
 
-  const handleImageChange = async (e: any) => {
+  const handleImageChange = async (e:React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -89,9 +94,10 @@ export default function PersonalDetailsPage() {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors.data?.message)
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
       }
     }
 
@@ -99,7 +105,6 @@ export default function PersonalDetailsPage() {
 
   const removeImage = () => {
     setImagePreview(null)
-    setSelectedFile(null)
     setValue("avatar", {} as FileList)
   }
 
@@ -107,7 +112,7 @@ export default function PersonalDetailsPage() {
 
 
 
-  const onSubmit = async(data: RoomFormValues) => {
+  const onSubmit = async (data: RoomFormValues) => {
     const formData = new FormData();
 
     formData.append("name", data?.name);
@@ -123,9 +128,10 @@ export default function PersonalDetailsPage() {
       } else {
         toast.error(res?.messages)
       }
-    } catch (errors: any) {
-      if (errors) {
-        toast.error(errors.data?.message)
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
       }
     }
 
