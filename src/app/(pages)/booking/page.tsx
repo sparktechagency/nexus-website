@@ -50,14 +50,16 @@ const BookingPage = () => {
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Upcoming");
+
+
   const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
 
 
-  const [timeSlots, setTimeSlots] = useState([])
+  const [timeSlots, setTimeSlots] = useState([]) // time data 
+  const [pcs, setPcs] = useState([]) // pc data
+  const [bookings, setBookings] = useState<ProviderBookingProps[]>([])  // booking data
 
 
-  const [bookings, setBookings] = useState<ProviderBookingProps[]>([])
-  const [pcs, setPcs] = useState([])
   const numberArray = pcs.map(Number);
 
 
@@ -97,7 +99,36 @@ const BookingPage = () => {
   }, [providerListData]);
 
 
+  // console.log("pcs---------> ",pcs)
+  // console.log("time---------> ",timeSlots)
+  // console.log("booking---------> ",bookings)
 
+let tableHeaders= [];
+let tableRow= [];
+  tableHeaders.push(<th>Time</th>);
+  
+   for (let index = 0; index < pcs.length; index++) {
+    const element = pcs[index] + '-' + timeSlots[index] + '-' + bookings[index] + '-' + index;
+    console.log(element);
+    if (pcs[index]) {
+      tableHeaders.push(<th key={index} className="border p-4">{pcs[index]}</th>);
+    }
+    tableRow.push(<tr></tr>);
+    if (timeSlots[index]) {
+       tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
+        if (bookings[index].pc_no === index) {
+          tableRow.push(<td key={index} className="border p-4">{bookings[index]}</td>);
+        }
+       tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
+    }
+  }
+
+
+
+
+
+
+  
   return (
     <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
 
@@ -162,57 +193,14 @@ const BookingPage = () => {
         </div>
       </div>
 
-
-
-
-
-
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-
-
-            <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 border-r border-gray-200">Time</th>
-                {
-                  pcs.map((item, index) => {
-                    return (
-                      <th key={index} className="px-6 py-4 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
-                        {item}
-                      </th>
-                    )
-                  })
-                }
-              </tr>
+          <table>
+            <thead className="border flex gap-5">
+             {tableHeaders}
             </thead>
-
-
-
-            {/* TABLE BODY */}
             <tbody>
-              {providerListData?.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                    }`}
-                >
-                  <td className="px-6 py-4 border-r border-gray-200 ">
-                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">{item.starting_time}</span>
-                  </td>
-                  <td className="flex flex-col bg-gray-400 m-1  text-center px-6 py-4 border border-gray-200">
-                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">PC : {item?.pc_no}</span>
-                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">{item?.user?.name}</span>
-                    <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">Duration : {item?.duration}</span>
-                  </td>
-                </tr>
-              ))}
+              {tableRow}
             </tbody>
           </table>
-        </div>
-      </div>
-
-
     </div>
   );
 };
