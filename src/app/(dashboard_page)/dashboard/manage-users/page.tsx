@@ -31,6 +31,7 @@ const ManageUserPage = () => {
   const [isDelete, setIsDelete] = useState(false)
   const router = useRouter()
   const [deleteId, setDeleteId] = useState<string | number>('')
+ 
 
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 6
@@ -47,16 +48,17 @@ const ManageUserPage = () => {
 
 
 
-  const handleNavigate = (value: string) => {
+  const handleNavigate = (value: string,viewDetailsId:string | number) => {
     if (value === 'USER') {
-      router.push('/dashboard/manage-user')
+      router.push(`/dashboard/manage-user?id=${viewDetailsId}`)
     } else if (value === 'PROVIDER') {
-      router.push('/dashboard/manage-provider')
+      router.push(`/dashboard/manage-provider?id=${viewDetailsId}`)
     }
   }
 
   const handleDeleteUser = (id: string | number) => {
     setDeleteId(id)
+  
   }
 
 
@@ -96,25 +98,25 @@ const ManageUserPage = () => {
 
           {/* User List */}
           <div className="space-y-2">
-            {userData?.map((user) => (
+            {userData?.map((item) => (
               <div
-                key={user.id}
+                key={item.id}
                 className="grid grid-cols-12 gap-4 items-center px-4 py-4 "
               >
                 {/* User Info */}
                 <div className="col-span-5 flex items-center gap-3">
-                  <Image src={user.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
+                  <Image src={item.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
                   <div>
                     <div
-                      className="font-medium text-slate-100">{user.name}</div>
-                    <div className="text-sm text-slate-400">{user.email}</div>
+                      className="font-medium text-slate-100">{item.name}</div>
+                    <div className="text-sm text-slate-400">{item.email}</div>
                   </div>
                 </div>
 
                 {/* Role */}
                 <div className="col-span-3">
                   <div className="bg-[#fff] w-fit text-black px-3 py-1 rounded-xl">
-                    {user.role}
+                    {item.role}
                   </div>
                 </div>
 
@@ -124,7 +126,7 @@ const ManageUserPage = () => {
                   <svg
                     onClick={() => {
                       setIsDelete(!isDelete);
-                        handleDeleteUser(user?.id)
+                        handleDeleteUser(item?.id)
                     }}
                     className="cursor-pointer"
                     width="43" height="44" viewBox="0 0 43 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +137,7 @@ const ManageUserPage = () => {
 
                   {/* view */}
                   <svg
-                    onClick={() => handleNavigate(user?.role)}
+                    onClick={() => handleNavigate(item?.role,item?.id)}
                     className="cursor-pointer"
                     width="43" height="44" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="46" height="46" rx="12" fill="white" />

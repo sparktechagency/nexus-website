@@ -20,7 +20,7 @@ export const pageTitles: Record<string, PageTitleConfig> = {
     icon: DashboardOverviewIcon,
   },
   "/dashboard/manage-users": {
-    title: "Manage User",
+    title: "Manage Users",
     subtitle: "Here you can manage all the users & delete which one you like.",
   },
   "/dashboard/manage-user": {

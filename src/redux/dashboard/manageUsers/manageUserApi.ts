@@ -18,9 +18,39 @@ const manageUserApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['manageUser'],
         }),
+        // ========= PROVIDER LIST DETAILS ==================
+         getProviderProfileApi: builder.query({
+            query: (id) => ({
+                url: `/admin/service-provider-profile/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['manageUser'],
+        }),
+         getGamerListApi: builder.query({
+            query: (id) => ({
+                url: `/admin/gamer-list/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['manageUser'],
+        }),
+        // ========= USER PROFILE DETAILS ====================
+          getUserProfileApi: builder.query({
+            query: (id) => ({
+                url: `/admin/user-profile/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['manageUser'],
+        }),
+         getProviderListApi: builder.query({
+            query: (id) => ({
+                url: `/admin/provider-list/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['manageUser'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const {useGetUserApiQuery,useDeleteUserApiMutation} = manageUserApi;
+export const {useGetUserApiQuery,useDeleteUserApiMutation,useGetProviderProfileApiQuery,useGetGamerListApiQuery,useGetUserProfileApiQuery,useGetProviderListApiQuery} = manageUserApi;

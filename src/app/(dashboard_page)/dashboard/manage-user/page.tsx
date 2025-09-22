@@ -1,73 +1,70 @@
+"use client"
 
-
+import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useGetProviderListApiQuery, useGetUserProfileApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 
 import Image from "next/image"
-import Link from "next/link"
 
 
-const userData = [
-    {
-        id: 1,
-        name: "Abir",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        bookingId: "456854",
-        zoneName: "Dragon's Lair",
-        contact: "abid32@gmail.com",
-        price: "$1023",
-    },
-    {
-        id: 2,
-        name: "Maksud",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        bookingId: "365236",
-        zoneName: "Mystic Forest",
-        contact: "user123@example.com",
-        price: "$2045",
-    },
-    {
-        id: 3,
-        name: "Madhob",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        bookingId: "478562",
-        zoneName: "Galactic Arena",
-        contact: "contact@samplemail.com",
-        price: "$3047",
-    },
-    {
-        id: 4,
-        name: "Madhob",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        bookingId: "478562",
-        zoneName: "Shadow Realm",
-        contact: "contact@samplemail.com",
-        price: "$3047",
-    },
-]
-
-
-
+interface ProviderProps {
+    id: string;
+    provider: {
+        avatar: string;
+        name: string;
+        gaming_zone_name: string;
+        email: string;
+    };
+    order_id: string;
+    total: number;
+}
 
 
 const ManageUserPage = () => {
+    const searchParams = useSearchParams()
+    const id = searchParams.get('id')
+    const router = useRouter()
+
+
+    // GET PROVIDER PROFILE API
+    const { data: getUser, isLoading } = useGetUserProfileApiQuery(id)
+    const userData = getUser?.data
+
+
+
+    // GET GAMER LIST API
+    const { data: getProviderList } = useGetProviderListApiQuery(id)
+    const providerListData: ProviderProps[] = getProviderList?.data?.data
+
+    const handleViewAll = () => {
+        router.push(`/dashboard/manage-user-list?id:${id}`)
+    }
+
+    if (isLoading) {
+        return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoaderTwo /></div>
+    }
+
+
+
     return (
         <div className="pt-4">
             <div className=" space-y-4">
 
                 <div className="bg-[#28242f] rounded-xl">
-                    <div className="p-8 text-center flex justify-center items-center">
-                        <div>
+                    <div className="p-8 text-center w-full flex justify-center items-center">
+                        <div className="flex flex-col justify-center items-center">
                             <Image
-                                src="https://randomuser.me/api/portraits/men/1.jpg"
-                                alt="Hasan Mahmud"
+                                src={userData?.avatar}
+                                alt="photo"
                                 width={200}
                                 height={200}
-                                className="object-cover rounded-full "
+                                className="object-cover  w-[200px] h-[200px] rounded-full "
                             />
 
-                            <h1 className="text-2xl font-semibold text-white my-3">Hasan Mahmud</h1>
-                            <p className="text-gray-500 mb-1">Location: Times Square, USA</p>
-                            <p className="text-gray-500">hasanmahmud@gmail.com</p>
+                            <h1 className="text-2xl font-semibold text-white my-3">{userData?.name}</h1>
+                            {userData?.address && <p className="text-gray-500 mb-1">Location: {userData?.address}</p>}
+                            <p className="text-gray-500">{userData?.email}</p>
                         </div>
                     </div>
 
@@ -87,11 +84,10 @@ const ManageUserPage = () => {
                                                 </linearGradient>
                                             </defs>
                                         </svg>
-
                                     </div>
                                 </div>
                                 <p className="text-slate-400 mb-2">Completed services</p>
-                                <p className="text-3xl font-bold text-white">4,856</p>
+                                <p className="text-3xl font-bold text-white">${userData?.completed_services}</p>
                             </div>
                         </div>
 
@@ -117,7 +113,7 @@ const ManageUserPage = () => {
                                     </div>
                                 </div>
                                 <p className="text-slate-400 mb-2">Total pay</p>
-                                <p className="text-3xl font-bold text-white">$4,856</p>
+                                <p className="text-3xl font-bold text-white">${userData?.total_pay}</p>
                             </div>
                         </div>
                     </div>
@@ -129,11 +125,11 @@ const ManageUserPage = () => {
 
                     <div className="flex justify-between pb-10">
                         <h2 className="text-3xl font-bold ">Providers list who earn money</h2>
-                        <Link href='/dashboard/manage-user-list'>
-                            <p className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
-                                View all
-                            </p>
-                        </Link>
+                        <p
+                            onClick={handleViewAll}
+                            className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
+                            View all
+                        </p>
                     </div>
 
 
@@ -151,16 +147,16 @@ const ManageUserPage = () => {
 
 
                         <TableBody>
-                            {userData.map((gamer) => (
-                                <TableRow key={gamer.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
+                            {providerListData?.slice(0, 4)?.map((item) => (
+                                <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                                     <TableCell className="flex items-center space-x-3">
-                                        <Image src={gamer.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
-                                        <span className="text-white">{gamer.name}</span>
+                                        <Image src={item?.provider?.avatar} alt="user photo" width={50} height={50} className="object-cover w-[50px] h-[50px] rounded-full" />
+                                        <span className="text-white">{item?.provider?.name}</span>
                                     </TableCell>
-                                    <TableCell className="text-slate-300">{gamer.bookingId}</TableCell>
-                                    <TableCell className="text-slate-300">{gamer.zoneName}</TableCell>
-                                    <TableCell className="text-slate-300">{gamer.contact}</TableCell>
-                                    <TableCell className="text-white text-right font-semibold">{gamer.price}</TableCell>
+                                    <TableCell className="text-slate-300">{item?.order_id}</TableCell>
+                                    <TableCell className="text-slate-300">{item?.provider?.gaming_zone_name}</TableCell>
+                                    <TableCell className="text-slate-300">{item?.provider?.email}</TableCell>
+                                    <TableCell className="text-white text-right font-semibold">{item?.total}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

@@ -164,7 +164,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
                                 id="roomImage"
                                 className="hidden"
                                 accept="image/*"
-                                // {...register("roomImage", { required: "Room image is required" })}
+                                {...register("roomImage", { required: "Room image is required" })}
                                 onChange={handleImageChange}
                             />
                             {errors.roomImage && <p className="text-red-500 text-sm">{errors.roomImage.message}</p>}

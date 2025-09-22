@@ -6,75 +6,63 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Image from "next/image"
 import { Tooltip } from "recharts";
-import Link from "next/link"
 
-// Sample data for the activities chart
-const activitiesData = [
-  { day: "Sun", completedServices: 1500, totalEarnings: 1200 },
-  { day: "Mon", completedServices: 1800, totalEarnings: 1600 },
-  { day: "Tue", completedServices: 2100, totalEarnings: 1400 },
-  { day: "Wed", completedServices: 1600, totalEarnings: 2000 },
-  { day: "Thu", completedServices: 1900, totalEarnings: 1800 },
-  { day: "Fri", completedServices: 2200, totalEarnings: 1700 },
-  { day: "Sat", completedServices: 1400, totalEarnings: 1300 },
-]
 
-const providersData = [
-  {
-    id: 1,
-    name: "Abir",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    bookingId: "456854",
-    zoneName: "Dragon's Lair",
-    contact: "abid32@gmail.com",
-    price: "$1023",
-  },
-  {
-    id: 2,
-    name: "Maksud",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    bookingId: "365236",
-    zoneName: "Mystic Forest",
-    contact: "user123@example.com",
-    price: "$2045",
-  },
-  {
-    id: 3,
-    name: "Madhob",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    bookingId: "478562",
-    zoneName: "Galactic Arena",
-    contact: "contact@samplemail.com",
-    price: "$3047",
-  },
-  {
-    id: 4,
-    name: "Madhob",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    bookingId: "478562",
-    zoneName: "Shadow Realm",
-    contact: "contact@samplemail.com",
-    price: "$3047",
-  },
-]
+import { useGetGamerListApiQuery, useGetProviderProfileApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
+import { useRouter, useSearchParams } from 'next/navigation'
+import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
+
+interface GamerProps {
+  id: string;
+  user: {
+    avatar: string;
+    name: string;
+    email: string;
+  };
+  order_id: string;
+  total: string;
+}
 
 const ManageProviderPage = () => {
+  const searchParams = useSearchParams()
+  const id = searchParams.get('id')
+  const router = useRouter()
+
+
+  // GET PROVIDER PROFILE API
+  const { data: getProvider,isLoading } = useGetProviderProfileApiQuery(id)
+  const providerData = getProvider?.data
+  const activitiesData = getProvider?.data?.activities
+
+
+  // GET GAMER LIST API
+  const { data: getGamerList } = useGetGamerListApiQuery(id)
+  const gamerListData: GamerProps[] = getGamerList?.data?.data
+
+  const handleViewAll = () => {
+    router.push(`/dashboard/manage-provider-list?id:${id}`)
+  }
+
+if(isLoading){
+  return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoaderTwo /></div>
+}
+
   return (
     <div className="text-[#fff] mb-6 pt-4 ">
       <div className="flex justify-between gap-4">
         <div className="bg-[#28242f] rounded-xl w-full">
           <div className="p-8  flex  items-center">
             <div>
-              <Image
-                src="https://randomuser.me/api/portraits/men/1.jpg"
-                alt="Hasan Mahmud"
+              {providerData?.avatar && <Image
+                src={providerData?.avatar}
+                alt="photo"
                 width={100}
                 height={100}
-                className="object-cover rounded-full " />
+                className="object-cover rounded-full " />}
 
-              <h1 className="text-2xl font-semibold text-white my-3">Hasan Mahmud</h1>
-              <p className="text-gray-500 mb-1">Location: Times Square, USA</p>
-              <p className="text-gray-500">hasanmahmud@gmail.com</p>
+              <h1 className="text-2xl font-semibold text-white my-3">{providerData?.name}</h1>
+              <p className="text-gray-500 mb-1">Location: {providerData?.address}</p>
+              <p className="text-gray-500">{providerData?.email}</p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4 mx-4 pb-4">
@@ -95,7 +83,7 @@ const ManageProviderPage = () => {
                   </div>
                 </div>
                 <p className="text-slate-400 mb-2">Completed services</p>
-                <p className="text-3xl font-bold text-white">4,856</p>
+                <p className="text-3xl font-bold text-white">${providerData?.completed_services}</p>
               </div>
             </div>
 
@@ -121,7 +109,7 @@ const ManageProviderPage = () => {
                   </div>
                 </div>
                 <p className="text-slate-400 mb-2">Total pay</p>
-                <p className="text-3xl font-bold text-white">$4,856</p>
+                <p className="text-3xl font-bold text-white">${providerData?.total_earnings}</p>
               </div>
             </div>
           </div>
@@ -220,11 +208,11 @@ const ManageProviderPage = () => {
 
         <div className="flex justify-between pb-10">
           <h2 className="text-3xl font-bold ">Gamers list who book gaming zone</h2>
-          <Link href='/dashboard/manage-provider-list'>
-            <p className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
-              View all
-            </p>
-          </Link>
+          <p
+            onClick={handleViewAll}
+            className="cursor-pointer text-xl bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-4 decoration-[#6523E7]">
+            View all
+          </p>
         </div>
 
 
@@ -241,15 +229,15 @@ const ManageProviderPage = () => {
 
 
           <TableBody>
-            {providersData.map((gamer) => (
-              <TableRow key={gamer.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
+            {gamerListData?.slice(0, 4)?.map((item) => (
+              <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                 <TableCell className="flex items-center space-x-3">
-                  <Image src={gamer.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
-                  <span className="text-white">{gamer.name}</span>
+                  <Image src={item?.user?.avatar} alt="user photo" width={50} height={50} className="object-cover w-[50px] h-[50px] rounded-full" />
+                  <span className="text-white">{item?.user?.name}</span>
                 </TableCell>
-                <TableCell className="text-slate-300">{gamer.bookingId}</TableCell>
-                <TableCell className="text-slate-300">{gamer.contact}</TableCell>
-                <TableCell className="text-white text-right font-semibold">{gamer.price}</TableCell>
+                <TableCell className="text-slate-300">{item?.order_id}</TableCell>
+                <TableCell className="text-slate-300">{item?.user?.email}</TableCell>
+                <TableCell className="text-white text-right font-semibold">{item?.total}</TableCell>
               </TableRow>
             ))}
           </TableBody>
