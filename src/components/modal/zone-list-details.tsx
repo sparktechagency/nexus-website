@@ -8,28 +8,26 @@ import { useGetZoonDetailsApiQuery } from "@/redux/dashboard/zoonListing/zoonLis
 interface ZoneListProps {
     open: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-    viewDetailsId : string | number;
+    viewDetailsId: string | number;
 }
 
 
-export default function ZoneListDetails({ open, setIsOpen,viewDetailsId }: ZoneListProps) {
-
-const {data:getzoonDetails} = useGetZoonDetailsApiQuery(viewDetailsId)
-const zoonDetailsData = getzoonDetails?.data
-
-console.log(zoonDetailsData)
+export default function ZoneListDetails({ open, setIsOpen, viewDetailsId }: ZoneListProps) {
+    const { data: getzoonDetails } = useGetZoonDetailsApiQuery(viewDetailsId)
+    const zoonDetailsData = getzoonDetails?.data
 
     return (
         <div className=" text-white">
             {/* Image */}
             <div className="flex justify-center">
-                <Image
+                {zoonDetailsData?.avatar && <Image
                     src={zoonDetailsData?.avatar} // Replace with your image path
                     alt="photo"
                     width={500}
                     height={500}
                     className="max-w-[200px] object-cover rounded-lg w-full"
-                />
+                />}
+
             </div>
 
             {/* Content */}
@@ -43,7 +41,7 @@ console.log(zoonDetailsData)
                     <span>{zoonDetailsData?.opening_time} - {zoonDetailsData?.closing_time}</span>
                 </div>
             </div>
-            
+
 
             {/* Close Button */}
             <div className="p-4">

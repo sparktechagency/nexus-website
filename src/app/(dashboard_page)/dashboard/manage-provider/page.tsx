@@ -25,7 +25,7 @@ interface GamerProps {
 
 const ManageProviderPage = () => {
   const searchParams = useSearchParams()
-  const id = searchParams.get('id')
+    const id = searchParams.get('id') || ""
   const router = useRouter()
 
 

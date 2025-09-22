@@ -31,16 +31,12 @@ const ManageUserPage = () => {
   const [isDelete, setIsDelete] = useState(false)
   const router = useRouter()
   const [deleteId, setDeleteId] = useState<string | number>('')
- 
 
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 6
 
 
-
-
-
-  const { data: getUser, isLoading, refetch } = useGetUserApiQuery({ per_page: perPage, role: searchText,search:searchText, page: currentPage })
+  const { data: getUser, isLoading, refetch } = useGetUserApiQuery({ per_page: perPage,search:searchText, page: currentPage })
   const userData: User[] = getUser?.data?.data
   const totalItems = getUser?.data?.total
   const totalPages = Math.ceil(totalItems / perPage)

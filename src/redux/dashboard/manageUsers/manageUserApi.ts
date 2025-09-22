@@ -5,8 +5,8 @@ import { baseApi } from "@/redux/api/baseApi";
 const manageUserApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getUserApi: builder.query({
-            query: ({per_page,role,search="",page}) => ({
-                url: `/admin/user-lists?per_page=${per_page}&role=${role}&search=${search}&page=${page}`,
+            query: ({per_page,search="",page}) => ({
+                url: `/admin/user-lists?per_page=${per_page}&search=${search}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['manageUser'],
@@ -27,8 +27,8 @@ const manageUserApi = baseApi.injectEndpoints({
             providesTags: ['manageUser'],
         }),
          getGamerListApi: builder.query({
-            query: (id) => ({
-                url: `/admin/gamer-list/${id}`,
+            query: ({id,per_page,page}) => ({
+                url: `/admin/gamer-list/${id}?per_page=${per_page}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['manageUser'],
@@ -42,8 +42,8 @@ const manageUserApi = baseApi.injectEndpoints({
             providesTags: ['manageUser'],
         }),
          getProviderListApi: builder.query({
-            query: (id) => ({
-                url: `/admin/provider-list/${id}`,
+            query: ({id, per_page, page}) => ({
+                url: `/admin/provider-list/${id}?per_page=${per_page}&page=${page}`,
                 method: "GET",
             }),
             providesTags: ['manageUser'],

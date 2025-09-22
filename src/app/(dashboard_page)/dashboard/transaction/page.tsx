@@ -41,7 +41,6 @@ const TransactionPage = () => {
   const totalPages = Math.ceil(totalItems / perPage)
 
 
-  console.log(transitionData)
 
   const planData = [
     { name: "Basic Plan", count: totalBasicPlanData, color: "text-yellow-400", icon: <StarIcon /> },

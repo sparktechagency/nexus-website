@@ -34,7 +34,7 @@ const ZoneListingPage = () => {
 
 
 
-  const { data: getZoonList, refetch, isLoading } = useGetZoonListApiQuery({ per_page: perPage, role: searchText, page: currentPage })
+  const { data: getZoonList, refetch, isLoading } = useGetZoonListApiQuery({ per_page: perPage, search: searchText, page: currentPage })
   const zoonListData: Provider[] = getZoonList?.data?.data
   const totalItems = getZoonList?.data?.total
   const totalPages = Math.ceil(totalItems / perPage)
@@ -52,6 +52,8 @@ const ZoneListingPage = () => {
     return <DashboardLoader />
   }
 
+console.log(searchText)
+
   return (
     <div className="text-[#fff] mb-6 pt-4">
 
@@ -59,7 +61,7 @@ const ZoneListingPage = () => {
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4  bg-transparent" />
           <Input
-            placeholder="Search by name or email"
+            placeholder="Search by name"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="pl-10 bg-[#28242f]  py-6 rounded-full  border-none focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0"

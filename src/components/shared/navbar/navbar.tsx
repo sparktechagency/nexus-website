@@ -118,7 +118,7 @@ export default function Navbar() {
                     >
                         Bookings
                     </Link>
-                    <Link
+                    {/* <Link
                         href="/bookingTwo"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/bookingTwo')
                             ? 'bg-[#0b041a] shadow-[0_0_10px_3px_rgba(8,112,184,0.7)] text-white'
@@ -126,7 +126,7 @@ export default function Navbar() {
                             }`}
                     >
                         BookingTwo
-                    </Link>
+                    </Link> */}
                     <Link
                         href="/profile"
                         className={`px-4 py-1 rounded-full transition-colors ${isActive('/profile')

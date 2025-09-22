@@ -1,10 +1,13 @@
 "use client"
 
+import CustomPagination from "@/components/customPagination/CustomPagination"
+import DashboardLoader from "@/components/DashboardLoader"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import WebEmptyData from "@/components/WebEmptyData"
 import { useGetGamerListApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 
 interface GamerProps {
@@ -21,13 +24,23 @@ interface GamerProps {
 
 const ManageProviderList = () => {
   const searchParams = useSearchParams()
-  const id = searchParams.get('id')
+  const id = searchParams.get('id') || ""
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 8
 
 
-  const { data: getGamerList } = useGetGamerListApiQuery(id)
+  const { data: getGamerList, isLoading, refetch } = useGetGamerListApiQuery({ id: id, per_page: perPage, page: currentPage })
   const gamerListData: GamerProps[] = getGamerList?.data?.data
+  const totalItems = getGamerList?.data?.total
+  const totalPages = Math.ceil(totalItems / perPage)
 
+  useEffect(() => {
+    refetch();
+  }, [currentPage, perPage, refetch]);
 
+  if (isLoading) {
+    return <DashboardLoader />
+  }
 
 
   return (
@@ -61,10 +74,18 @@ const ManageProviderList = () => {
           </Table>
         </div>
           :
-          <WebEmptyData 
-          customStyle="border-2 border-gray-500"
+          <WebEmptyData
+            customStyle="border-2 border-gray-500"
           />
       }
+
+
+      {/* PAGINATION COMPONENT */}
+      <CustomPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   )
 }

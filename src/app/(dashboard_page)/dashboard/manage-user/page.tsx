@@ -23,7 +23,7 @@ interface ProviderProps {
 
 const ManageUserPage = () => {
     const searchParams = useSearchParams()
-    const id = searchParams.get('id')
+      const id = searchParams.get('id') || ""
     const router = useRouter()
 
 

@@ -3,16 +3,16 @@ import ResponsivePaginationComponent from 'react-responsive-pagination'
 
 
 interface CustomPaginationProps {
-    currentPage: number
-    totalPages: number
-    setCurrentPage: (page: number) => void
+  currentPage: number
+  totalPages: number
+  setCurrentPage: (page: number) => void
 
 }
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({ currentPage, totalPages, setCurrentPage, }) => {
-    return (
-        <>
-            <style>{`
+  return (
+    <>
+      <style>{`
      /* PAGINATION CUSTOM STYLE */
 
 .pagination {
@@ -70,17 +70,16 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ currentPage, totalP
   }
 }
       `}
-            </style>
-            <div className='flex justify-end py-4'>
-                <ResponsivePaginationComponent
-                    current={currentPage}
-                    total={totalPages}
-                    onPageChange={setCurrentPage}
-
-                />
-            </div>
-        </>
-    )
+      </style>
+      <div className='flex justify-end py-4'>
+        <ResponsivePaginationComponent
+          current={currentPage}
+          total={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </div>
+    </>
+  )
 }
 
 export default CustomPagination

@@ -12,6 +12,11 @@ const JoditEditor = dynamic(() => import("jodit-react"), {
   ssr: false,
 });
 
+const editorConfig = {
+  theme: 'dark',
+};
+
+
 export default function TermsAndConditionsPage() {
   const [content, setContent] = useState("");
 
@@ -54,10 +59,11 @@ export default function TermsAndConditionsPage() {
         className="text-black "
         value={content}
         config={{
+            ...editorConfig,
           height: 600,
           placeholder: "Write your terms and conditions here...",
           style: {
-            color: "black", // Additional inline style for the editor
+            color: "white", // Additional inline style for the editor
           },
         }}
 
