@@ -46,7 +46,6 @@ const [forgotPasswordApi, { isLoading }] = useForgotPasswordApiMutation()
 
         try {
             const res = await forgotPasswordApi(formData).unwrap();
-            console.log(res)
             if (res?.status === 'success') {
                 toast.success(res?.message)
                 router.push(`/dashboard-verify-otp?email=${formData.get('email')}&text=forgot-password`)

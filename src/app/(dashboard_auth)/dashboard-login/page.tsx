@@ -84,7 +84,9 @@ const DashboardLoginPage = () => {
     }
   }
 
-
+const handleNavigateForgot = () =>{
+  router.push('/dashboard-forgot-password')
+}
 
 
 
@@ -168,12 +170,12 @@ const DashboardLoginPage = () => {
                   <p className="text-red-400 text-sm">{errors.password.message}</p>
                 )}
 
-                <Link
-                  href="/dashboard-forgot-password"
-                  className="text-sm text-right bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline"
+                <p
+                onClick={handleNavigateForgot}
+                  className="cursor-pointer text-sm text-right bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text hover:underline"
                 >
                   Forgot password?
-                </Link>
+                </p>
               </div>
 
               {/* Submit Button */}

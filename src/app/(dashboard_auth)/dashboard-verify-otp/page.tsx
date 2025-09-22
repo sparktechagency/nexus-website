@@ -95,6 +95,9 @@ export default function DashboardVerifyOtpPage() {
 
             if (res?.status === 'success') {
                 toast.success(res?.message)
+                router.push(`/dashboard-create-new-password?email=${email}`)
+                setOtp(Array(6).fill(""));
+                
                 if (token) {
                     Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
                 }
@@ -104,10 +107,6 @@ export default function DashboardVerifyOtpPage() {
                 if (subscription_status) {
                     Cookies.set('subscription_status', subscription_status);
                 }
-                else {
-                    router.push(`/dashboard-create-new-password?email=${email}`)
-                }
-
             } else {
                 toast.error(res?.messages)
             }
@@ -135,7 +134,7 @@ export default function DashboardVerifyOtpPage() {
                 toast.error(res?.messages)
             }
         } catch (errors) {
-           const errorValue = errors as ApiError;
+            const errorValue = errors as ApiError;
             if (errorValue?.data?.message) {
                 toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }

@@ -1,9 +1,8 @@
-
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, useFormState } from "react-hook-form"
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -35,19 +34,23 @@ export default function DashboardCreateNewPasswordPage() {
     const [changePasswordApi, { isLoading }] = useChangePasswordApiMutation()
     const router = useRouter()
 
-
     const {
         register,
         handleSubmit,
         watch,
+        setValue,
         formState: { errors }
     } = useForm<CreateNewPasswordInputs>()
 
-    const passwordValue = watch("new_password")
+    const passwordValue = watch("new_password") // To keep track of the new password
 
-
-
-
+    // Effect to trigger retype password validation when new password changes
+    useEffect(() => {
+        if (passwordValue) {
+            // Validate retype_password whenever new_password changes
+            setValue("retype_password", "", { shouldValidate: true }) // Clear retype_password value to trigger validation
+        }
+    }, [passwordValue, setValue])
 
     const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
         const formData = new FormData();
@@ -55,8 +58,6 @@ export default function DashboardCreateNewPasswordPage() {
         formData.append("current_password", data?.current_password);
         formData.append("new_password", data?.new_password);
         formData.append("retype_password", data?.retype_password);
-
-
 
         try {
             const res = await changePasswordApi(formData).unwrap();
@@ -99,8 +100,6 @@ export default function DashboardCreateNewPasswordPage() {
                                 You have to create a new password after forget
                             </CardDescription>
                         </CardHeader>
-
-
 
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <CardContent className="space-y-6 px-6 pb-6">
@@ -163,8 +162,7 @@ export default function DashboardCreateNewPasswordPage() {
                                             className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                                             {...register("retype_password", {
                                                 required: "Please confirm your password",
-                                                validate: value =>
-                                                    value === passwordValue || "Passwords do not match"
+                                                validate: value => value === passwordValue || "Passwords do not match"
                                             })}
                                         />
                                         <button
@@ -177,8 +175,6 @@ export default function DashboardCreateNewPasswordPage() {
                                     </div>
                                     {errors.retype_password && <p className="text-red-500 text-sm">{errors.retype_password.message}</p>}
                                 </div>
-
-
 
                                 {/* Submit */}
                                 <Button
@@ -200,4 +196,3 @@ export default function DashboardCreateNewPasswordPage() {
         </div>
     )
 }
-
