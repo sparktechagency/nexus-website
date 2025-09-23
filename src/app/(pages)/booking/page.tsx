@@ -25,13 +25,30 @@ interface ProviderBookingProps {
 import { Button } from "@/components/ui/button";
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader";
 import WebEmptyData from "@/components/WebEmptyData";
+import CustomModal from "@/components/modal/customModal"
+import AddGamer from "@/components/modal/booking-section-modal/add-gamer"
+import GamerInfoPayComplete from "@/components/modal/booking-section-modal/gamer-info-pay-complete"
+import GamerInfoConBooking from "@/components/modal/booking-section-modal/gamer-info-con-booking"
+import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gamer-info-con-reschedule"
+import RescheduleUpdate from "@/components/modal/booking-section-modal/reschedule-update"
+import BookingConfirmation from "@/components/modal/booking-section-modal/booking-confirmation"
+import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating"
+import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
 
 
 
 const BookingPage = () => {
+  const [isAddRoom, setIsAddRoom] = useState(false)
+  const [gamerInfoPayCompleteModalOpen, setGamerInfoPayCompleteModalOpen] = useState(false)
+  const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
+  const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
+  const [gamerReviewRatingModalOpen, setGamerReviewRatingModalOpen] = useState(false)
+  const [rescheduleUpdateModalOpen, setRescheduleUpdateModalOpen] = useState(false)
+  const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
+  const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
-  const [selectedStatus, setSelectedStatus] = useState("Upcoming");
+  const [selectedStatus, setSelectedStatus] = useState("Ongoing");
 
   const [timeSlots, setTimeSlots] = useState<string[]>([])  // time data 
   const [pcs, setPcs] = useState<string[]>([])  // pc data
@@ -44,8 +61,8 @@ const BookingPage = () => {
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
-    room_id: 2,
-    status: "Upcoming",
+    room_id: roomId,
+    status: selectedStatus,
     date: "2025-08-20",
   });
 
@@ -85,6 +102,7 @@ const BookingPage = () => {
             <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
           </div>
           <Button
+            onClick={() => setIsAddRoom(!isAddRoom)}
             className="w-fit px-6 py-2 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
             style={{
               background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
@@ -143,8 +161,6 @@ const BookingPage = () => {
         </div>
 
 
-
-
         {/* TABLE COMPONENT */}
         <div className="overflow-x-auto w-full">
           {
@@ -197,6 +213,100 @@ const BookingPage = () => {
           }
         </div>
       </div>
+
+
+
+      {/* modal component(ADD_ROOM) */}
+      <CustomModal
+        open={isAddRoom}
+        setIsOpen={setIsAddRoom}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[50vw]"}
+      >
+        <AddGamer
+          open={isAddRoom}
+          setIsOpen={setIsAddRoom}
+        />
+      </CustomModal>
+
+      {/* modal component(Gamer_Info_Pay_Complete) */}
+      <CustomModal
+        open={gamerInfoPayCompleteModalOpen}
+        setIsOpen={setGamerInfoPayCompleteModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[40vw]"}
+      >
+        <GamerInfoPayComplete />
+      </CustomModal>
+
+      {/* modal component(Gamer_Info_con-booking) */}
+      <CustomModal
+        open={gamerInfoConBookingModalOpen}
+        setIsOpen={setGamerInfoConBookingModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[40vw]"}
+      >
+        <GamerInfoConBooking />
+      </CustomModal>
+
+      {/* modal component(gamer-info-con-reschedule) */}
+      <CustomModal
+        open={gamerInfoRescheduleModalOpen}
+        setIsOpen={setGamerInfoRescheduleModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[40vw]"}
+      >
+        <GamerInfoConReschedule />
+      </CustomModal>
+
+      {/* modal component(reschedule-update) */}
+      <CustomModal
+        open={rescheduleUpdateModalOpen}
+        setIsOpen={setRescheduleUpdateModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[40vw]"}
+      >
+        <RescheduleUpdate
+          open={rescheduleUpdateModalOpen}
+          setIsOpen={setRescheduleUpdateModalOpen}
+        />
+      </CustomModal>
+
+      {/* modal component(reschedule-update) */}
+      <CustomModal
+        open={bookingConfirmationModalOpen}
+        setIsOpen={setBookingConfirmationModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[30vw]"}
+      >
+        <BookingConfirmation
+          open={bookingConfirmationModalOpen}
+          setIsOpen={setBookingConfirmationModalOpen}
+        />
+      </CustomModal>
+
+      {/* modal component(reschedule-update) */}
+      <CustomModal
+        open={gamerReviewRatingModalOpen}
+        setIsOpen={setGamerReviewRatingModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"!max-w-[45vw]"}>
+
+        <GamerInfoReviewRating
+          open={gamerReviewRatingModalOpen}
+          setIsOpen={setGamerReviewRatingModalOpen}
+        />
+      </CustomModal>
+
+      {/* modal component(CancelTab_Modal) */}
+      <CustomModal
+        open={cancelTabModalModalOpen}
+        setIsOpen={setCancelTabModalModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"!max-w-[45vw]"}>
+
+        <CancelTabModal />
+      </CustomModal>
     </>
   );
 };
