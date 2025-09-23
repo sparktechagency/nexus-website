@@ -22,28 +22,10 @@ interface ProviderBookingProps {
   user: { id: number | string; name: string };
 }
 
-
-import { useMemo } from "react"
 import { Button } from "@/components/ui/button";
+import CustomButtonLoader from "@/components/loader/CustomButtonLoader";
+import WebEmptyData from "@/components/WebEmptyData";
 
-interface Booking {
-  id: number | string;
-  user: {
-    id: number | string;
-    name: string
-  }
-  starting_time: string
-  ending_time: string
-  pc_no: string | number;
-  color?: "blue" | "pink" | "green" | "orange"
-}
-
-const colorVariants = {
-  blue: "bg-blue-500/80 border-blue-400 text-white",
-  pink: "bg-pink-500/80 border-pink-400 text-white",
-  green: "bg-green-500/80 border-green-400 text-white",
-  orange: "bg-orange-500/80 border-orange-400 text-white",
-}
 
 
 const BookingPage = () => {
@@ -51,15 +33,8 @@ const BookingPage = () => {
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState("Upcoming");
 
-
-  const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
-
-
   const [timeSlots, setTimeSlots] = useState([]) // time data 
   const [pcs, setPcs] = useState([]) // pc data
-  const [bookings, setBookings] = useState<ProviderBookingProps[]>([])  // booking data
-
-
   const numberArray = pcs.map(Number);
 
 
@@ -87,9 +62,6 @@ const BookingPage = () => {
 
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
-      setProviderBookings(providerListData);
-      setBookings(providerListData);
-
       const newPcs = providerListData.map((item, index) => ` ${index + 1}`);
       setPcs(newPcs);
 
@@ -99,35 +71,9 @@ const BookingPage = () => {
   }, [providerListData]);
 
 
-  // console.log("pcs---------> ",pcs)
-  // console.log("time---------> ",timeSlots)
-  // console.log("booking---------> ",bookings)
-
-  let tableHeaders = [];
-  let tableRow = [];
-  tableHeaders.push(<th>Time</th>);
-
-  for (let index = 0; index < pcs.length; index++) {
-    const element = pcs[index] + '-' + timeSlots[index] + '-' + bookings[index] + '-' + index;
-    console.log(element);
-    if (pcs[index]) {
-      tableHeaders.push(<th key={index} className="border p-4">{pcs[index]}</th>);
-    }
-    tableRow.push(<tr></tr>);
-    if (timeSlots[index]) {
-      tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
-      if (bookings[index].pc_no === index) {
-        tableRow.push(<td key={index} className="border p-4">{bookings[index]}</td>);
-      }
-      tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
-    }
+  if (isLoading) {
+    return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
-
-
-
-
-
-
 
   return (
     <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
@@ -174,6 +120,8 @@ const BookingPage = () => {
           ))}
         </div>
 
+
+
         {/* Status Tabs */}
         <div className="flex flex-wrap gap-8 mb-6">
           {(["Ongoing", "Upcoming", "Completed", "Canceled"] as BookingStatus[]).map((status) => (
@@ -196,43 +144,54 @@ const BookingPage = () => {
 
 
 
-
-
-
       {/* TABLE COMPONENT */}
-      <table className="min-w-full table-auto border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-400">
-            <th className="px-4 py-2 border">Time</th>
-            {pcs.map((pc, index) => (
-              <th key={index} className="px-4 py-2 border">
-                {pc}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {timeSlots.map((slot, slotIndex) => (
-            <tr key={slotIndex}>
-              <td className="px-4 py-2 border">{slot}</td>
-              {pcs.map((pc, pcIndex) => {
-                const booking = bookings.find(
-                  (b) => b.starting_time === slot && b.pc_no === pc
-                );
-                return (
-                  <td
-                    key={pcIndex}
-                    className={`px-4 py-2 border ${booking ? 'bg-green-800' : "bg-pink-400"}`}
-                  >
-                    {booking ? 'Name': "no"}
-                  </td>
-                );
-              })}
+      {
+        providerListData?.length > 0 ? <table className="min-w-full overflow-x-auto table-auto  border border-gray-900">
+          <thead>
+            <tr className="">
+              <th className="px-4 py-2 border">Time</th>
+              {pcs.map((pc, index) => (
+                <th key={index} className="px-4 py-2 border ">
+                  PC {pc}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {timeSlots.map((slot, slotIndex) => (
+              <tr key={slotIndex}>
+                <td className="px-4 py-2 border">{slot}</td>
+                {numberArray.map((pc, pcIndex) => {
+                  const bookingData = providerListData?.find(b => {
+                    return (
+                      b.starting_time === slot && b.pc_no === pc
+                    )
+                  });
+                  return (
+                    <td
+                      key={pcIndex}
+                      className={` px-4 py-6  border text-center ${bookingData ? 'bg-[#b9c8ff] text-black' : ""}`}
+                    >
+                      {bookingData && <div className="flex flex-col">
+                        <p className="font-bold">{bookingData?.user.name}</p>
+                        <p className="text-gray-500">{bookingData?.starting_time} - {bookingData?.ending_time}</p>
+                      </div>}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+          :
+          <WebEmptyData
+            customStyle={`bg-red-500 text-white `}
+            style={{
+              background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+            }}
+          />
+      }
     </div>
   );
 };
