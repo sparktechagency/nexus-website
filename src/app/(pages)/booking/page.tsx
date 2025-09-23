@@ -49,7 +49,7 @@ const colorVariants = {
 const BookingPage = () => {
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus>("Upcoming");
+  const [selectedStatus, setSelectedStatus] = useState("Upcoming");
 
 
   const [providerBookings, setProviderBookings] = useState<ProviderBookingProps[]>([]);
@@ -69,9 +69,9 @@ const BookingPage = () => {
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
-    room_id: 3,
-    status: selectedStatus,
-    date: "2025-09-20",
+    room_id: 2,
+    status: "Upcoming",
+    date: "2025-08-20",
   });
 
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
@@ -103,11 +103,11 @@ const BookingPage = () => {
   // console.log("time---------> ",timeSlots)
   // console.log("booking---------> ",bookings)
 
-let tableHeaders= [];
-let tableRow= [];
+  let tableHeaders = [];
+  let tableRow = [];
   tableHeaders.push(<th>Time</th>);
-  
-   for (let index = 0; index < pcs.length; index++) {
+
+  for (let index = 0; index < pcs.length; index++) {
     const element = pcs[index] + '-' + timeSlots[index] + '-' + bookings[index] + '-' + index;
     console.log(element);
     if (pcs[index]) {
@@ -115,11 +115,11 @@ let tableRow= [];
     }
     tableRow.push(<tr></tr>);
     if (timeSlots[index]) {
-       tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
-        if (bookings[index].pc_no === index) {
-          tableRow.push(<td key={index} className="border p-4">{bookings[index]}</td>);
-        }
-       tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
+      tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
+      if (bookings[index].pc_no === index) {
+        tableRow.push(<td key={index} className="border p-4">{bookings[index]}</td>);
+      }
+      tableRow.push(<td key={index} className="border p-4">{timeSlots[index]}</td>);
     }
   }
 
@@ -128,7 +128,7 @@ let tableRow= [];
 
 
 
-  
+
   return (
     <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
 
@@ -193,14 +193,46 @@ let tableRow= [];
         </div>
       </div>
 
-          <table>
-            <thead className="border flex gap-5">
-             {tableHeaders}
-            </thead>
-            <tbody>
-              {tableRow}
-            </tbody>
-          </table>
+
+
+
+
+
+
+      {/* TABLE COMPONENT */}
+      <table className="min-w-full table-auto border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-gray-400">
+            <th className="px-4 py-2 border">Time</th>
+            {pcs.map((pc, index) => (
+              <th key={index} className="px-4 py-2 border">
+                {pc}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {timeSlots.map((slot, slotIndex) => (
+            <tr key={slotIndex}>
+              <td className="px-4 py-2 border">{slot}</td>
+              {pcs.map((pc, pcIndex) => {
+                const booking = bookings.find(
+                  (b) => b.starting_time === slot && b.pc_no === pc
+                );
+                return (
+                  <td
+                    key={pcIndex}
+                    className={`px-4 py-2 border ${booking ? 'bg-green-800' : "bg-pink-400"}`}
+                  >
+                    {booking ? 'Name': "no"}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
