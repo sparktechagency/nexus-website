@@ -34,6 +34,7 @@ import RescheduleUpdate from "@/components/modal/booking-section-modal/reschedul
 import BookingConfirmation from "@/components/modal/booking-section-modal/booking-confirmation"
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating"
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
+import DatePicker from "react-datepicker";
 
 
 
@@ -49,21 +50,30 @@ const BookingPage = () => {
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState("Ongoing");
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+
 
   const [timeSlots, setTimeSlots] = useState<string[]>([])  // time data 
   const [pcs, setPcs] = useState<string[]>([])  // pc data
   const numberArray = pcs.map(Number);
 
+  // Format to yyyy-mm-dd
+  const dateStr = startDate || new Date()
+  const date = new Date(dateStr);
+  const formattedDate = date.toISOString().split('T')[0];
 
 
   // get room api
   const { data: getAllRoom } = useAllRoomGetRoomApiQuery({ skip: true });
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
 
+
+
+
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
     room_id: roomId,
     status: selectedStatus,
-    date: "2025-08-20",
+    date: formattedDate,
   });
 
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
@@ -92,10 +102,12 @@ const BookingPage = () => {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
 
+
+
+
   return (
     <>
       <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
-
         <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
           <div>
             <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
@@ -156,7 +168,19 @@ const BookingPage = () => {
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
+
             ))}
+      
+
+         {/* DATE PICKER (SELECT DATA) */}
+            {
+              selectedStatus && (selectedStatus === "Upcoming" || selectedStatus === "Completed" || selectedStatus === "Canceled") ? <div className="">
+              <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} 
+              className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+                wrapperClassName="w-full"
+              />
+            </div> : ""
+            }
           </div>
         </div>
 
@@ -226,6 +250,7 @@ const BookingPage = () => {
         <AddGamer
           open={isAddRoom}
           setIsOpen={setIsAddRoom}
+          roomId={roomId}
         />
       </CustomModal>
 

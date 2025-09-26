@@ -21,13 +21,14 @@ const bookingApi = baseApi.injectEndpoints({
         //     providesTags: ['webBooking'],
         // }),
         // ADD GAMER
-        // addGamerApi: builder.mutation({
-        //     query: () => ({
-        //         url: `/add-gamer`,
-        //         method: "POST",
-        //     }),
-        //     invalidatesTags: ['webBooking'],
-        // }),
+        addGamerApi: builder.mutation({
+            query: (addGamerInfo) => ({
+                url: `/add-gamer`,
+                method: "POST",
+                body:addGamerInfo,
+            }),
+            invalidatesTags: ['webBooking'],
+        }),
         // PROVIDER BOOKING LIST[---------> table all data show this api use for <--------------]
         getProviderBookingListApi: builder.query({
             query: ({ room_id, status, date }) => ({
@@ -81,4 +82,4 @@ const bookingApi = baseApi.injectEndpoints({
 })
 
 
-export const { useGetProviderBookingListApiQuery, } = bookingApi;
+export const { useGetProviderBookingListApiQuery,useAddGamerApiMutation } = bookingApi;

@@ -11,13 +11,17 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import toast from 'react-hot-toast';
+import { useAddGamerApiMutation } from '@/redux/website/booking/bookingApi';
+import CustomButtonLoader from '@/components/loader/CustomButtonLoader';
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  contactNumber: z.string().min(1, "Contact number is required"),
-  date: z.string().min(1, "Date is required"),
-  opening_time: z.string().min(1, "Starting time is required"),
-  pcNumber: z.string().min(1, "Please select a PC number"),
+  name: z.string().min(1, "Please enter a name"),
+  phone: z.string().min(1, "Contact number is required"),
+  booking_date: z.string().min(1, "Date is required"),
+  starting_time: z.string().min(1, "Starting time is required"),
+  pc_no: z.string().min(1, "Please select a PC number"),
   duration: z.string().min(1, "Please select a duration"),
 })
 
@@ -26,59 +30,45 @@ type FormData = z.infer<typeof formSchema>
 interface AddGamerProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  roomId: number | string;
 }
 
-const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
+interface ApiError {
+  data: {
+    message: string;
+  };
+}
+
+const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
+
+
+  const [addGamerApi, { isLoading }] = useAddGamerApiMutation()
+
 
   const {
     register,
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      contactNumber: "",
-      date: "",
-      opening_time: "",
-      pcNumber: "",
+      name: "",
+      phone: "",
+      booking_date: "",
+      starting_time: "",
+      pc_no: "",
       duration: "",
     },
   })
 
-  const onSubmit = async (data: FormData) => {
-    console.log("Form submitted:", data)
-
-    const dateStr = startDate || new Date()
-    const date = new Date(dateStr);
-    const formattedDate = date.toISOString().split('T')[0];
-    console.log(formattedDate)
-
-    // const formData = new FormData();
-    // formData.append("promo_code", data.promo_code);
-
-    // try {
-    //   const res = await addPromoApi(formData).unwrap();
-    //   console.log(res)
-    //   if (res?.status === 'success') {
-    //     toast.success(res?.message)
-    //     setIsOpen(!open)
-    //   } else {
-    //     toast.error(res?.messages)
-    //   }
-    // } catch (errors: any) {
-    //   if (errors) {
-    //     toast.error(errors.data?.message)
-    //   }
-    // }
+  const onSubmit = async (values: FormData) => {
+    console.log('clck onsubmit function--------> ')
 
 
-
-    setIsOpen(!open)
-    // reset()
   }
 
   const handleCancel = () => {
@@ -87,10 +77,10 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
   }
 
   return (
-    <div className='xl:p-8'>
-      <h1 className="text-center text-[24px] py-4">Add Gamer</h1>
+    <div className='xl:p-6'>
+      <h1 className="text-center text-[24px]">Add Gamer</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-white text-sm">
             Email
@@ -105,12 +95,27 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
           {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
         </div>
 
+
         <div className="space-y-2">
-          <Label htmlFor="contactNumber" className="text-white text-sm">
+          <Label htmlFor="name" className="text-white text-sm">
+            Name
+          </Label>
+          <Input
+            id="name"
+            type="name"
+            placeholder="Enter the name of the room"
+            {...register("name")}
+            className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 "
+          />
+          {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-white text-sm">
             Contact Number
           </Label>
           <Input
-            id="contactNumber"
+            id="phone"
             type="number"
             placeholder="Enter the contact number"
             maxLength={11}
@@ -120,50 +125,50 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
                 target.value = target.value.slice(0, 11)
               }
             }}
-            {...register("contactNumber")}
+            {...register("phone")}
             className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
-          {errors.contactNumber && <p className="text-red-400 text-xs mt-1">{errors.contactNumber.message}</p>}
+          {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone.message}</p>}
         </div>
 
 
 
 
         <div className="space-y-2 w-full">
-          <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
-          <DatePicker 
+          <Label htmlFor="booking_date" className="text-base font-medium">Validate Date</Label>
+          <DatePicker
 
-          selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33]/80 p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
-           wrapperClassName="w-full" 
+            selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33]/80 p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+            wrapperClassName="w-full"
           />
         </div>
 
 
 
         <div className="space-y-2">
-          <Label htmlFor="opening_time" className="text-white text-sm">
+          <Label htmlFor="starting_time" className="text-white text-sm">
             Starting time
           </Label>
           <div className="relative">
             <Input
-              id="opening_time"
+              id="starting_time"
               type="tex"
               placeholder="Enter the opening time(10.00 AM)"
-              {...register("opening_time")}
+              {...register("starting_time")}
               className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
-          {errors.opening_time && <p className="text-red-400 text-xs mt-1">{errors.opening_time.message}</p>}
+          {errors.starting_time && <p className="text-red-400 text-xs mt-1">{errors.starting_time.message}</p>}
         </div>
 
 
 
         <div className="space-y-2">
-          <Label htmlFor="pcNumber" className="text-white text-sm">
+          <Label htmlFor="pc_no" className="text-white text-sm">
             PC Number
           </Label>
           <Controller
-            name="pcNumber"
+            name="pc_no"
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
@@ -190,7 +195,7 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
               </Select>
             )}
           />
-          {errors.pcNumber && <p className="text-red-400 text-xs mt-1">{errors.pcNumber.message}</p>}
+          {errors.pc_no && <p className="text-red-400 text-xs mt-1">{errors.pc_no.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -233,9 +238,9 @@ const AddGamer = ({ open, setIsOpen }: AddGamerProps) => {
               background:
                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
             }}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
-            {isSubmitting ? "Processing..." : "Add"}
+            {isLoading ? <CustomButtonLoader /> : "Add"}
           </Button>
           <Button
             type="button"
