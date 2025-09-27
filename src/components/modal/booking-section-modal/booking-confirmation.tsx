@@ -3,20 +3,51 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useCancelBookingApiMutation, useConfirmBookingApiMutation } from "@/redux/website/booking/bookingApi";
 import { Dispatch, SetStateAction, useState } from "react"
+import toast from "react-hot-toast";
 
 
 interface BookingConfirmProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  bookingId: string | number;
 }
 
-const BookingConfirmation = ({ open, setIsOpen }: BookingConfirmProps) => {
+const BookingConfirmation = ({ open, setIsOpen, bookingId }: BookingConfirmProps) => {
+
   const [selectedValue, setSelectedValue] = useState("")
+
+  const [confirmBookingApi] = useConfirmBookingApiMutation()
+  const [cancelBookingApi] = useCancelBookingApiMutation()
+
+console.log(bookingId,'booking id-------> ')
+
+  const handleApply = async () => {
+    if (selectedValue === "complete") {
+      try {
+        const res = await confirmBookingApi(bookingId).unwrap()
+        if (res?.status === "success") {
+          toast.success(res?.message)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (selectedValue === "cancelled") {
+      try {
+        const res = await cancelBookingApi(bookingId).unwrap()
+        if (res?.status === "success") {
+          toast.success(res?.message)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
 
 
   return (
-    <div>
+    <div className="xl:p-8">
 
       <p className="py-8 text-2xl font-semibold">Booking confirmation</p>
       <RadioGroup
@@ -71,7 +102,10 @@ const BookingConfirmation = ({ open, setIsOpen }: BookingConfirmProps) => {
         </Button>
 
         <Button
-          onClick={() => setIsOpen(!open)}
+          onClick={() => {
+            setIsOpen(!open);
+            handleApply()
+          }}
           className="w-[40%] py-6 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
           style={{
             background:

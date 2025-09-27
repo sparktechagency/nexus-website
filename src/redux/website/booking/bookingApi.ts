@@ -38,13 +38,13 @@ const bookingApi = baseApi.injectEndpoints({
             providesTags: ['webBooking'],
         }),
         // BOOKING DETAILS
-        // getBookingDetailsApi: builder.query({
-        //     query: (id) => ({
-        //         url: `/provider-booking-details/${id}`,
-        //         method: "GET",
-        //     }),
-        //     providesTags: ['webBooking'],
-        // }),
+        getBookingDetailsApi: builder.query({
+            query: (id) => ({
+                url: `/provider-booking-details/${id}`,
+                method: "GET",
+            }),
+            providesTags: ['webBooking'],
+        }),
         // MARK AS PAYMENT COMPLETE
         // markAsPaymentApi: builder.mutation({
         //     query: (id) => ({
@@ -54,32 +54,37 @@ const bookingApi = baseApi.injectEndpoints({
         //     invalidatesTags: ['webBooking'],
         // }),
         // CONFIRM BOOKING
-        // confirmBookingApi: builder.mutation({
-        //     query: (id) => ({
-        //         url: `/confirm-booking/${id}`,
-        //         method: "POST",
-        //     }),
-        //     invalidatesTags: ['webBooking'],
-        // }),
+        confirmBookingApi: builder.mutation({
+            query: (id) => ({
+                url: `/confirm-booking/${id}`,
+                method: "POST",
+            }),
+            invalidatesTags: ['webBooking'],
+        }),
+
+
         // CANCEL BOOKING
-        // cancelBookingApi: builder.mutation({
-        //     query: (id) => ({
-        //         url: `/cancel-booking/${id}`,
-        //         method: "POST",
-        //     }),
-        //     invalidatesTags: ['webBooking'],
-        // }),
+        cancelBookingApi: builder.mutation({
+            query: (id) => ({
+                url: `/cancel-booking/${id}`,
+                method: "POST",
+            }),
+            invalidatesTags: ['webBooking'],
+        }),
+
+
         // RESCHEDULE BOOKING
-        // rescheduleBookingApi: builder.mutation({
-        //     query: (id) => ({
-        //         url: `/reschedule-booking/${id}`,
-        //         method: "POST",
-        //     }),
-        //     invalidatesTags: ['webBooking'],
-        // }),
+        rescheduleBookingApi: builder.mutation({
+            query: ({rescheduleInfo,id}) => ({
+                url: `/reschedule-booking/1`,
+                method: "POST",
+                body:rescheduleInfo,
+            }),
+            invalidatesTags: ['webBooking'],
+        }),
     }),
     overrideExisting: true
 })
 
 
-export const { useGetProviderBookingListApiQuery,useAddGamerApiMutation } = bookingApi;
+export const { useGetProviderBookingListApiQuery,useGetBookingDetailsApiQuery,useAddGamerApiMutation,useConfirmBookingApiMutation,useCancelBookingApiMutation,useRescheduleBookingApiMutation} = bookingApi;

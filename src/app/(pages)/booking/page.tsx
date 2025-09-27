@@ -4,7 +4,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
-import { useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
+import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
 
 
 
@@ -47,11 +47,13 @@ const BookingPage = () => {
   const [gamerReviewRatingModalOpen, setGamerReviewRatingModalOpen] = useState(false)
   const [rescheduleUpdateModalOpen, setRescheduleUpdateModalOpen] = useState(false)
   const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
+
   const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState("Ongoing");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [bookingId, setBookingId] = useState<string | number>('')
 
 
   const [timeSlots, setTimeSlots] = useState<string[]>([])  // time data 
@@ -70,14 +72,22 @@ const BookingPage = () => {
 
 
 
-
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
     room_id: roomId,
     status: selectedStatus,
     date: formattedDate,
   });
-
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
+
+
+  // BOOKING DETAILS API
+  const { data: getBookingDetails } = useGetBookingDetailsApiQuery(bookingId);
+  const bookingDetails = getBookingDetails?.data
+
+
+
+
+
 
   useEffect(() => {
     if (allRoomData && allRoomData.length > 0) {
@@ -98,13 +108,29 @@ const BookingPage = () => {
     }
   }, [providerListData]);
 
-
-  if (isLoading) {
-    return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
+  const handleModalOpen = (bookingSelectId: string | number, statusType) => {
+    setBookingId(bookingSelectId)
+    if (statusType === 'Ongoing') {
+      setGamerInfoPayCompleteModalOpen(true)
+    }
+    else if (statusType === 'Upcoming') {
+      setGamerInfoConBookingModalOpen(true)
+    }
+    else if (statusType === 'Completed') {
+      setGamerReviewRatingModalOpen(true)
+    }
+    else if (statusType === 'Canceled') {
+      setCancelTabModalModalOpen(true)
+    }
   }
 
 
 
+
+
+  if (isLoading) {
+    return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
+  }
 
   return (
     <>
@@ -171,16 +197,16 @@ const BookingPage = () => {
               </button>
 
             ))}
-      
 
-         {/* DATE PICKER (SELECT DATA) */}
+
+            {/* DATE PICKER (SELECT DATA) */}
             {
               selectedStatus && (selectedStatus === "Upcoming" || selectedStatus === "Completed" || selectedStatus === "Canceled") ? <div className="">
-              <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} 
-              className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
-                wrapperClassName="w-full"
-              />
-            </div> : ""
+                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)}
+                  className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+                  wrapperClassName="w-full"
+                />
+              </div> : ""
             }
           </div>
         </div>
@@ -217,7 +243,9 @@ const BookingPage = () => {
                           key={pcIndex}
                           className={` px-1 xl:px-4 py-2 md:py-6  border border-gray-800 text-center ${bookingData ? 'bg-[#b9c8ff] text-black' : ""}`}
                         >
-                          {bookingData && <div className="flex flex-col">
+                          {bookingData && <div
+                            onClick={() => handleModalOpen(bookingData?.id, selectedStatus)}
+                            className="flex flex-col cursor-pointer">
                             <p className="text-[10px] md:text-[14px] xl:text-[16px] font-bold">{bookingData?.user.name}</p>
                             <p className="flex flex-col md:flex-row  justify-center text-[10px] md:text-[12px] xl:text-[16px] text-gray-500"><span className="mr-[2px]">{bookingData?.starting_time}</span> - <span className="ml-[2px]">{bookingData?.ending_time}</span></p>
                           </div>}
@@ -241,7 +269,7 @@ const BookingPage = () => {
 
 
 
-      {/* modal component(ADD_ROOM) */}
+      {/* modal component(ADD_Gamer) */}
       <CustomModalTwo
         open={isAddRoom}
         setIsOpen={setIsAddRoom}
@@ -255,6 +283,9 @@ const BookingPage = () => {
         />
       </CustomModalTwo>
 
+
+
+
       {/* modal component(Gamer_Info_Pay_Complete) */}
       <CustomModal
         open={gamerInfoPayCompleteModalOpen}
@@ -265,15 +296,42 @@ const BookingPage = () => {
         <GamerInfoPayComplete />
       </CustomModal>
 
-      {/* modal component(Gamer_Info_con-booking) */}
+
+
+      {/* modal component(Gamer_Info_con-booking ===== Details [STATUS----> UP_Coming ]) */}
       <CustomModal
         open={gamerInfoConBookingModalOpen}
         setIsOpen={setGamerInfoConBookingModalOpen}
         className={"p-4 max-h-[0vh]"}
         maxWidth={"md:!max-w-[40vw]"}
       >
-        <GamerInfoConBooking />
+        <GamerInfoConBooking
+          bookingDetails={bookingDetails}
+           bookingId={bookingId}
+        />
       </CustomModal>
+
+
+
+      {/* modal component (up_COMING------> CONFIRM BOOKING) */}
+      {/* <CustomModal
+        open={bookingConfirmationModalOpen}
+        setIsOpen={setBookingConfirmationModalOpen}
+        className={"p-4 max-h-[0vh]"}
+        maxWidth={"md:!max-w-[30vw]"}
+      >
+        <BookingConfirmation
+          open={bookingConfirmationModalOpen}
+          setIsOpen={setBookingConfirmationModalOpen}
+          bookingId={bookingId}
+        />
+      </CustomModal> */}
+
+
+
+
+
+
 
       {/* modal component(gamer-info-con-reschedule) */}
       <CustomModal
@@ -285,33 +343,18 @@ const BookingPage = () => {
         <GamerInfoConReschedule />
       </CustomModal>
 
-      {/* modal component(reschedule-update) */}
-      <CustomModal
-        open={rescheduleUpdateModalOpen}
-        setIsOpen={setRescheduleUpdateModalOpen}
-        className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
-      >
-        <RescheduleUpdate
-          open={rescheduleUpdateModalOpen}
-          setIsOpen={setRescheduleUpdateModalOpen}
-        />
-      </CustomModal>
 
-      {/* modal component(reschedule-update) */}
-      <CustomModal
-        open={bookingConfirmationModalOpen}
-        setIsOpen={setBookingConfirmationModalOpen}
-        className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[30vw]"}
-      >
-        <BookingConfirmation
-          open={bookingConfirmationModalOpen}
-          setIsOpen={setBookingConfirmationModalOpen}
-        />
-      </CustomModal>
 
-      {/* modal component(reschedule-update) */}
+
+
+
+
+
+
+
+
+
+      {/* modal component(REVIEW_RATING) */}
       <CustomModal
         open={gamerReviewRatingModalOpen}
         setIsOpen={setGamerReviewRatingModalOpen}
@@ -321,8 +364,12 @@ const BookingPage = () => {
         <GamerInfoReviewRating
           open={gamerReviewRatingModalOpen}
           setIsOpen={setGamerReviewRatingModalOpen}
+          bookingDetails={bookingDetails}
         />
       </CustomModal>
+
+
+
 
       {/* modal component(CancelTab_Modal) */}
       <CustomModal
@@ -331,7 +378,9 @@ const BookingPage = () => {
         className={"p-4 max-h-[0vh]"}
         maxWidth={"!max-w-[45vw]"}>
 
-        <CancelTabModal />
+        <CancelTabModal
+          bookingId={bookingId}
+        />
       </CustomModal>
     </>
   );

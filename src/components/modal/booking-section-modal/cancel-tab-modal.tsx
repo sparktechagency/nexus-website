@@ -1,8 +1,20 @@
 
 import { Button } from "@/components/ui/button"
+import { useCancelBookingApiMutation } from "@/redux/website/booking/bookingApi"
 import Image from "next/image"
 
-const CancelTabModal = () => {
+interface cancelModelProps {
+  bookingId : number
+}
+
+const CancelTabModal = ({bookingId} :cancelModelProps) => {
+
+  
+  const [cancelBookingApi] = useCancelBookingApiMutation()
+
+
+console.log('cancel booiningid', bookingId)
+
   return (
     <div className="">
       <h1 className="text-center text-[24px] py-4">Gamer Information</h1>

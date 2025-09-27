@@ -9,11 +9,15 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import DatePicker from 'react-datepicker';
+import toast from 'react-hot-toast';
+import { useRescheduleBookingApiMutation } from '@/redux/website/booking/bookingApi';
+import CustomButtonLoader from '@/components/loader/CustomButtonLoader';
 
 const formSchema = z.object({
-  date: z.string().min(1, "Date is required"),
-  startingTime: z.string().min(1, "Starting time is required"),
-  pcNumber: z.string().min(1, "Please select a PC number"),
+  booking_date: z.string().min(1, "Date is required"),
+  starting_time: z.string().min(1, "Starting time is required"),
+  pc_no: z.string().min(1, "Please select a PC number"),
   duration: z.string().min(1, "Please select a duration"),
 })
 
@@ -22,9 +26,21 @@ type FormData = z.infer<typeof formSchema>
 interface AddGamerProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  bookingId: string | number;
 }
 
-const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
+interface ApiError {
+  data: {
+    message: string;
+  };
+}
+
+const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+
+
+  const [rescheduleBookingApi] = useRescheduleBookingApiMutation()
+
   const {
     register,
     handleSubmit,
@@ -34,9 +50,9 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: "",
-      startingTime: "",
-      pcNumber: "",
+      booking_date: "",
+      starting_time: "",
+      pc_no: "",
       duration: "",
     },
   })
@@ -44,10 +60,32 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
 
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form submitted:", data)
 
-    setIsOpen(!open)
-    reset()
+    const formData = new FormData();
+    formData.append("room_id", "2");
+    formData.append("booking_date", "2025-08-19");
+    formData.append("starting_time", "07:00 PM");
+    formData.append("pc_no", "2");
+    formData.append("duration", "2");
+    formData.append("_method", "PUT");
+
+
+
+    try {
+      const res = await rescheduleBookingApi(formData).unwrap();
+      console.log(res)
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message);
+      }
+    }
   }
 
   const handleCancel = () => {
@@ -57,7 +95,7 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
 
 
   return (
-    <div>
+    <div className='xl:p-8'>
       <h1 className="text-center text-[24px] py-4">Reschedule</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -75,8 +113,8 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
               value="vip"
               id="vip"
               className={`w-6 h-6 border-2 ${selectedValue === "vip"
-                  ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
-                  : "border-gray-400"
+                ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
+                : "border-gray-400"
                 }`}
             />
             <Label
@@ -92,8 +130,8 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
               value="bootcamp"
               id="bootcamp"
               className={`w-6 h-6 border-2 ${selectedValue === "bootcamp"
-                  ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
-                  : "border-gray-400"
+                ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
+                : "border-gray-400"
                 }`}
             />
             <Label
@@ -109,8 +147,8 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
               value="ps5"
               id="ps5"
               className={`w-6 h-6 border-2 ${selectedValue === "ps5"
-                  ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
-                  : "border-gray-400"
+                ? "border-transparent bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7]"
+                : "border-gray-400"
                 }`}
             />
             <Label
@@ -128,38 +166,37 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
           <Label htmlFor="date" className="text-white text-sm">
             Date
           </Label>
-          <div className="relative">
-            <Input
-              id="date"
-              type="date"
-              {...register("date")}
-              className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 border-gray-700 text-white  [&::-webkit-calendar-picker-indicator]:invert"
+          <div className="space-y-2 w-full">
+            <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
+            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+              wrapperClassName="w-full"
             />
           </div>
-          {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date.message}</p>}
+          {errors.booking_date && <p className="text-red-400 text-xs mt-1">{errors.booking_date.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="startingTime" className="text-white text-sm">
-            Starting time
+          <Label htmlFor="starting_time" className="text-white text-sm">
+            Opening Time
           </Label>
           <div className="relative">
             <Input
-              id="startingTime"
-              type="time"
-              {...register("startingTime")}
+              id="starting_time"
+              type="tex"
+              placeholder="Enter the opening time(10.00 AM)"
+              {...register("starting_time")}
               className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
-          {errors.startingTime && <p className="text-red-400 text-xs mt-1">{errors.startingTime.message}</p>}
+          {errors.starting_time && <p className="text-red-400 text-xs mt-1">{errors.starting_time.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="pcNumber" className="text-white text-sm">
+          <Label htmlFor="pc_no" className="text-white text-sm">
             PC Number
           </Label>
           <Controller
-            name="pcNumber"
+            name="pc_no"
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
@@ -186,7 +223,7 @@ const RescheduleUpdate = ({ open, setIsOpen }: AddGamerProps) => {
               </Select>
             )}
           />
-          {errors.pcNumber && <p className="text-red-400 text-xs mt-1">{errors.pcNumber.message}</p>}
+          {errors.pc_no && <p className="text-red-400 text-xs mt-1">{errors.pc_no.message}</p>}
         </div>
 
         <div className="space-y-2">
