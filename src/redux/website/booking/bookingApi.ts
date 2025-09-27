@@ -76,7 +76,7 @@ const bookingApi = baseApi.injectEndpoints({
         // RESCHEDULE BOOKING
         rescheduleBookingApi: builder.mutation({
             query: ({rescheduleInfo,id}) => ({
-                url: `/reschedule-booking/1`,
+                url: `/reschedule-booking/${id}`,
                 method: "POST",
                 body:rescheduleInfo,
             }),

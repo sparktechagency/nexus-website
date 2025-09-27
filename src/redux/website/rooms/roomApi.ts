@@ -49,9 +49,17 @@ const roomApi = baseApi.injectEndpoints({
             }),
             providesTags: ['room'],
         }),
+        // BOOKING RESCHEDULE MODAL FOR
+         getAllRoomApi: builder.query({
+            query: () => ({
+                url: `/rooms`,
+                method: "GET",
+            }),
+            providesTags: ['room'],
+        }),
     }),
        overrideExisting: true
 })
 
 
-export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery,useSingleGetRoomApiQuery,useAllRoomGetRoomApiQuery } = roomApi;
+export const { useCreateRoomApiMutation, useUpdateRoomApiMutation, useDeleteRoomApiMutation, useGetRoomApiQuery,useSingleGetRoomApiQuery,useAllRoomGetRoomApiQuery,useGetAllRoomApiQuery } = roomApi;

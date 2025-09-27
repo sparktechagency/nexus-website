@@ -55,7 +55,7 @@ const GamerInfoConBooking = ({ bookingDetails, bookingId }: GamerInfoConBookingP
       <h1 className="text-center text-[24px] py-4">Gamer Information</h1>
 
       {/* Profile Image */}
-      <div className="flex justify-center mb-8 mt-6">
+      {bookingDetails?.user?.avatar &&  <div className="flex justify-center mb-8 mt-6">
         <Image
           src={bookingDetails?.user?.avatar}
           alt="photo"
@@ -63,7 +63,8 @@ const GamerInfoConBooking = ({ bookingDetails, bookingId }: GamerInfoConBookingP
           width={100}
           height={100}
         />
-      </div>
+      </div>}
+     
 
       {/* Information Grid */}
       <div className="mb-8">
@@ -168,7 +169,7 @@ const GamerInfoConBooking = ({ bookingDetails, bookingId }: GamerInfoConBookingP
         open={rescheduleUpdateModalOpen}
         setIsOpen={setRescheduleUpdateModalOpen}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[50vw]"}
       >
         <RescheduleUpdate
           open={rescheduleUpdateModalOpen}
