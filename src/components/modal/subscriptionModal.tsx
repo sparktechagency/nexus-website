@@ -1,14 +1,67 @@
 
 import { Button } from "@/components/ui/button"
+import { useCheckOutApiMutation, useGetSubscriptionApiQuery } from "@/redux/dashboard/subscription/subscirptionApi"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Dispatch, SetStateAction } from "react"
+import CustomButtonLoader from "../loader/CustomButtonLoader"
+import CustomButtonLoaderTwo from "../loader/CustomButtonLoaderTwo"
 
 interface SubscriptionModalProps {
   open: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
+
 export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModalProps) {
+  const router = useRouter()
+
+  // GET API
+  const { data: getSubscription, isLoading } = useGetSubscriptionApiQuery({ skip: true })
+  const subscriptionData = getSubscription?.data
+
+
+  const [checkOutApi] = useCheckOutApiMutation()
+
+
+
+
+  const handleNavigate = async (planId : number) => {
+    const formData = new FormData();
+    formData.append("plan_id", planId.toString());
+
+    // Make sure the URLs are correctly passed
+    formData.append("cancel_url", "http://localhost:3000/home");
+    formData.append("success_url", "http://localhost:3000/home");
+
+    try {
+      const res = await checkOutApi(formData).unwrap();
+      const successUrl = res?.data?.url
+      const cancelUrl = res?.data?.errors?.cancel_url
+
+      if (res?.status === 'success') {
+        router.push(successUrl)
+      }else(
+        router.push(cancelUrl)
+      )
+
+    } catch (error) {
+      // Error handling, maybe redirect or show message
+      console.error(error);
+      router.push('/');
+    }
+  };
+
+
+
+
+  if (isLoading) {
+    return <div className="h-[200px] flex justify-center items-center">
+      <CustomButtonLoaderTwo />
+    </div>
+
+  }
+
   return (
     <div className="text-[#fff xl:p-8">
       <div className="text-center mb-8">
@@ -27,7 +80,7 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
 
           </div>
           <h3 className="text-black text-lg font-semibold mb-1">Basic Plan</h3>
-          <p className="text-black text-sm mb-4">$5643.00/monthly</p>
+          <p className="text-black text-sm mb-4">${subscriptionData[0]?.price}/monthly</p>
 
           <ul className="text-left text-black text-sm space-y-2 mb-6">
             <li>• Up to 5 PC bookings per day.</li>
@@ -36,10 +89,9 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
           </ul>
 
           <Button
+            onClick={() => handleNavigate(subscriptionData[0]?.id)}
             className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
-            <Link href='/rescedule'>
-              Manage plan
-            </Link>
+            Manage plan
           </Button>
         </div>
 
@@ -68,10 +120,10 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
             <li>• Email support.</li>
           </ul>
 
-          <Button className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
-            <Link href='/rescedule'>
-              Manage plan
-            </Link>
+          <Button
+            onClick={() => handleNavigate(subscriptionData[1]?.id)}
+            className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
+            Manage plan
           </Button>
         </div>
 
@@ -109,10 +161,10 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
             <li>• First access to beta features.</li>
           </ul>
 
-          <Button className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
-            <Link href='/rescedule'>
-              Manage plan
-            </Link>
+          <Button
+            onClick={() => handleNavigate(subscriptionData[2]?.id)}
+            className="w-full bg-white text-black hover:bg-gray-100 rounded-full cursor-pointer">
+            Manage plan
           </Button>
         </div>
       </div>

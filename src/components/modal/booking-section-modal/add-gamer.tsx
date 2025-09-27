@@ -66,9 +66,52 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   })
 
   const onSubmit = async (values: FormData) => {
-    console.log('clck onsubmit function--------> ')
+   
+    console.log('clck')
+
+    // const dateStr = startDate || new Date()
+    // const date = new Date(dateStr);
+    // const formattedDate = date.toISOString().split('T')[0];
+    // console.log(formattedDate)
+
+    // const formData = new FormData();
+    // formData.append("room_id", roomId.toString());
+    // formData.append("email", data.email);
+    // formData.append("name", data.name);
+    // formData.append("phone", data.phone);
+    // formData.append("booking_date", data.booking_date);
+    // formData.append("starting_time", data.starting_time);
+    // formData.append("pc_no", data.pc_no);
+    // formData.append("duration", data.duration);
 
 
+    // formData.forEach((value, key) => {
+    //   console.log(key, value);
+    // });
+
+
+
+
+    // try {
+    //   const res = await addGamerApi(formData).unwrap();
+    //   console.log(res)
+    //   if (res?.status === 'success') {
+    //     toast.success(res?.message)
+    //     setIsOpen(!open)
+    //   } else {
+    //     toast.error(res?.messages)
+    //   }
+    // } catch (errors) {
+    //   const errorValue = errors as ApiError;
+    //   if (errorValue?.data?.message) {
+    //     toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+    //   }
+    // }
+
+
+
+    // setIsOpen(!open)
+    // reset()
   }
 
   const handleCancel = () => {
@@ -238,7 +281,6 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
               background:
                 "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
             }}
-            disabled={isLoading}
           >
             {isLoading ? <CustomButtonLoader /> : "Add"}
           </Button>

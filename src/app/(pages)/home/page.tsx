@@ -10,6 +10,7 @@ import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
 import { useEffect, useState, Suspense } from 'react'
 import cookies from 'js-cookie'
 import { useGetWebDashboardHomeApiQuery } from '@/redux/website/home/webHomePageApi'
+import { useGetProfileApiQuery } from '@/redux/website/profile/profileApi'
 
 
 
@@ -28,13 +29,15 @@ const HomePageContent = () => {
   }, [modalVerify])
 
 
-  const {data:getDashboard} = useGetWebDashboardHomeApiQuery({
-    skip:true
+  const { data: getProfile } = useGetProfileApiQuery(null)
+  const profileData = getProfile?.data
+  const subscriptionStatus = profileData?.subscription_status
+
+  const { data: getDashboard } = useGetWebDashboardHomeApiQuery({
+    skip: true
   })
-const curdData = getDashboard?.data
+  const curdData = getDashboard?.data
 
-
-  
 
 
 
@@ -45,7 +48,7 @@ const curdData = getDashboard?.data
       {/* Main Content Grid */}
       <main className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 ">
         {/* Summary Cards */}
-        <DashboardSummaryCard title="Total Room" value={curdData?.total_room} icon="Room" iconBgColor="bg-icon-blue"/>
+        <DashboardSummaryCard title="Total Room" value={curdData?.total_room} icon="Room" iconBgColor="bg-icon-blue" />
 
         <DashboardSummaryCard title="Upcoming Bookings" value={curdData?.upcoming_bookings} icon="Booking" iconBgColor="bg-icon-orange" />
         <DashboardSummaryCard title="Revenue" value={curdData?.revenue} icon="Revenue" iconBgColor="bg-icon-green" />
@@ -70,17 +73,21 @@ const curdData = getDashboard?.data
 
 
       {/* modal component(RESCEDULE) */}
-      <CustomModal
-        open={isSubscription}
-        setIsOpen={setIsSubscription}
-        className={"p-4 max-h-[30vh] xl:max-h-none xl:overflow-y-hidden"}
-        maxWidth={"md:!max-w-[95vw] xl:!max-w-[50vw]"}
-      >
-        <SubscriptionModal
+      {
+        subscriptionStatus !== 'active'  && <CustomModal
           open={isSubscription}
           setIsOpen={setIsSubscription}
-        />
-      </CustomModal>
+          className={"p-4 max-h-[30vh] xl:max-h-none xl:overflow-y-hidden"}
+          maxWidth={"md:!max-w-[95vw] xl:!max-w-[50vw]"}
+        >
+          <SubscriptionModal
+            open={isSubscription}
+            setIsOpen={setIsSubscription}
+          />
+        </CustomModal>
+      }
+
+
     </div>
   )
 }

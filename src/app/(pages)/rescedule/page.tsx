@@ -14,7 +14,6 @@ export default function RescedulePage() {
     const router = useRouter()
 
 
-
     const handleBackClick = () => {
         router.push("/home?showSubscription=true")
     }

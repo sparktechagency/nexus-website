@@ -35,6 +35,7 @@ import BookingConfirmation from "@/components/modal/booking-section-modal/bookin
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating"
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
 import DatePicker from "react-datepicker";
+import CustomModalTwo from "@/components/modal/customModalTwo";
 
 
 
@@ -241,7 +242,7 @@ const BookingPage = () => {
 
 
       {/* modal component(ADD_ROOM) */}
-      <CustomModal
+      <CustomModalTwo
         open={isAddRoom}
         setIsOpen={setIsAddRoom}
         className={"p-4 max-h-[0vh]"}
@@ -252,7 +253,7 @@ const BookingPage = () => {
           setIsOpen={setIsAddRoom}
           roomId={roomId}
         />
-      </CustomModal>
+      </CustomModalTwo>
 
       {/* modal component(Gamer_Info_Pay_Complete) */}
       <CustomModal

@@ -13,6 +13,7 @@ export const baseApi = createApi({
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
         headers.set("accept", "application/json");
+       // NEW LINK add for json formate data send
       }
       return headers;
     },
