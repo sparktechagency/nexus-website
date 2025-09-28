@@ -79,7 +79,7 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
 
 
   const onSubmit = async (data: RoomFormValues) => {
-   
+
 
     const formData = new FormData();
     formData.append("room_id",bookingId.toString());
@@ -89,25 +89,25 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
     formData.append("duration", data.duration);
     formData.append("_method", "PUT");
 
-    try {
-      const res = await rescheduleBookingApi({
-        rescheduleInfo: formData,
-        id: bookingId
-      }).unwrap();
+    // try {
+    //   const res = await rescheduleBookingApi({
+    //     rescheduleInfo: formData,
+    //     id: bookingId
+    //   }).unwrap();
 
-      console.log(res)
-      if (res?.status === 'success') {
-        toast.success(res?.message)
-        setIsOpen(false);
-      } else {
-        toast.error(res?.messages)
-      }
-    } catch (errors) {
-      const errorValue = errors as ApiError;
-      if (errorValue?.data?.message) {
-        toast.error(errorValue?.data?.message);
-      }
-    }
+    //   console.log(res)
+    //   if (res?.status === 'success') {
+    //     toast.success(res?.message)
+    //     setIsOpen(false);
+    //   } else {
+    //     toast.error(res?.messages)
+    //   }
+    // } catch (errors) {
+    //   const errorValue = errors as ApiError;
+    //   if (errorValue?.data?.message) {
+    //     toast.error(errorValue?.data?.message);
+    //   }
+    // }
   }
 
   const handleCancel = () => {

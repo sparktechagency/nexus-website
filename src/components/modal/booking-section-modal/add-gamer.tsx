@@ -1,11 +1,9 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,18 +12,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import toast from 'react-hot-toast';
 import { useAddGamerApiMutation } from '@/redux/website/booking/bookingApi';
 import CustomButtonLoader from '@/components/loader/CustomButtonLoader';
+import { useGetAllRoomApiQuery } from '@/redux/website/rooms/roomApi';
 
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  name: z.string().min(1, "Please enter a name"),
-  phone: z.string().min(1, "Contact number is required"),
-  booking_date: z.string().min(1, "Date is required"),
-  starting_time: z.string().min(1, "Starting time is required"),
-  pc_no: z.string().min(1, "Please select a PC number"),
-  duration: z.string().min(1, "Please select a duration"),
-})
-
-type FormData = z.infer<typeof formSchema>
 
 interface AddGamerProps {
   open: boolean;
@@ -39,9 +27,34 @@ interface ApiError {
   };
 }
 
+type RoomFormValues = {
+  room_id: string | number
+  email: string
+  name: string
+  phone: string
+  booking_date: string
+  starting_time: string
+  pc_no: string
+  duration: string
+}
+interface RoomProps {
+  id: number;
+  provider_id: number;
+  name: string;
+  photo: string;
+  no_of_pc: number;
+  price: number;
+  created_at: string;
+  updated_at: string;
+}
+
+
+
 const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
 
+  const { data: getAllRoom } = useGetAllRoomApiQuery({ skip: true })
+  const roomData: RoomProps[] = getAllRoom?.data?.data
 
   const [addGamerApi, { isLoading }] = useAddGamerApiMutation()
 
@@ -49,75 +62,55 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   const {
     register,
     handleSubmit,
+    setValue,
     control,
-    reset,
-    formState: { errors, },
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      name: "",
-      phone: "",
-      booking_date: "",
-      starting_time: "",
-      pc_no: "",
-      duration: "",
-    },
-  })
-
-  const onSubmit = async (values: FormData) => {
-   
-    console.log('clck')
-
-    // const dateStr = startDate || new Date()
-    // const date = new Date(dateStr);
-    // const formattedDate = date.toISOString().split('T')[0];
-    // console.log(formattedDate)
-
-    // const formData = new FormData();
-    // formData.append("room_id", roomId.toString());
-    // formData.append("email", data.email);
-    // formData.append("name", data.name);
-    // formData.append("phone", data.phone);
-    // formData.append("booking_date", data.booking_date);
-    // formData.append("starting_time", data.starting_time);
-    // formData.append("pc_no", data.pc_no);
-    // formData.append("duration", data.duration);
+    formState: { errors },
+  } = useForm<RoomFormValues>()
 
 
-    // formData.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
+  // Update form value when date changes
+  useEffect(() => {
+    if (startDate) {
+      const formattedDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      setValue("booking_date", formattedDate);
+    }
+  }, [startDate, setValue]);
 
 
+  const onSubmit = async (data: RoomFormValues) => {
 
+    const formData = new FormData();
+    formData.append("room_id", roomId.toString());
+    formData.append("email", data.email);
+    formData.append("name", data.name);
+    formData.append("phone", data.phone);
+    formData.append("booking_date", data.booking_date);
+    formData.append("starting_time", data.starting_time);
+    formData.append("pc_no", data.pc_no);
+    formData.append("duration", data.duration);
 
-    // try {
-    //   const res = await addGamerApi(formData).unwrap();
-    //   console.log(res)
-    //   if (res?.status === 'success') {
-    //     toast.success(res?.message)
-    //     setIsOpen(!open)
-    //   } else {
-    //     toast.error(res?.messages)
-    //   }
-    // } catch (errors) {
-    //   const errorValue = errors as ApiError;
-    //   if (errorValue?.data?.message) {
-    //     toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
-    //   }
-    // }
-
-
-
-    // setIsOpen(!open)
-    // reset()
+    try {
+      const res = await addGamerApi(formData).unwrap();
+      console.log(res)
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+        setIsOpen(!open)
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+      }
+    }
   }
 
   const handleCancel = () => {
-    reset()
     setIsOpen(!open)
   }
+
+  // console.log(roomData)
 
   return (
     <div className='xl:p-6'>
@@ -177,13 +170,16 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
 
 
 
-        <div className="space-y-2 w-full">
-          <Label htmlFor="booking_date" className="text-base font-medium">Validate Date</Label>
-          <DatePicker
-
-            selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33]/80 p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
-            wrapperClassName="w-full"
-          />
+        <div className="space-y-2">
+          <Label htmlFor="date" className="text-white text-sm">
+            Date
+          </Label>
+          <div className="space-y-2 w-full">
+            <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
+            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
+              wrapperClassName="w-full"
+            />
+          </div>
         </div>
 
 
@@ -215,25 +211,16 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 ">
+                <SelectTrigger className="w-full rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="pc1" className="text-white hover:bg-gray-700">
-                    PC 1
-                  </SelectItem>
-                  <SelectItem value="pc2" className="text-white hover:bg-gray-700">
-                    PC 2
-                  </SelectItem>
-                  <SelectItem value="pc3" className="text-white hover:bg-gray-700">
-                    PC 3
-                  </SelectItem>
-                  <SelectItem value="pc4" className="text-white hover:bg-gray-700">
-                    PC 4
-                  </SelectItem>
-                  <SelectItem value="pc5" className="text-white hover:bg-gray-700">
-                    PC 5
-                  </SelectItem>
+                  {/* Dynamically render PC numbers */}
+                  {roomData?.map((room) => (
+                    <SelectItem key={room.id} value={`${room.no_of_pc}`} className="text-white hover:bg-gray-700">
+                      {`PC ${room.no_of_pc}`} {/* Dynamically displaying PC numbers */}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -241,7 +228,8 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
           {errors.pc_no && <p className="text-red-400 text-xs mt-1">{errors.pc_no.message}</p>}
         </div>
 
-        <div className="space-y-2">
+
+       <div className="space-y-2">
           <Label htmlFor="duration" className="text-white text-sm">
             Duration
           </Label>
@@ -250,20 +238,20 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500">
-                  <SelectValue placeholder="Select" />
+                <SelectTrigger className="w-full rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500">
+                  <SelectValue placeholder="Select Duration" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="1h" className="text-white hover:bg-gray-700">
+                  <SelectItem value="1" className="text-white hover:bg-gray-700">
                     1 Hour
                   </SelectItem>
-                  <SelectItem value="2h" className="text-white hover:bg-gray-700">
+                  <SelectItem value="2" className="text-white hover:bg-gray-700">
                     2 Hours
                   </SelectItem>
-                  <SelectItem value="3h" className="text-white hover:bg-gray-700">
+                  <SelectItem value="3" className="text-white hover:bg-gray-700">
                     3 Hours
                   </SelectItem>
-                  <SelectItem value="4h" className="text-white hover:bg-gray-700">
+                  <SelectItem value="4" className="text-white hover:bg-gray-700">
                     4 Hours
                   </SelectItem>
                 </SelectContent>
