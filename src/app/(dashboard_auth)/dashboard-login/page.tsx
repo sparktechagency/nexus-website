@@ -59,7 +59,7 @@ const DashboardLoginPage = () => {
       const role = res?.data?.user?.role
       const subscription_status = res?.data?.user?.subscription_status
 
-      if (res?.status === 'success') {
+      if (res?.status === 'success' && role === "ADMIN") {
         toast.success(res?.message)
         if (token) {
           Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
@@ -74,7 +74,7 @@ const DashboardLoginPage = () => {
 
         router.push("/dashboard")
       } else {
-        toast.error(res?.messages)
+        toast.error("Invalid credential. You are not a admin.");
       }
     } catch (errors) {
       const errorValue = errors as ApiError;

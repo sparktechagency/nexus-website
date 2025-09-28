@@ -60,7 +60,7 @@ export default function LoginPage() {
 
 
 
-      if (res?.status === 'success') {
+      if (res?.status === 'success' && role === "PROVIDER") {
         toast.success(res?.message)
         if (token) {
           Cookies.set('token', token); // expires in 7 days, set secure if you need HTTPS
@@ -73,7 +73,7 @@ export default function LoginPage() {
         }
         router.push("/home")
       } else {
-        toast.error(res?.messages)
+       toast.error("Invalid credential. You are not a provider.");
       }
     } catch (errors) {
        const errorValue = errors as ApiError;
