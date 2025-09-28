@@ -1,10 +1,8 @@
 
 import { Button } from "@/components/ui/button"
 import { useCheckOutApiMutation, useGetSubscriptionApiQuery } from "@/redux/dashboard/subscription/subscirptionApi"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Dispatch, SetStateAction } from "react"
-import CustomButtonLoader from "../loader/CustomButtonLoader"
 import CustomButtonLoaderTwo from "../loader/CustomButtonLoaderTwo"
 
 interface SubscriptionModalProps {
@@ -31,8 +29,8 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
     formData.append("plan_id", planId.toString());
 
     // Make sure the URLs are correctly passed
-    formData.append("cancel_url", "http://localhost:3000/home");
-    formData.append("success_url", "http://localhost:3000/home");
+    formData.append("cancel_url", "http://10.10.10.19:3000/home");
+    formData.append("success_url", "http://10.10.10.19:3000/home");
 
     try {
       const res = await checkOutApi(formData).unwrap();
@@ -59,7 +57,6 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
     return <div className="h-[200px] flex justify-center items-center">
       <CustomButtonLoaderTwo />
     </div>
-
   }
 
   return (

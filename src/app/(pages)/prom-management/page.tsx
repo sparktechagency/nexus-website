@@ -14,6 +14,7 @@ import toast from "react-hot-toast"
 import DashboardLoader from "@/components/DashboardLoader"
 import WebEmptyData from "@/components/WebEmptyData"
 import CustomPagination from "@/components/customPagination/CustomPagination"
+import CommonSubscription from "@/components/commonSubscription/CommonSubscription"
 
 interface PromoCodeProps {
     id: number
@@ -96,7 +97,7 @@ export default function PromoManagement() {
                 toast.error(res?.messages)
             }
         } catch (errors) {
-           const errorValue = errors as ApiError;
+            const errorValue = errors as ApiError;
             if (errorValue?.data?.message) {
                 toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
@@ -287,6 +288,9 @@ export default function PromoManagement() {
                     viewPromoId={viewPromoId}
                 />
             </CustomModal>
+
+            {/* SUBSCRIPTION COMPONENT MODAL */}
+            <CommonSubscription />
         </div>
     )
 }

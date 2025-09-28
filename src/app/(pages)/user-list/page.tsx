@@ -13,6 +13,7 @@ import { useGetUserListApiQuery } from "@/redux/website/userList/userListApi"
 import WebEmptyData from "@/components/WebEmptyData"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
+import CommonSubscription from "@/components/commonSubscription/CommonSubscription"
 
 interface UserListProps {
     id: string
@@ -147,6 +148,10 @@ const UserList = () => {
                             />
                 }
             </div>
+
+
+            {/* SUBSCRIPTION COMPONENT MODAL */}
+            <CommonSubscription />
         </div>
     )
 }

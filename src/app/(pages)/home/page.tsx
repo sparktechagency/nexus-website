@@ -1,37 +1,22 @@
 
 "use client"
 
-import CustomModal from '@/components/modal/customModal'
+
 import HomeFooterCurd from '@/components/modal/home-footer-curd'
-import SubscriptionModal from '@/components/modal/subscriptionModal'
 import DashboardSummaryCard from "@/components/summary-card"
 import WeeklyBookingGraph from "@/components/weekly-booking-graph"
 import WeeklyRevenueGraph from "@/components/weekly-revenue-graph"
-import { useEffect, useState, Suspense } from 'react'
-import cookies from 'js-cookie'
+import {Suspense } from 'react'
+
 import { useGetWebDashboardHomeApiQuery } from '@/redux/website/home/webHomePageApi'
-import { useGetProfileApiQuery } from '@/redux/website/profile/profileApi'
+import CommonSubscription from '@/components/commonSubscription/CommonSubscription'
+
 
 
 
 // Wrap the component that uses useSearchParams in Suspense
 const HomePageContent = () => {
-  const [isSubscription, setIsSubscription] = useState(false)
 
-  const modalVerify = cookies.get("subscription_status")
-
-  useEffect(() => {
-    if (modalVerify === "active") {
-      setIsSubscription(false)
-    } else {
-      setIsSubscription(true)
-    }
-  }, [modalVerify])
-
-
-  const { data: getProfile } = useGetProfileApiQuery(null)
-  const profileData = getProfile?.data
-  const subscriptionStatus = profileData?.subscription_status
 
   const { data: getDashboard } = useGetWebDashboardHomeApiQuery({
     skip: true
@@ -63,31 +48,10 @@ const HomePageContent = () => {
           <WeeklyBookingGraph />
         </div>
       </main>
-
       <HomeFooterCurd />
 
-
-
-
-
-
-
-      {/* modal component(RESCEDULE) */}
-      {
-        subscriptionStatus !== 'active'  && <CustomModal
-          open={isSubscription}
-          setIsOpen={setIsSubscription}
-          className={"p-4 max-h-[30vh] xl:max-h-none xl:overflow-y-hidden"}
-          maxWidth={"md:!max-w-[95vw] xl:!max-w-[50vw]"}
-        >
-          <SubscriptionModal
-            open={isSubscription}
-            setIsOpen={setIsSubscription}
-          />
-        </CustomModal>
-      }
-
-
+    {/* SUBSCRIPTION COMPONENT MODAL */}
+      <CommonSubscription />
     </div>
   )
 }

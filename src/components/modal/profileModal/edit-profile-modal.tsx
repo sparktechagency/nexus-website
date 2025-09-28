@@ -54,15 +54,16 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         setValue("name", profileData?.name);
         setValue("gaming_zone_name", profileData?.gaming_zone_name);
         setValue("opening_time", profileData?.opening_time);
-        setValue("closing_time", profileData?.closing_time);
+        setValue("closing_time", (profileData?.closing_time));
         setValue("address", profileData?.address);
         setValue("phone", profileData?.phone);
         if (profileData?.avatar) {
             setImagePreview(profileData?.avatar);
         }
-
     }, [profileData, setValue]);
 
+
+    
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -85,6 +86,17 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
     }
 
 
+    // TIME FORMATE (---AM/PM---)
+    function convertTo12HourFormat(time: string): string {
+        const [hours, minutes] = time.split(':');
+        let hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour ? hour : 12; // the hour '0' should be '12'
+        return `${hour}:${minutes} ${ampm}`;
+    }
+
+    
 
     const onSubmit = async (data: FormValues) => {
         const formData = new FormData();
@@ -93,8 +105,8 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         }
         formData.append("name", data.name)
         formData.append("gaming_zone_name", data.gaming_zone_name)
-        formData.append("opening_time", data.opening_time)
-        formData.append("closing_time", data.closing_time)
+        formData.append("opening_time", convertTo12HourFormat(data.opening_time))
+        formData.append("closing_time", convertTo12HourFormat(data.closing_time))
         formData.append("address", data.address)
         formData.append("phone", data.phone)
 
@@ -200,7 +212,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                             <div className="relative">
                                 <Input
                                     id="opening_time"
-                                    type="tex"
+                                    type="time"
                                     placeholder="Enter the opening time(10.00 AM)"
                                     {...register("opening_time")}
                                     className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
@@ -216,7 +228,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                             <div className="relative">
                                 <Input
                                     id="closing_time"
-                                    type="tex"
+                                    type="time"
                                     placeholder="Enter the closing time(10.00 AM)"
                                     {...register("closing_time")}
                                     className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"

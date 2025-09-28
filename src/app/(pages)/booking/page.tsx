@@ -11,6 +11,7 @@ import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from 
 interface BookingProps {
   id: number | string;
   name: string;
+   no_of_pc?: number;
 }
 
 interface ProviderBookingProps {
@@ -34,6 +35,7 @@ import GamerInfoReviewRating from "@/components/modal/booking-section-modal/game
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
 import DatePicker from "react-datepicker";
 import CustomModalTwo from "@/components/modal/customModalTwo";
+import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
 
 
 
@@ -82,7 +84,7 @@ const BookingPage = () => {
 
 
 
-
+const pcNumber = allRoomData?.find(item => item.id === roomId)
 
 
   useEffect(() => {
@@ -215,9 +217,9 @@ const BookingPage = () => {
               <thead>
                 <tr >
                   <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-2 border border-gray-800">Time</th>
-                  {pcs.map((pc, index) => (
+                  {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0}, (_, index) => (
                     <th key={index} className="text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800 ">
-                      PC {pc}
+                    PC {index + 1}
                     </th>
                   ))}
                 </tr>
@@ -355,6 +357,11 @@ const BookingPage = () => {
           bookingId={bookingId}
         />
       </CustomModal>
+
+
+
+      {/* SUBSCRIPTION COMPONENT MODAL */}
+      <CommonSubscription />
     </>
   );
 };

@@ -12,7 +12,7 @@ import CustomButtonLoader from "../loader/CustomButtonLoader"
 
 
 type RoomFormValues = {
-    roomImage: FileList
+    gaming_zone: FileList
     gaming_zone_name: string
     phone: string
     opening_time: string
@@ -40,7 +40,7 @@ interface ApiError {
 
 export default function RegisterModal({ registerData }: { registerData: RegisterFormInputs }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [collectPhoto, setCollectPhoto] = useState<File | null>(null)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const router = useRouter()
 
     const [registerApi, { isLoading }] = useRegisterApiMutation()
@@ -54,30 +54,36 @@ export default function RegisterModal({ registerData }: { registerData: Register
 
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
+        const file = event.target.files?.[0];
         if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string)
-            }
-            reader.readAsDataURL(file)
-
-            // Update form value
-            const fileList = event.target.files
+            setSelectedFile(file);
+            setImagePreview(URL.createObjectURL(file));
+            const fileList = event.target.files;
             if (fileList) {
-                setValue("roomImage", fileList)
+                setValue("gaming_zone", fileList);
             }
         }
-        setCollectPhoto(file ?? null);
     }
-
 
     const removeImage = () => {
         setImagePreview(null)
-        setValue("roomImage", {} as FileList)
+        setSelectedFile(null)
+        setValue("gaming_zone", {} as FileList)
     }
 
-    const onSubmit = async (data:RoomFormValues) => {
+
+    // TIME FORMATE (---AM/PM---)
+    function convertTo12HourFormat(time: string): string {
+        const [hours, minutes] = time.split(':');
+        let hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour ? hour : 12; // the hour '0' should be '12'
+        return `${hour}:${minutes} ${ampm}`;
+    }
+
+
+    const onSubmit = async (data: RoomFormValues) => {
 
         const formData = new FormData();
 
@@ -89,14 +95,19 @@ export default function RegisterModal({ registerData }: { registerData: Register
 
         formData.append("gaming_zone_name", data?.gaming_zone_name);
         formData.append("phone", data?.phone); // You can remove this if it's already in the previous section
-        formData.append("opening_time", data?.opening_time);
-        formData.append("closing_time", data?.closing_time);
+        formData.append("opening_time", convertTo12HourFormat(data?.opening_time));
+        formData.append("closing_time", convertTo12HourFormat(data?.closing_time));
         formData.append("address", data?.address);
 
-        if (collectPhoto) {
-            formData.append("gaming_zone", collectPhoto);
+        if (selectedFile) {
+            formData.append("gaming_zone", selectedFile)
         }
 
+
+
+        // formData.forEach((value, key) => {
+        //     console.log('key------>', key, 'value------>', value);
+        // });
 
         try {
             const res = await registerApi(formData).unwrap();
@@ -151,7 +162,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
                                 </div>
                             ) : (
                                 <label
-                                    htmlFor="roomImage"
+                                    htmlFor="gaming_zone"
                                     className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg  bg-gray-900 text-gray-400 transition-colors hover:bg-gray-900"
                                 >
                                     <UploadCloud className="h-8 w-8" />
@@ -161,13 +172,13 @@ export default function RegisterModal({ registerData }: { registerData: Register
 
                             <input
                                 type="file"
-                                id="roomImage"
+                                id="gaming_zone"
                                 className="hidden"
                                 accept="image/*"
-                                {...register("roomImage", { required: "Room image is required" })}
+                                // {...register("gaming_zone", { required: "Room image is required" })}
                                 onChange={handleImageChange}
                             />
-                            {errors.roomImage && <p className="text-red-500 text-sm">{errors.roomImage.message}</p>}
+                            {errors.gaming_zone && <p className="text-red-500 text-sm">{errors.gaming_zone.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -216,7 +227,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
                                 <div className="relative">
                                     <Input
                                         id="opening_time"
-                                        type="tex"
+                                        type="time"
                                         placeholder="Enter the opening time(10.00 AM)"
                                         {...register("opening_time")}
                                         className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
@@ -232,7 +243,7 @@ export default function RegisterModal({ registerData }: { registerData: Register
                                 <div className="relative">
                                     <Input
                                         id="closing_time"
-                                        type="tex"
+                                        type="time"
                                         placeholder="Enter the closing time(10.00 AM)"
                                         {...register("closing_time")}
                                         className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"

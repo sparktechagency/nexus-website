@@ -128,9 +128,7 @@ const NotificationPage = () => {
                         <div className="flex-1 min-w-0">
                             <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-slate-200 text-sm leading-relaxed">{notification.id}</p>
-                        </div>
+                    
 
                         {/* Time */}
                         <div className="flex-shrink-0">

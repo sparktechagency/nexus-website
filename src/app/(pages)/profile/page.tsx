@@ -1,6 +1,7 @@
 "use client"
 
 
+import CommonSubscription from "@/components/commonSubscription/CommonSubscription"
 import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
 import CustomModal from "@/components/modal/customModal"
 import EditProfileModal from "@/components/modal/profileModal/edit-profile-modal"
@@ -27,9 +28,9 @@ interface RatingProfileData {
 
 
 interface ApiError {
-    data: {
-        message: string;
-    };
+  data: {
+    message: string;
+  };
 }
 
 export default function WebProfilePage() {
@@ -164,12 +165,12 @@ export default function WebProfilePage() {
             <div className="space-y-4 bg-[#1a1b3a]/60 rounded-xl border border-gray-800/50 md:h-[550px]">
               {/* Basic Info Section */}
               <div className=" rounded-xl p-6  ">
-                <div className="flex justify-center">
+                <div className="flex justify-center pt-8">
                   <div className="relative cursor-pointer"
                     onClick={handleImageClick}
                   >
                     <div
-                      className="cursor-pointer"
+                      className="cursor-pointer "
 
                     >
                       {
@@ -191,20 +192,21 @@ export default function WebProfilePage() {
                       className="hidden"
                     />
 
-                    <div className="absolute -top-2 -right-2 text-2xl">
+                    <div className="absolute -top-7 -right-2 text-2xl">
 
                       {
                         profileData?.subscription_type === "Free"
                           ? ""
                           : profileData?.subscription_type === "Basic"
-                            ? (<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            ? 
+                            (<svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M62.4899 23.5322L41.7601 21.6096L33.5256 2.48853C32.9491 1.14966 31.0507 1.14966 30.4742 2.48853L22.2399 21.6097L1.51003 23.5322C0.0585351 23.6669 -0.528089 25.4722 0.567034 26.4342L16.2078 40.1745L11.6305 60.4839C11.31 61.9059 12.8458 63.0217 14.0991 62.2774L32 51.6482L49.9008 62.2774C51.1542 63.0217 52.6901 61.9059 52.3696 60.4839L47.7922 40.1745L63.4329 26.4342C64.528 25.4722 63.9414 23.6669 62.4899 23.5322Z" fill="#FFDC64" />
                               <path d="M33.5256 2.48853C32.9491 1.14966 31.0507 1.14966 30.4742 2.48853L22.2399 21.6097L1.51003 23.5322C0.0585351 23.6669 -0.528089 25.4722 0.567034 26.4342L16.2078 40.1745L11.6305 60.4839C11.31 61.9059 12.8458 63.0217 14.0991 62.2774L18.0945 59.9051C18.6475 37.1425 29.2237 21.1129 37.5972 11.943L33.5256 2.48853Z" fill="#FFC850" />
                             </svg>
                             )
                             : profileData?.subscription_type === "Standard"
                               ? (
-                                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path fillRule="evenodd" clipRule="evenodd" d="M14.057 63.6808C13.6978 63.6808 13.4057 63.4472 13.3319 63.1057L12.2068 58.2677L1.48069 63.5432C0.838694 63.8546 0.155209 63.1868 0.480636 62.5432L5.74371 51.7921L0.905728 50.667C0.204231 50.5014 0.118149 49.5524 0.768116 49.2543L14.0444 43.1661C14.7525 42.8385 15.3012 43.6249 15.0523 44.1756C17.0048 45.3306 21.1892 49.268 20.8701 49.9918L14.7444 63.2432C14.6195 63.5057 14.3445 63.6808 14.057 63.6808Z" fill="#FDBF00" />
                                   <path fillRule="evenodd" clipRule="evenodd" d="M15.1954 35.3662C15.1828 35.3662 15.1704 35.3662 15.1704 35.3662L0.719024 34.8162C0.0554737 34.7896 -0.257993 33.9486 0.256428 33.5036L17.1331 18.5023C17.233 18.4147 17.3455 18.3523 17.4831 18.3273L25.9714 16.5646C26.7687 16.3947 18.3976 29.4508 15.0473 33.8708C16.4332 33.9246 16.0649 35.3662 15.1954 35.3662Z" fill="#FF193D" />
                                   <path fillRule="evenodd" clipRule="evenodd" d="M29.9344 64.0067C29.5411 64.0067 29.1998 63.6699 29.1843 63.2816L28.6343 48.8302C28.6038 47.9372 43.3426 38.6044 45.9834 37.7121C46.2229 36.7955 47.6359 37.1053 47.4484 38.0542L45.6857 46.5425C45.6608 46.6675 45.5982 46.7925 45.5107 46.8926L30.497 63.7567C30.347 63.9191 30.1469 64.0067 29.9344 64.0067Z" fill="#FF193D" />
@@ -237,8 +239,6 @@ export default function WebProfilePage() {
                                 </svg>)
                                 : ''
                       }
-
-
 
                     </div>
                     <div className="bg-white absolute -bottom-0 -right-2  rounded-full p-1">
@@ -368,6 +368,10 @@ export default function WebProfilePage() {
             setIsOpen={setIsEdit}
           />
         </CustomModal>
+
+
+        {/* SUBSCRIPTION COMPONENT MODAL */}
+        <CommonSubscription />
       </div>
     </>
   )

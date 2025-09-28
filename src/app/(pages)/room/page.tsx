@@ -15,6 +15,8 @@ import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
 import WebEmptyData from "@/components/WebEmptyData"
+import { useGetProfileApiQuery } from "@/redux/website/profile/profileApi"
+import CommonSubscription from "@/components/commonSubscription/CommonSubscription"
 
 
 interface RoomProps {
@@ -39,6 +41,13 @@ const RoomPage = () => {
   const roomData: RoomProps[] = getRoom?.data?.data
   const totalItems = getRoom?.data?.total
   const totalPages = Math.ceil(totalItems / perPage)
+
+
+
+  const { data: getProfile } = useGetProfileApiQuery(null)
+  const profileData = getProfile?.data
+  const subscriptionStatus = profileData?.subscription_status
+
 
 
 
@@ -124,7 +133,7 @@ const RoomPage = () => {
                         <button
                           onClick={() => {
                             setIsDeleteRoom(!isDeleteRoom);
-                              handleDeleteRoom(item?.id)
+                            handleDeleteRoom(item?.id)
                           }}
                           className="cursor-pointer">
                           <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -136,7 +145,7 @@ const RoomPage = () => {
                         <button
                           onClick={() => {
                             setIsEditRoom(!isEditRoom);
-                              handleUpdateRoom(item?.id)
+                            handleUpdateRoom(item?.id)
                           }}
                           className="cursor-pointer">
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -214,6 +223,13 @@ const RoomPage = () => {
           deleteId={deleteId ?? 0}
         />
       </CustomModal>
+
+
+
+
+
+      {/* SUBSCRIPTION COMPONENT MODAL */}
+      <CommonSubscription />
     </div>
   )
 }

@@ -81,6 +81,16 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   }, [startDate, setValue]);
 
 
+  // TIME FORMATE (---AM/PM---)
+  function convertTo12HourFormat(time: string): string {
+    const [hours, minutes] = time.split(':');
+    let hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
+    return `${hour}:${minutes} ${ampm}`;
+  }
+
   const onSubmit = async (data: RoomFormValues) => {
 
     const formData = new FormData();
@@ -89,7 +99,7 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
     formData.append("name", data.name);
     formData.append("phone", data.phone);
     formData.append("booking_date", data.booking_date);
-    formData.append("starting_time", data.starting_time);
+    formData.append("starting_time", convertTo12HourFormat(data.starting_time));
     formData.append("pc_no", data.pc_no);
     formData.append("duration", data.duration);
 
@@ -195,7 +205,7 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
           <div className="relative">
             <Input
               id="starting_time"
-              type="tex"
+              type="time"
               placeholder="Enter the opening time(10.00 AM)"
               {...register("starting_time")}
               className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
