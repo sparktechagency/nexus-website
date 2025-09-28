@@ -29,7 +29,7 @@ interface ApiError {
 
 const NotificationPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const perPage  = 8
+    const perPage = 8
 
 
     const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage ?? 5, page: currentPage ?? 1 })
@@ -50,8 +50,6 @@ const NotificationPage = () => {
     const handleNotificationId = async (id: string | string) => {
         try {
             const res = await singleNotification(id).unwrap();
-            console.log(res)
-
             if (res?.status === true) {
                 toast.success(res?.message)
             } else {
@@ -67,11 +65,8 @@ const NotificationPage = () => {
 
 
     const handleMarkAllNotification = async () => {
-        console.log('click')
-
         try {
             const res = await markAllWebNotificationApi(null).unwrap();
-            console.log(res)
 
             if (res?.status === true) {
                 toast.success(res?.message)
@@ -128,7 +123,7 @@ const NotificationPage = () => {
                         <div className="flex-1 min-w-0">
                             <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
                         </div>
-                    
+
 
                         {/* Time */}
                         <div className="flex-shrink-0">

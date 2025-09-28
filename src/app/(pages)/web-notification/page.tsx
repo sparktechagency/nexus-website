@@ -34,7 +34,7 @@ const WebNotificationPage = () => {
     const router = useRouter()
     const [currentPage, setCurrentPage] = useState(1);
 
-    const perPage = 8
+    const perPage = 7
 
 
     const { data: getNotification, isLoading, refetch } = useGetWebNotificationApiQuery({ per_page: perPage ?? 5, page: currentPage ?? 1 })
@@ -53,7 +53,6 @@ const WebNotificationPage = () => {
     const handleNotificationId = async (id: string | number) => {
         try {
             const res = await singleNotification(id).unwrap();
-            console.log(res)
 
             if (res?.status === true) {
                 toast.success(res?.message)
@@ -70,11 +69,9 @@ const WebNotificationPage = () => {
 
 
     const handleMarkAllNotification = async () => {
-        console.log('click')
 
         try {
             const res = await markAllWebNotificationApi(null).unwrap();
-            console.log(res)
 
             if (res?.status === true) {
                 toast.success(res?.message)
@@ -156,9 +153,6 @@ const WebNotificationPage = () => {
                             {/* Content */}
                             <div className="flex-1 min-w-0">
                                 <p className="text-slate-200 text-sm leading-relaxed">{notification.title}</p>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-slate-200 text-sm leading-relaxed">{notification.id}</p>
                             </div>
 
                             {/* Time */}

@@ -24,9 +24,9 @@ type LoginFormInputs = {
 }
 
 interface ApiError {
-    data: {
-        message: string;
-    };
+  data: {
+    message: string;
+  };
 }
 
 export default function LoginPage() {
@@ -52,6 +52,7 @@ export default function LoginPage() {
 
     try {
       const res = await loginApi(formData).unwrap();
+      console.log('web login ----------> ',res)
 
 
       const token = res?.data?.access_token
@@ -73,13 +74,13 @@ export default function LoginPage() {
         }
         router.push("/home")
       } else {
-       toast.error("Invalid credential. You are not a provider.");
+        toast.error("Invalid credential. You are not a provider.");
       }
     } catch (errors) {
-       const errorValue = errors as ApiError;
-            if (errorValue?.data?.message) {
-                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
-            }
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+      }
     }
 
 
@@ -128,7 +129,7 @@ export default function LoginPage() {
             className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm  rounded-xl"
           >
 
-            
+
             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
               <Image
                 src="/web_pic/logo.png"

@@ -135,26 +135,33 @@ export default function WebProfilePage() {
       `}</style>
 
       <div className="min-h-screen bg-[#0a0b1e] text-white p-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-evenly gap-3 xl:gap-10 ">
-            <h2 className="text-white md:text-2xl font-bold xl:mb-6">Basic info</h2>
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 xl:grid-cols-12 items-center xl:mb-6 ">
+            <div className="xl:col-span-5 ">
+              <h2 className="text-white md:text-2xl font-bold ">Basic info</h2>
+            </div>
 
-            <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-4 ">
-              <Link href="mailto:someone@example.com" className="w-fit">
-                <Button
-                  className="w-[130px] cursor-pointer md:py-6 rounded-full  text-white font-semibold transition-all duration-200"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                  }}
-                >
-                  <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 12C1.5875 12 1.23438 11.8531 0.940625 11.5594C0.646875 11.2656 0.5 10.9125 0.5 10.5V1.5C0.5 1.0875 0.646875 0.734375 0.940625 0.440625C1.23438 0.146875 1.5875 0 2 0H14C14.4125 0 14.7656 0.146875 15.0594 0.440625C15.3531 0.734375 15.5 1.0875 15.5 1.5V10.5C15.5 10.9125 15.3531 11.2656 15.0594 11.5594C14.7656 11.8531 14.4125 12 14 12H2ZM8 6.75L2 3V10.5H14V3L8 6.75ZM8 5.25L14 1.5H2L8 5.25ZM2 3V1.5V10.5V3Z" fill="white" />
-                  </svg>
-                  Support
-                </Button>
-              </Link>
-              <h2 className="text-white md:text-2xl font-bold">Gamers thought about you!</h2>
+            <div className="xl:col-span-7 py-8">
+              <div className="flex items-center gap-6">
+                <div>
+                  <Link href="mailto:someone@example.com" className="w-fit">
+                    <Button
+                      className="w-[130px] cursor-pointer md:py-6 rounded-full  text-white font-semibold transition-all duration-200"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                      }}
+                    >
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 12C1.5875 12 1.23438 11.8531 0.940625 11.5594C0.646875 11.2656 0.5 10.9125 0.5 10.5V1.5C0.5 1.0875 0.646875 0.734375 0.940625 0.440625C1.23438 0.146875 1.5875 0 2 0H14C14.4125 0 14.7656 0.146875 15.0594 0.440625C15.3531 0.734375 15.5 1.0875 15.5 1.5V10.5C15.5 10.9125 15.3531 11.2656 15.0594 11.5594C14.7656 11.8531 14.4125 12 14 12H2ZM8 6.75L2 3V10.5H14V3L8 6.75ZM8 5.25L14 1.5H2L8 5.25ZM2 3V1.5V10.5V3Z" fill="white" />
+                      </svg>
+                      Support
+                    </Button>
+                  </Link>
+
+                </div>
+                <h2 className="text-white md:text-2xl font-bold">Gamers thought about you!</h2>
+              </div>
             </div>
           </div>
 
@@ -198,7 +205,7 @@ export default function WebProfilePage() {
                         profileData?.subscription_type === "Free"
                           ? ""
                           : profileData?.subscription_type === "Basic"
-                            ? 
+                            ?
                             (<svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M62.4899 23.5322L41.7601 21.6096L33.5256 2.48853C32.9491 1.14966 31.0507 1.14966 30.4742 2.48853L22.2399 21.6097L1.51003 23.5322C0.0585351 23.6669 -0.528089 25.4722 0.567034 26.4342L16.2078 40.1745L11.6305 60.4839C11.31 61.9059 12.8458 63.0217 14.0991 62.2774L32 51.6482L49.9008 62.2774C51.1542 63.0217 52.6901 61.9059 52.3696 60.4839L47.7922 40.1745L63.4329 26.4342C64.528 25.4722 63.9414 23.6669 62.4899 23.5322Z" fill="#FFDC64" />
                               <path d="M33.5256 2.48853C32.9491 1.14966 31.0507 1.14966 30.4742 2.48853L22.2399 21.6097L1.51003 23.5322C0.0585351 23.6669 -0.528089 25.4722 0.567034 26.4342L16.2078 40.1745L11.6305 60.4839C11.31 61.9059 12.8458 63.0217 14.0991 62.2774L18.0945 59.9051C18.6475 37.1425 29.2237 21.1129 37.5972 11.943L33.5256 2.48853Z" fill="#FFC850" />

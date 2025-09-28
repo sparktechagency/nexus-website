@@ -112,7 +112,7 @@ const UserList = () => {
                                     <TableRow key={item.id} className="text-[#ffff] border-none hover:bg-transparent cursor-pointer">
                                         <TableCell>
                                             <div className="flex items-center gap-3">
-                                                <Image src={item.avatar} alt="item photo" width={50} height={50} className="object-cover rounded-full" />
+                                                <Image src={item.avatar} alt="item photo" width={50} height={50} className="w-[40px] h-[40px] object-cover rounded-lg" />
                                                 <span className=" font-medium">{item.name}</span>
                                             </div>
                                         </TableCell>
