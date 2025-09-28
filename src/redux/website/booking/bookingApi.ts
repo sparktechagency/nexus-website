@@ -25,7 +25,7 @@ const bookingApi = baseApi.injectEndpoints({
             query: (addGamerInfo) => ({
                 url: `/add-gamer`,
                 method: "POST",
-                body:addGamerInfo,
+                body: addGamerInfo,
             }),
             invalidatesTags: ['webBooking'],
         }),
@@ -46,13 +46,13 @@ const bookingApi = baseApi.injectEndpoints({
             providesTags: ['webBooking'],
         }),
         // MARK AS PAYMENT COMPLETE
-        // markAsPaymentApi: builder.mutation({
-        //     query: (id) => ({
-        //         url: `/mark-as-payment-complete/${id}`,
-        //         method: "POST",
-        //     }),
-        //     invalidatesTags: ['webBooking'],
-        // }),
+        markAsPaymentApi: builder.mutation({
+            query: (id) => ({
+                url: `/mark-as-payment-complete/${id}`,
+                method: "POST",
+            }),
+            invalidatesTags: ['webBooking'],
+        }),
         // CONFIRM BOOKING
         confirmBookingApi: builder.mutation({
             query: (id) => ({
@@ -75,10 +75,10 @@ const bookingApi = baseApi.injectEndpoints({
 
         // RESCHEDULE BOOKING
         rescheduleBookingApi: builder.mutation({
-            query: ({rescheduleInfo,id}) => ({
+            query: ({ rescheduleInfo, id }) => ({
                 url: `/reschedule-booking/${id}`,
                 method: "POST",
-                body:rescheduleInfo,
+                body: rescheduleInfo,
             }),
             invalidatesTags: ['webBooking'],
         }),
@@ -87,4 +87,4 @@ const bookingApi = baseApi.injectEndpoints({
 })
 
 
-export const { useGetProviderBookingListApiQuery,useGetBookingDetailsApiQuery,useAddGamerApiMutation,useConfirmBookingApiMutation,useCancelBookingApiMutation,useRescheduleBookingApiMutation} = bookingApi;
+export const { useGetProviderBookingListApiQuery, useGetBookingDetailsApiQuery, useAddGamerApiMutation, useMarkAsPaymentApiMutation, useConfirmBookingApiMutation, useCancelBookingApiMutation, useRescheduleBookingApiMutation } = bookingApi;

@@ -59,6 +59,10 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
   const [addGamerApi, { isLoading }] = useAddGamerApiMutation()
 
 
+  const pcNumber = roomData?.find(item => item.id === roomId)
+
+
+
   const {
     register,
     handleSubmit,
@@ -110,7 +114,7 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
     setIsOpen(!open)
   }
 
-  // console.log(roomData)
+  console.log(pcNumber)
 
   return (
     <div className='xl:p-6'>
@@ -200,8 +204,7 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
           {errors.starting_time && <p className="text-red-400 text-xs mt-1">{errors.starting_time.message}</p>}
         </div>
 
-
-
+        {/* pc number */}
         <div className="space-y-2">
           <Label htmlFor="pc_no" className="text-white text-sm">
             PC Number
@@ -215,13 +218,18 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  {/* Dynamically render PC numbers */}
-                  {roomData?.map((room) => (
-                    <SelectItem key={room.id} value={`${room.no_of_pc}`} className="text-white hover:bg-gray-700">
-                      {`PC ${room.no_of_pc}`} {/* Dynamically displaying PC numbers */}
+                  {/* Dynamic array of PC numbers based on room data */}
+                  {pcNumber && Array.from({ length: pcNumber.no_of_pc }, (_, index) => (
+                    <SelectItem
+                      key={index}
+                      value={(index + 1).toString()}
+                      className="text-white hover:bg-gray-700"
+                    >
+                      PC {index + 1}
                     </SelectItem>
                   ))}
                 </SelectContent>
+
               </Select>
             )}
           />
@@ -229,7 +237,7 @@ const AddGamer = ({ open, setIsOpen, roomId }: AddGamerProps) => {
         </div>
 
 
-       <div className="space-y-2">
+        <div className="space-y-2">
           <Label htmlFor="duration" className="text-white text-sm">
             Duration
           </Label>

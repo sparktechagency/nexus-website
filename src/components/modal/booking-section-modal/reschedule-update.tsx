@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import DatePicker from 'react-datepicker';
 import toast from 'react-hot-toast';
 import { useRescheduleBookingApiMutation } from '@/redux/website/booking/bookingApi';
-import { useGetAllRoomApiQuery} from '@/redux/website/rooms/roomApi';
+import { useGetAllRoomApiQuery } from '@/redux/website/rooms/roomApi';
 
 type RoomFormValues = {
   room_id: string | number
@@ -25,6 +25,7 @@ interface AddGamerProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   bookingId: string | number;
+  roomId: string | number;
 }
 
 interface ApiError {
@@ -44,12 +45,14 @@ interface RoomProps {
   updated_at: string;
 }
 
-const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
+const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedRoom, setSelectedRoom] = useState<string>("");
 
   const { data: getAllRoom } = useGetAllRoomApiQuery({ skip: true })
   const roomData: RoomProps[] = getAllRoom?.data?.data
+
+  const pcNumber = roomData?.find(item => item.id === roomId)
 
   const [rescheduleBookingApi] = useRescheduleBookingApiMutation()
 
@@ -82,32 +85,32 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
 
 
     const formData = new FormData();
-    formData.append("room_id",bookingId.toString());
+    formData.append("room_id", bookingId.toString());
     formData.append("booking_date", data.booking_date);
-    formData.append("starting_time", data.starting_time); 
+    formData.append("starting_time", data.starting_time);
     formData.append("pc_no", data.pc_no);
     formData.append("duration", data.duration);
     formData.append("_method", "PUT");
 
-    // try {
-    //   const res = await rescheduleBookingApi({
-    //     rescheduleInfo: formData,
-    //     id: bookingId
-    //   }).unwrap();
+    try {
+      const res = await rescheduleBookingApi({
+        rescheduleInfo: formData,
+        id: bookingId
+      }).unwrap();
 
-    //   console.log(res)
-    //   if (res?.status === 'success') {
-    //     toast.success(res?.message)
-    //     setIsOpen(false);
-    //   } else {
-    //     toast.error(res?.messages)
-    //   }
-    // } catch (errors) {
-    //   const errorValue = errors as ApiError;
-    //   if (errorValue?.data?.message) {
-    //     toast.error(errorValue?.data?.message);
-    //   }
-    // }
+      console.log(res)
+      if (res?.status === 'success') {
+        toast.success(res?.message)
+        setIsOpen(false);
+      } else {
+        toast.error(res?.messages)
+      }
+    } catch (errors) {
+      const errorValue = errors as ApiError;
+      if (errorValue?.data?.message) {
+        toast.error(errorValue?.data?.message);
+      }
+    }
   }
 
   const handleCancel = () => {
@@ -176,6 +179,7 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
           {errors.starting_time && <p className="text-red-400 text-xs mt-1">{errors.starting_time.message}</p>}
         </div>
 
+        {/* pc number */}
         <div className="space-y-2">
           <Label htmlFor="pc_no" className="text-white text-sm">
             PC Number
@@ -189,13 +193,18 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId }: AddGamerProps) => {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  {/* Dynamically render PC numbers */}
-                  {roomData?.map((room) => (
-                    <SelectItem key={room.id} value={`${room.no_of_pc}`} className="text-white hover:bg-gray-700">
-                      {`PC ${room.no_of_pc}`} {/* Dynamically displaying PC numbers */}
+                  {/* Dynamic array of PC numbers based on room data */}
+                  {pcNumber && Array.from({ length: pcNumber.no_of_pc }, (_, index) => (
+                    <SelectItem
+                      key={index}
+                      value={(index + 1).toString()}
+                      className="text-white hover:bg-gray-700"
+                    >
+                      PC {index + 1}
                     </SelectItem>
                   ))}
                 </SelectContent>
+
               </Select>
             )}
           />

@@ -30,10 +30,11 @@ interface BookingDetails {
 interface GamerInfoConBookingProps {
   bookingDetails: BookingDetails;
   bookingId: string | number
+  roomId: string | number
 }
 
 
-const GamerInfoConBooking = ({ bookingDetails, bookingId }: GamerInfoConBookingProps) => {
+const GamerInfoConBooking = ({ bookingDetails, bookingId,roomId }: GamerInfoConBookingProps) => {
   const [bookingConfirmationModalOpen, setBookingConfirmationModalOpen] = useState(false)
   const [rescheduleUpdateModalOpen, setRescheduleUpdateModalOpen] = useState(false)
 
@@ -175,6 +176,7 @@ const GamerInfoConBooking = ({ bookingDetails, bookingId }: GamerInfoConBookingP
           open={rescheduleUpdateModalOpen}
           setIsOpen={setRescheduleUpdateModalOpen}
           bookingId={bookingId}
+          roomId={roomId}
         />
       </CustomModal>
     </div>

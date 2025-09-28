@@ -18,7 +18,7 @@ interface BookingDetails {
 interface RatingProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  bookingDetails: BookingDetails; 
+  bookingDetails: BookingDetails;
 }
 
 const GamerInfoReviewRating = ({ open, setIsOpen, bookingDetails }: RatingProps) => {
