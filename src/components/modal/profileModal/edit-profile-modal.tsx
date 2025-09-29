@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useForm } from "react-hook-form"
@@ -80,15 +81,15 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         setValue("photo", {} as FileList)
     }
 
-    // TIME FORMATE (---AM/PM---)
+
     function convertTo24HourFormat(time: string): string {
         const [timePart, modifier] = time.split(' ')
-        let [hours, minutes] = timePart.split(':').map(Number)
+        const [hours, minutes] = timePart.split(':').map(Number)
 
-        if (modifier === "PM" && hours < 12) hours += 12
-        if (modifier === "AM" && hours === 12) hours = 0
+        const adjustedHours = modifier === "PM" && hours < 12 ? hours + 12 :
+            modifier === "AM" && hours === 12 ? 0 : hours
 
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+        return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
     }
 
     function convertTo12HourFormat(time: string): string {

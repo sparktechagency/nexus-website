@@ -7,6 +7,7 @@ import React, {
     type ChangeEvent,
     type KeyboardEvent,
     type ClipboardEvent,
+    Suspense,
 } from "react"
 import Image from "next/image"
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -28,7 +29,7 @@ interface ApiError {
     };
 }
 
-export default function DashboardVerifyOtpPage() {
+function SuspendDashboardVerifyOtp() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
     const router = useRouter()
@@ -245,3 +246,15 @@ export default function DashboardVerifyOtpPage() {
         </div >
     )
 }
+
+
+const DashboardVerifyOtpPage = () => {
+    return (
+        <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>}>
+            <SuspendDashboardVerifyOtp />
+        </Suspense>
+    )
+}
+
+export default DashboardVerifyOtpPage;
+

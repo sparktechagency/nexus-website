@@ -4,7 +4,7 @@ import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useGetProviderListApiQuery, useGetUserProfileApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
-
+import { Suspense } from "react";
 import Image from "next/image"
 
 
@@ -21,7 +21,7 @@ interface ProviderProps {
 }
 
 
-const ManageUserPage = () => {
+function SuspenseManagerUser () {
     const searchParams = useSearchParams()
       const id = searchParams.get('id') || ""
     const router = useRouter()
@@ -167,4 +167,16 @@ const ManageUserPage = () => {
     )
 }
 
-export default ManageUserPage;
+
+
+
+
+const ManageProviderList = () => {
+    return (
+        <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><CustomButtonLoaderTwo /></div>}>
+            <SuspenseManagerUser />
+        </Suspense>
+    )
+}
+
+export default ManageProviderList;

@@ -8,7 +8,7 @@ import WebEmptyData from "@/components/WebEmptyData"
 import { useGetProviderListApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 
 
 interface providerProps {
@@ -23,7 +23,7 @@ interface providerProps {
 }
 
 
-const ManageUserListPage = () => {
+function SuspendManageUserListPage() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id') || ""
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,4 +90,15 @@ const ManageUserListPage = () => {
   )
 }
 
-export default ManageUserListPage
+
+
+
+const ManageUserPage = () => {
+  return (
+    <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><DashboardLoader /></div>}>
+      <SuspendManageUserListPage />
+    </Suspense>
+  )
+}
+
+export default ManageUserPage;

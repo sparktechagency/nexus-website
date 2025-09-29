@@ -50,7 +50,7 @@ const EditRoom = ({ open, setIsOpen, editId }: RoomStateProps) => {
   const [updateRoomApi, { isLoading: updateLoading }] = useUpdateRoomApiMutation()
 
   // get room data by id -
-  const { data: getRoomData, isLoading, isError, error } = useSingleGetRoomApiQuery(editId)
+  const { data: getRoomData, isLoading, isError,} = useSingleGetRoomApiQuery(editId)
   const singleRoomData = getRoomData?.data
 
   useEffect(() => {
@@ -138,7 +138,6 @@ const EditRoom = ({ open, setIsOpen, editId }: RoomStateProps) => {
       <div className="text-[#fff] xl:p-8 flex justify-center items-center">
         <div className="text-center text-red-500">
           <p>Failed to load data</p>
-          <p className="text-sm mt-2">{(error as any)?.data?.message || 'Unknown error'}</p>
           <Button
             onClick={() => setIsOpen(false)}
             className="mt-4 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"

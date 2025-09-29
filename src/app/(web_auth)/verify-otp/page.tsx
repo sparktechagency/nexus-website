@@ -6,6 +6,7 @@ import React, {
     type ChangeEvent,
     type KeyboardEvent,
     type ClipboardEvent,
+    Suspense,
 } from "react"
 import Image from "next/image"
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,7 +28,7 @@ interface ApiError {
     };
 }
 
-export default function VerifyOtPPage() {
+function SuspenseVerifyOtP() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
     const inputRefs = useRef<HTMLInputElement[]>([])
     const router = useRouter()
@@ -118,7 +119,7 @@ export default function VerifyOtPPage() {
                 toast.error(res?.messages)
             }
         } catch (errors) {
-             const errorValue = errors as ApiError;
+            const errorValue = errors as ApiError;
             if (errorValue?.data?.message) {
                 toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
             }
@@ -193,7 +194,7 @@ export default function VerifyOtPPage() {
                 <div className="w-full xl:w-[646px] px-4 pb-4 xl:pb-0 xl:px-0 xl:p-8 rounded-2xl">
                     <div
                         className="w-full bg-[#14151b] shadow-[0_0_10px_3px_rgba(8,112,184,0.5)] backdrop-blur-sm rounded-xl"
-                       
+
                     >
                         <div className=" rounded-xl border-none  p-6 text-center shadow-lg">
                             <CardHeader className="flex flex-col items-center space-y-4 pt-8 pb-6">
@@ -265,10 +266,6 @@ export default function VerifyOtPPage() {
                                     }
                                 </Button>
 
-
-
-
-
                                 <Link href="/forgot-password">
                                     <Button
                                         className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200">
@@ -277,11 +274,19 @@ export default function VerifyOtPPage() {
                                 </Link>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </div >
+    )
+
+}
+
+
+export default function VerifyOtPPage() {
+    return (
+        <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>}>
+            <SuspenseVerifyOtP />
+        </Suspense>
     )
 }

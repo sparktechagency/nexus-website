@@ -1,7 +1,6 @@
 
 "use client"
 
-
 import HomeFooterCurd from '@/components/modal/home-footer-curd'
 import DashboardSummaryCard from "@/components/summary-card"
 import WeeklyBookingGraph from "@/components/weekly-booking-graph"

@@ -100,7 +100,7 @@ export default function ChangePasswordPage() {
                             />
                             <CardTitle className="text-3xl font-bold text-[#ffff]">Create New Password</CardTitle>
                             <CardDescription className="text-sm text-gray-400 text-center">
-                                You have to create a new password after forget
+                                You have to create a new password.
                             </CardDescription>
                         </CardHeader>
 

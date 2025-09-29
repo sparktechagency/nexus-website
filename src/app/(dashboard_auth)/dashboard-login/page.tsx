@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useLoginApiMutation } from "@/redux/authontication/authApi"
 import toast from "react-hot-toast"

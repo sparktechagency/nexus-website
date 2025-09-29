@@ -68,7 +68,7 @@ console.log(bookingId,'booking id-------> ')
             htmlFor="complete"
             className={`text-lg cursor-pointer ${selectedValue === "complete" ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent" : "text-gray-300"}`}
           >
-            Complete
+            Confirm
           </Label>
         </div>
 

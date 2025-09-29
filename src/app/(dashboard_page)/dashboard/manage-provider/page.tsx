@@ -11,6 +11,7 @@ import { Tooltip } from "recharts";
 import { useGetGamerListApiQuery, useGetProviderProfileApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 import { useRouter, useSearchParams } from 'next/navigation'
 import CustomButtonLoaderTwo from "@/components/loader/CustomButtonLoaderTwo"
+import { Suspense } from "react"
 
 interface GamerProps {
   id: string;
@@ -23,7 +24,7 @@ interface GamerProps {
   total: string;
 }
 
-const ManageProviderPage = () => {
+function SuspendManageProviderPage (){
   const searchParams = useSearchParams()
     const id = searchParams.get('id') || ""
   const router = useRouter()
@@ -247,5 +248,16 @@ if(isLoading){
   )
 }
 
+
+
+
+
+const ManageProviderPage = () => {
+    return (
+        <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><CustomButtonLoaderTwo /></div>}>
+            <SuspendManageProviderPage />
+        </Suspense>
+    )
+}
 
 export default ManageProviderPage;

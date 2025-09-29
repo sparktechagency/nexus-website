@@ -186,8 +186,6 @@ export default function PromoManagement() {
                                         </TableCell>
 
 
-
-
                                         <TableCell>
                                             <div className="flex items-center gap-4 justify-center">
                                                 {/* add info */}

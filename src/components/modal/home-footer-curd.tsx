@@ -4,15 +4,46 @@ import { useGetWebDashboardHomeApiQuery } from "@/redux/website/home/webHomePage
 import { Clock } from "lucide-react"
 import Image from "next/image"
 
+// Define interfaces for the data types
+interface User {
+  avatar: string;
+  name: string;
+}
+
+interface Room {
+  name: string;
+}
+
+interface ScheduleItem {
+  user: User;
+  starting_time: string;
+  ending_time: string;
+  room: Room;
+}
+
+interface PaymentItem {
+  user: User;
+  total: string | number;
+  mark_complete_date: string;
+  room: Room;
+}
+
+interface BookingItem {
+  user: User;
+  starting_time: string;
+  ending_time: string;
+  booking_date: string;
+  room: Room;
+}
 
 export default function HomeFooterCurd() {
 
     const { data: getDashboard } = useGetWebDashboardHomeApiQuery({
         skip: true
     })
-    const todayScheduleData = getDashboard?.data?.today_schedule
-    const lastPaymentData = getDashboard?.data?.last_payment
-    const upcomingBookingData = getDashboard?.data?.upcoming_booking
+    const todayScheduleData : ScheduleItem[] = getDashboard?.data?.today_schedule
+    const lastPaymentData : PaymentItem[] = getDashboard?.data?.last_payment
+    const upcomingBookingData : [BookingItem] = getDashboard?.data?.upcoming_booking
 
 
 

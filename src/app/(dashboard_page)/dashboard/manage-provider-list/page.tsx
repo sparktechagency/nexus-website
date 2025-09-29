@@ -7,7 +7,7 @@ import WebEmptyData from "@/components/WebEmptyData"
 import { useGetGamerListApiQuery } from "@/redux/dashboard/manageUsers/manageUserApi"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 
 
 interface GamerProps {
@@ -22,7 +22,7 @@ interface GamerProps {
 }
 
 
-const ManageProviderList = () => {
+function SuspendManageProviderList(){
   const searchParams = useSearchParams()
   const id = searchParams.get('id') || ""
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,4 +90,13 @@ const ManageProviderList = () => {
   )
 }
 
-export default ManageProviderList
+
+const ManageProviderList = () => {
+    return (
+        <Suspense fallback={<div className="h-[50vh] flex justify-center items-center"><DashboardLoader /></div>}>
+            <SuspendManageProviderList />
+        </Suspense>
+    )
+}
+
+export default ManageProviderList;
