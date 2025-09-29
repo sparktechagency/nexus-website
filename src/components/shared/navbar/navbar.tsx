@@ -25,8 +25,8 @@ export default function Navbar() {
     const isActive = (path: string) => pathname === path;
 
     const { data: getNotification } = useGetWebNotificationApiQuery(undefined, {
-        pollingInterval: 5000, // Poll every 5 seconds
-        refetchOnFocus: true, // Optionally refetch when the tab gains focus
+        // pollingInterval: 5000, 
+        refetchOnFocus: true, 
     });
     const notificationCount = getNotification?.data?.unread_notifications_count || 0
 

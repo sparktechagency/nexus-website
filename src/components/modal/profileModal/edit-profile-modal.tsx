@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm } from "react-hook-form"
@@ -39,45 +40,39 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         formState: { errors },
     } = useForm<FormValues>()
 
-
     const [editProfileApi, { isLoading }] = useEditProfileApiMutation()
     const { data: getProfile } = useGetProfileApiQuery({
         skip: true
     })
     const profileData = getProfile?.data
 
-
-
-
     // DEFAULT DATA SHOW
     useEffect(() => {
-        setValue("name", profileData?.name);
-        setValue("gaming_zone_name", profileData?.gaming_zone_name);
-        setValue("opening_time", profileData?.opening_time);
-        setValue("closing_time", (profileData?.closing_time));
-        setValue("address", profileData?.address);
-        setValue("phone", profileData?.phone);
-        if (profileData?.avatar) {
-            setImagePreview(profileData?.avatar);
+        if (profileData) {
+            // Convert time to HH:mm format for correct display
+            setValue("name", profileData?.name)
+            setValue("gaming_zone_name", profileData?.gaming_zone_name)
+            setValue("opening_time", convertTo24HourFormat(profileData?.opening_time)) // Convert to 24-hour
+            setValue("closing_time", convertTo24HourFormat(profileData?.closing_time)) // Convert to 24-hour
+            setValue("address", profileData?.address)
+            setValue("phone", profileData?.phone)
+            if (profileData?.avatar) {
+                setImagePreview(profileData?.avatar)
+            }
         }
-    }, [profileData, setValue]);
-
-
-    
+    }, [profileData, setValue])
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+        const file = event.target.files?.[0]
         if (file) {
-            setSelectedFile(file);
-            setImagePreview(URL.createObjectURL(file));
-            const fileList = event.target.files;
+            setSelectedFile(file)
+            setImagePreview(URL.createObjectURL(file))
+            const fileList = event.target.files
             if (fileList) {
-                setValue("photo", fileList);
+                setValue("photo", fileList)
             }
         }
     }
-
-
 
     const removeImage = () => {
         setImagePreview(null)
@@ -85,33 +80,40 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         setValue("photo", {} as FileList)
     }
 
-
     // TIME FORMATE (---AM/PM---)
-    function convertTo12HourFormat(time: string): string {
-        const [hours, minutes] = time.split(':');
-        let hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        hour = hour % 12;
-        hour = hour ? hour : 12; // the hour '0' should be '12'
-        return `${hour}:${minutes} ${ampm}`;
+    function convertTo24HourFormat(time: string): string {
+        const [timePart, modifier] = time.split(' ')
+        let [hours, minutes] = timePart.split(':').map(Number)
+
+        if (modifier === "PM" && hours < 12) hours += 12
+        if (modifier === "AM" && hours === 12) hours = 0
+
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
     }
 
-    
+    function convertTo12HourFormat(time: string): string {
+        const [hours, minutes] = time.split(':')
+        let hour = parseInt(hours)
+        const ampm = hour >= 12 ? 'PM' : 'AM'
+        hour = hour % 12
+        hour = hour ? hour : 12 // the hour '0' should be '12'
+        return `${hour}:${minutes} ${ampm}`
+    }
 
     const onSubmit = async (data: FormValues) => {
-        const formData = new FormData();
+        const formData = new FormData()
         if (selectedFile) {
             formData.append("photo", selectedFile)
         }
         formData.append("name", data.name)
         formData.append("gaming_zone_name", data.gaming_zone_name)
-        formData.append("opening_time", convertTo12HourFormat(data.opening_time))
-        formData.append("closing_time", convertTo12HourFormat(data.closing_time))
+        formData.append("opening_time", convertTo12HourFormat(data.opening_time)) // Convert back to 12-hour for API
+        formData.append("closing_time", convertTo12HourFormat(data.closing_time)) // Convert back to 12-hour for API
         formData.append("address", data.address)
         formData.append("phone", data.phone)
 
         try {
-            const res = await editProfileApi(formData).unwrap();
+            const res = await editProfileApi(formData).unwrap()
             if (res?.status === 'success') {
                 toast.success(res?.message)
                 setIsOpen(!open)
@@ -123,12 +125,11 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                 toast.error(res?.messages)
             }
         } catch (errors) {
-             const errorValue = errors as ApiError;
+            const errorValue = errors as ApiError
             if (errorValue?.data?.message) {
-                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+                toast.error(errorValue?.data?.message) // Now you can safely access error.data.message
             }
         }
-
     }
 
     return (
@@ -164,7 +165,6 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                                         <X className=" h-4 w-4" />
                                     </button>
                                 </div>
-
                             </div>
                         ) : (
                             <label
