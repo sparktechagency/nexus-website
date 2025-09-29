@@ -15,7 +15,6 @@ import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi"
 import DashboardLoader from "@/components/DashboardLoader"
 import CustomPagination from "@/components/customPagination/CustomPagination"
 import WebEmptyData from "@/components/WebEmptyData"
-import { useGetProfileApiQuery } from "@/redux/website/profile/profileApi"
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription"
 
 
@@ -43,10 +42,6 @@ const RoomPage = () => {
   const totalPages = Math.ceil(totalItems / perPage)
 
 
-
-  const { data: getProfile } = useGetProfileApiQuery(null)
-  const profileData = getProfile?.data
-  const subscriptionStatus = profileData?.subscription_status
 
 
 

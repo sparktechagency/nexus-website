@@ -101,7 +101,7 @@ const ManageUserPage = () => {
               >
                 {/* User Info */}
                 <div className="col-span-5 flex items-center gap-3">
-                  <Image src={item.avatar} alt="user photo" width={50} height={50} className="object-cover rounded-full" />
+                  <Image src={item.avatar} alt="user photo" width={50} height={50} className="object-cover w-[50px] h-[50px] rounded-full" />
                   <div>
                     <div
                       className="font-medium text-slate-100">{item.name}</div>

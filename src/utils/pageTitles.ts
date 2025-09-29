@@ -56,6 +56,10 @@ export const pageTitles: Record<string, PageTitleConfig> = {
     subtitle: "Manage your subscription play which was created for  service providers.",
     backIcon:BackIcon,
   },
+  "/dashboard/change-password": {
+    title: "Change Password",
+    subtitle: "You can change your admin panel password from here.",
+  },
   "/dashboard/personal-details": {
     title: "Personal Details",
     subtitle: "You can update your personal information.",

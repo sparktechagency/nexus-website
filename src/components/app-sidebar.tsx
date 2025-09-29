@@ -69,6 +69,12 @@ export const data = {
       icon: Settings2,
       items: [
         {
+          title: "Change Password",
+          description: "You can change your admin panel password from here.",
+          url: "dashboard/change-password",
+          icon: SettingIcon,
+        },
+        {
           title: "Personal details",
           description: "Update Account Security Credentials",
           url: "dashboard/personal-details",
