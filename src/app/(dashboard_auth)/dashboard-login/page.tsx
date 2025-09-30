@@ -152,7 +152,7 @@ const handleNavigateForgot = () =>{
                       required: "Password is required",
                       minLength: {
                         value: 4,
-                        message: "Password must be at least 6 characters"
+                        message: "Password must be at least 4 characters"
                       }
                     })}
                   />
