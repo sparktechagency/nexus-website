@@ -24,13 +24,13 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
 
 
 
-  const handleNavigate = async (planId : number) => {
+  const handleNavigate = async (planId: number) => {
     const formData = new FormData();
     formData.append("plan_id", planId.toString());
 
     // Make sure the URLs are correctly passed
-    formData.append("cancel_url", "http://10.10.10.19:3000/home");
-    formData.append("success_url", "http://10.10.10.19:3000/home");
+    formData.append("cancel_url", `${process.env.NEXT_PUBLIC_SUBSCRIPTION_URL}/home`);
+    formData.append("success_url", `${process.env.NEXT_PUBLIC_SUBSCRIPTION_URL}/home`);
 
     try {
       const res = await checkOutApi(formData).unwrap();
@@ -39,7 +39,7 @@ export default function SubscriptionModal({ open, setIsOpen }: SubscriptionModal
 
       if (res?.status === 'success') {
         router.push(successUrl)
-      }else(
+      } else (
         router.push(cancelUrl)
       )
 

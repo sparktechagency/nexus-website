@@ -43,7 +43,7 @@ function SuspenseVerifyOtP() {
 
 
 
-
+    console.log(text)
 
 
 
@@ -87,6 +87,8 @@ function SuspenseVerifyOtP() {
         }
         formData.append("otp", fullOtp);
 
+
+
         try {
             const res = await verifyOtpApi(formData).unwrap();
             const token = res?.data?.access_token
@@ -109,10 +111,10 @@ function SuspenseVerifyOtP() {
                     router.push(`/`)
                 }
                 else if (text === 'forgot-password') {
-                    router.push(`/`)
+                    router.push(`/create-new-password?email=${email}`)
                 }
                 else {
-                    router.push(`/create-new-password?email=${email}`)
+                    router.push(`/`)
                 }
 
             } else {

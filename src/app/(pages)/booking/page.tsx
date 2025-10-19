@@ -123,12 +123,13 @@ const pcNumber = allRoomData?.find(item => item.id === roomId)
   }
 
 
-
-
-
   if (isLoading) {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
+
+
+  console.log('time slots---->',timeSlots)
+  console.log('pcNumber---->',pcNumber)
 
   return (
     <>
@@ -357,7 +358,6 @@ const pcNumber = allRoomData?.find(item => item.id === roomId)
           bookingId={bookingId}
         />
       </CustomModal>
-
 
 
       {/* SUBSCRIPTION COMPONENT MODAL */}

@@ -87,7 +87,6 @@ export default function LoginPage() {
   }
 
 
-
   return (
     <div
       className="h-full lg:h-dvh grid grid-cols-1 xl:grid-cols-2 gap-10 xl:gap-0 text-[#ffff] bg-cover bg-center"
