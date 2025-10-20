@@ -11,7 +11,7 @@ import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from 
 interface BookingProps {
   id: number | string;
   name: string;
-   no_of_pc?: number;
+  no_of_pc?: number;
 }
 
 interface ProviderBookingProps {
@@ -55,8 +55,11 @@ const BookingPage = () => {
 
 
   const [timeSlots, setTimeSlots] = useState<string[]>([])  // time data 
-  const [pcs, setPcs] = useState<string[]>([])  // pc data
-  const numberArray = pcs.map(Number);
+  // const [pcs, setPcs] = useState<string[]>([])
+
+
+
+
 
   // Format to yyyy-mm-dd
   const dateStr = startDate || new Date()
@@ -84,8 +87,7 @@ const BookingPage = () => {
 
 
 
-const pcNumber = allRoomData?.find(item => item.id === roomId)
-
+  const pcNumber = allRoomData?.find(item => item.id === roomId)
 
   useEffect(() => {
     if (allRoomData && allRoomData.length > 0) {
@@ -98,9 +100,8 @@ const pcNumber = allRoomData?.find(item => item.id === roomId)
 
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
-      const newPcs = providerListData.map((_, index) => ` ${index + 1}`);
-      setPcs(newPcs);
-
+      // const newPcs = providerListData.map((_, index) => ` ${index + 1}`);
+      // setPcs(newPcs);
       const timeData = providerListData?.map((item) => item.starting_time)
       setTimeSlots(timeData)
     }
@@ -127,9 +128,6 @@ const pcNumber = allRoomData?.find(item => item.id === roomId)
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
 
-
-  console.log('time slots---->',timeSlots)
-  console.log('pcNumber---->',pcNumber)
 
   return (
     <>
@@ -218,36 +216,47 @@ const pcNumber = allRoomData?.find(item => item.id === roomId)
               <thead>
                 <tr >
                   <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-2 border border-gray-800">Time</th>
-                  {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0}, (_, index) => (
+                  {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
                     <th key={index} className="text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800 ">
-                    PC {index + 1}
+                      PC {index + 1}
                     </th>
                   ))}
                 </tr>
               </thead>
 
+
               <tbody>
                 {timeSlots.map((slot, slotIndex) => (
                   <tr key={slotIndex}>
-                    <td className=" text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800">{slot}</td>
-                    {numberArray.map((pc, pcIndex) => {
-                      const bookingData = providerListData?.find(b => {
-                        return (
-                          b.starting_time === slot && b.pc_no === pc
-                        )
-                      });
+                    <td className="text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800">
+                      {slot}
+                    </td>
+
+                    {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => {
+                      const pcNumber = index + 1;
+                      const bookingData = providerListData?.find(b =>
+                        b.starting_time === slot && Number(b.pc_no) === pcNumber
+                      );
 
                       return (
                         <td
-                          key={pcIndex}
-                          className={` px-1 xl:px-4 py-2 md:py-6  border border-gray-800 text-center ${bookingData ? 'bg-[#b9c8ff] text-black' : ""}`}
+                          key={index}
+                          className={`px-1 xl:px-4 py-2 md:py-6 border border-gray-800  text-center ${bookingData ? 'cursor-pointer bg-[#FFD6DD]' : ''
+                            }`}
+                          onClick={() => bookingData && handleModalOpen(bookingData.id, selectedStatus)}
                         >
-                          {bookingData && <div
-                            onClick={() => handleModalOpen(bookingData?.id, selectedStatus)}
-                            className="flex flex-col cursor-pointer">
-                            <p className="text-[10px] md:text-[14px] xl:text-[16px] font-bold">{bookingData?.user.name}</p>
-                            <p className="flex flex-col md:flex-row  justify-center text-[10px] md:text-[12px] xl:text-[16px] text-gray-500"><span className="mr-[2px]">{bookingData?.starting_time}</span> - <span className="ml-[2px]">{bookingData?.ending_time}</span></p>
-                          </div>}
+                          {bookingData ? (
+                            <>
+                              <div
+                                onClick={() => handleModalOpen(bookingData?.id, selectedStatus)}
+                                className="flex flex-col cursor-pointer ">
+                                <p className="text-gray-900 text-[10px] md:text-[14px] xl:text-[16px] font-bold">{bookingData?.user.name}</p>
+                                <p className="flex flex-col md:flex-row  justify-center text-[10px] md:text-[12px] xl:text-[16px] text-gray-500"><span className="mr-[2px]">{bookingData?.starting_time}</span> - <span className="ml-[2px]">{bookingData?.ending_time}</span></p>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-gray-500"></span>
+                          )}
                         </td>
                       );
                     })}
