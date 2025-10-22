@@ -1,6 +1,7 @@
+
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { useForm, SubmitHandler} from "react-hook-form"
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +13,6 @@ import toast from "react-hot-toast"
 import { useChangePasswordApiMutation } from "@/redux/authontication/authApi"
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 import { useRouter } from "next/navigation"
-
 
 type CreateNewPasswordInputs = {
     current_password: string
@@ -26,7 +26,6 @@ interface ApiError {
     };
 }
 
-
 export default function DashboardCreateNewPasswordPage() {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
@@ -38,21 +37,69 @@ export default function DashboardCreateNewPasswordPage() {
         register,
         handleSubmit,
         watch,
-        setValue,
+        setError,
+        clearErrors,
         formState: { errors }
     } = useForm<CreateNewPasswordInputs>()
 
-    const passwordValue = watch("new_password") // To keep track of the new password
+    const passwordValue = watch("new_password")
+    const retypePasswordValue = watch("retype_password")
 
-    // Effect to trigger retype password validation when new password changes
-    useEffect(() => {
-        if (passwordValue) {
-            // Validate retype_password whenever new_password changes
-            setValue("retype_password", "", { shouldValidate: true }) // Clear retype_password value to trigger validation
+    // Simplified real-time validation
+    const validatePasswordMatch = (value: string) => {
+        if (!passwordValue) {
+            return "Please enter new password first"
         }
-    }, [passwordValue, setValue])
+        if (value !== passwordValue) {
+            return "Password do not match"
+        }
+        return true
+    }
+
+    const handleRetypePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        
+        if (value && passwordValue) {
+            if (value !== passwordValue) {
+                setError("retype_password", {
+                    type: "manual",
+                    message: "Password do not match"
+                })
+            } else {
+                clearErrors("retype_password")
+            }
+        } else if (!value) {
+            // Clear error when field is empty
+            clearErrors("retype_password")
+        }
+    }
+
+    const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        
+        if (retypePasswordValue) {
+            if (value !== retypePasswordValue) {
+                setError("retype_password", {
+                    type: "manual",
+                    message: "Password do not match"
+                })
+            } else {
+                clearErrors("retype_password")
+            }
+        }
+    }
 
     const onSubmit: SubmitHandler<CreateNewPasswordInputs> = async (data) => {
+        // Final validation before submission
+        if (data.new_password !== data.retype_password) {
+            setError("retype_password", {
+                type: "manual",
+                message: "Password do not match"
+            })
+            toast.error("Password do not match")
+            return
+        }
+
         const formData = new FormData();
 
         formData.append("current_password", data?.current_password);
@@ -70,7 +117,7 @@ export default function DashboardCreateNewPasswordPage() {
         } catch (errors) {
             const errorValue = errors as ApiError;
             if (errorValue?.data?.message) {
-                toast.error(errorValue?.data?.message); // Now you can safely access error.data.message
+                toast.error(errorValue?.data?.message);
             }
         }
     }
@@ -104,7 +151,7 @@ export default function DashboardCreateNewPasswordPage() {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <CardContent className="space-y-6 px-6 pb-6">
 
-                                {/* Password */}
+                                {/* Current Password */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="current_password" className="text-[#ffff]">Current Password</Label>
                                     <div className="relative">
@@ -127,7 +174,7 @@ export default function DashboardCreateNewPasswordPage() {
                                     {errors.current_password && <p className="text-red-500 text-sm">{errors.current_password.message}</p>}
                                 </div>
 
-                                {/* new_password */}
+                                {/* New Password */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="new_password" className="text-[#ffff]">New Password</Label>
                                     <div className="relative">
@@ -137,7 +184,19 @@ export default function DashboardCreateNewPasswordPage() {
                                             type={showNewPassword ? "text" : "password"}
                                             placeholder="********"
                                             className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
-                                            {...register("new_password", { required: "Password is required" })}
+                                            {...register("new_password", { 
+                                                required: "Password is required",
+                                                minLength: {
+                                                    value: 4,
+                                                    message: "Password must be at least 4 characters"
+                                                }
+                                            })}
+                                            onChange={(e) => {
+                                                // Call the original register onChange
+                                                register("new_password").onChange(e);
+                                                // Call our custom handler
+                                                handleNewPasswordChange(e);
+                                            }}
                                         />
                                         <button
                                             type="button"
@@ -162,8 +221,18 @@ export default function DashboardCreateNewPasswordPage() {
                                             className="pl-10 pr-10 md:py-6 rounded-full bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500"
                                             {...register("retype_password", {
                                                 required: "Please confirm your password",
-                                                validate: value => value === passwordValue || "Passwords do not match"
+                                                minLength: {
+                                                    value: 4,
+                                                    message: "Password must be at least 4 characters"
+                                                },
+                                                validate: validatePasswordMatch
                                             })}
+                                            onChange={(e) => {
+                                                // Call the original register onChange
+                                                register("retype_password").onChange(e);
+                                                // Call our custom handler
+                                                handleRetypePasswordChange(e);
+                                            }}
                                         />
                                         <button
                                             type="button"
@@ -173,7 +242,9 @@ export default function DashboardCreateNewPasswordPage() {
                                             {showRetypePassword ? <EyeOff className="h-4 w-4 " /> : <Eye className="h-4 w-4" />}
                                         </button>
                                     </div>
-                                    {errors.retype_password && <p className="text-red-500 text-sm">{errors.retype_password.message}</p>}
+                                    {errors.retype_password && (
+                                        <p className="text-red-500 text-sm">{errors.retype_password.message}</p>
+                                    )}
                                 </div>
 
                                 {/* Submit */}

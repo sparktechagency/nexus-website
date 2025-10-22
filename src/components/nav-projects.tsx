@@ -30,7 +30,7 @@ export function NavProjects({ projects }: NavProjectsProps) {
     <SidebarGroup>
       <SidebarMenu>
         {projects.map((item) => {
-           let isActive = false
+          let isActive = false
 
           if (item.url === "") {
             isActive = pathname === "/dashboard";
@@ -39,14 +39,14 @@ export function NavProjects({ projects }: NavProjectsProps) {
             // Special case for "Manage users" - also activate for manage-provider
             if (item.name === "Manage users") {
               isActive = pathname === `/dashboard/${item.url}` ||
-                         pathname.startsWith(`/dashboard/${item.url}/`) ||
-                         pathname === "/dashboard/manage-provider-list" ||
-                         pathname === "/dashboard/manage-provider" ||
-                         pathname === "/dashboard/manage-user" ||
-                         pathname === "/dashboard/manage-user-list"
+                pathname.startsWith(`/dashboard/${item.url}/`) ||
+                pathname === "/dashboard/manage-provider-list" ||
+                pathname === "/dashboard/manage-provider" ||
+                pathname === "/dashboard/manage-user" ||
+                pathname === "/dashboard/manage-user-list"
             } else {
               isActive = pathname === `/dashboard/${item.url}` ||
-                         pathname.startsWith(`/dashboard/${item.url}/`);
+                pathname.startsWith(`/dashboard/${item.url}/`);
             }
           }
 
