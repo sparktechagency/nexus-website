@@ -48,7 +48,7 @@ export default function DashboardCreateNewPasswordPage() {
     // Simplified real-time validation
     const validatePasswordMatch = (value: string) => {
         if (!passwordValue) {
-            return "Please enter new password first"
+            return "Please enter new password"
         }
         if (value !== passwordValue) {
             return "Password do not match"
