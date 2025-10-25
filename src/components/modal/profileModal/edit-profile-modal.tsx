@@ -14,7 +14,7 @@ import toast from "react-hot-toast"
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader"
 
 type FormValues = {
-    photo: FileList
+    gaming_zone: FileList
     gaming_zone_name: string
     opening_time: string
     closing_time: string
@@ -57,11 +57,12 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
             setValue("closing_time", convertTo24HourFormat(profileData?.closing_time)) // Convert to 24-hour
             setValue("address", profileData?.address)
             setValue("phone", profileData?.phone)
-            if (profileData?.avatar) {
-                setImagePreview(profileData?.avatar)
+            if (profileData?.gaming_zone) {
+                setImagePreview(profileData?.gaming_zone)
             }
         }
     }, [profileData, setValue])
+
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -70,7 +71,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
             setImagePreview(URL.createObjectURL(file))
             const fileList = event.target.files
             if (fileList) {
-                setValue("photo", fileList)
+                setValue("gaming_zone", fileList)
             }
         }
     }
@@ -78,7 +79,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
     const removeImage = () => {
         setImagePreview(null)
         setSelectedFile(null)
-        setValue("photo", {} as FileList)
+        setValue("gaming_zone", {} as FileList)
     }
 
 
@@ -101,10 +102,12 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         return `${hour}:${minutes} ${ampm}`
     }
 
+    
+
     const onSubmit = async (data: FormValues) => {
         const formData = new FormData()
         if (selectedFile) {
-            formData.append("photo", selectedFile)
+            formData.append("gaming_zone", selectedFile)
         }
         formData.append("name", data.name)
         formData.append("gaming_zone_name", data.gaming_zone_name)
@@ -112,6 +115,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
         formData.append("closing_time", convertTo12HourFormat(data.closing_time)) // Convert back to 12-hour for API
         formData.append("address", data.address)
         formData.append("phone", data.phone)
+
 
         try {
             const res = await editProfileApi(formData).unwrap()
@@ -121,7 +125,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                 reset()
                 setImagePreview(null)
                 setSelectedFile(null)
-                setValue("photo", {} as FileList)
+                setValue("gaming_zone", {} as FileList)
             } else {
                 toast.error(res?.messages)
             }
@@ -169,7 +173,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                             </div>
                         ) : (
                             <label
-                                htmlFor="photo"
+                                htmlFor="gaming_zone"
                                 className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg  bg-[#5E5E5E33]/80 text-gray-400 transition-colors hover:bg-[#5E5E5E33]/60"
                             >
                                 <UploadCloud className="h-8 w-8" />
@@ -179,13 +183,13 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
 
                         <input
                             type="file"
-                            id="photo"
+                            id="gaming_zone"
                             className="hidden"
                             accept="image/*"
-                            // {...register("photo", { required: "Room image is required" })}
+                            // {...register("gaming_zone", { required: "Room image is required" })}
                             onChange={handleImageChange}
                         />
-                        {errors.photo && <p className="text-red-500 text-sm">{errors.photo.message}</p>}
+                        {errors.gaming_zone && <p className="text-red-500 text-sm">{errors.gaming_zone.message}</p>}
                     </div>
 
                     {/* Gaming Zone Name */}
@@ -310,7 +314,7 @@ export default function EditProfileModal({ open, setIsOpen }: { open: boolean, s
                     </Button>
                     <Button
                         type="button"
-                        onClick={() => reset()}
+                        onClick={() => setIsOpen(!open)}
                         className="w-full md:py-6 rounded-full cursor-pointer text-[#EB4335] font-semibold transition-all duration-200"
                     >
                         Cancel

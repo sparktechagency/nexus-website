@@ -145,7 +145,7 @@ const WebNotificationPage = () => {
                                     alt="photo"
                                     width={40}
                                     height={40}
-                                    className="rounded-full"
+                                    className="w-[40px] h-[40px] rounded-full"
                                 />
                             }
 
