@@ -38,7 +38,7 @@ import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
 
 const BookingPage = () => {
-  const [isAddRoom, setIsAddRoom] = useState(false)
+  const [isAddGamer, setIsAddGamer] = useState(false)
   const [gamerInfoPayCompleteModalOpen, setGamerInfoPayCompleteModalOpen] = useState(false)
   const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
   const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
@@ -54,12 +54,35 @@ const BookingPage = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gamerInfo, setGamerInfo] = useState()
 
-  const timeLabels = [
-    '01:00 AM', '02:00 AM', '03:00 AM', '04:00 AM', '05:00 AM', '06:00 AM',
-    '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM',
-    '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM'
-  ];
+  // Generate time slots with 1-hour intervals for display
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const time = new Date();
+      time.setHours(hour, 0, 0, 0);
+      
+      // Format to "01:00 AM" format (WITH leading zeros)
+      const formattedTime = time.toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      
+      // Create 24-hour format for calculations
+      const time24 = `${hour.toString().padStart(2, '0')}:00`;
+      
+      slots.push({
+        time24: time24,
+        time12: formattedTime,
+        hour,
+        minute: 0,
+        totalMinutes: hour * 60
+      });
+    }
+    return slots;
+  };
+
+  const timeSlotsDetailed = generateTimeSlots();
 
   // Get initial date based on status
   const getInitialDate = (status: string): Date => {
@@ -158,58 +181,137 @@ const BookingPage = () => {
     });
   };
 
-  // Helper function to convert time to 24-hour format for comparison
-  const convertTo24Hour = (timeStr: string): string => {
-    const [time, modifier] = timeStr.split(' ');
-    let [hours, minutes] = time.split(':');
+  // Helper function to convert time string to minutes since midnight
+  const convertTimeToMinutes = (timeStr: string): number => {
+    let cleanTime = timeStr.trim();
+    let hours = 0;
+    let minutes = 0;
 
-    if (modifier === 'PM' && hours !== '12') {
-      hours = String(parseInt(hours, 10) + 12);
+    if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
+      const [timePart, modifier] = cleanTime.split(' ');
+      const [h, m] = timePart.split(':').map(Number);
+      
+      hours = h;
+      minutes = m || 0;
+      
+      if (modifier === 'PM' && hours !== 12) {
+        hours += 12;
+      }
+      if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+      }
+    } else {
+      const [h, m] = cleanTime.split(':').map(Number);
+      hours = h;
+      minutes = m;
     }
-    if (modifier === 'AM' && hours === '12') {
-      hours = '00';
-    }
-
-    return `${hours.padStart(2, '0')}:${minutes}`;
+    
+    return hours * 60 + minutes;
   };
 
-  // Helper function to check if a booking matches the current cell
-  const getBookingForCell = (pcNumber: number, timeLabel: string) => {
+  // NEW: Helper function to check if a time slot should show booking background
+  const shouldShowBookingInSlot = (timeSlot: typeof timeSlotsDetailed[0], pcNo: number): { show: boolean; booking: ProviderBookingProps | null } => {
+    if (!providerListData || !providerListData.length) {
+      return { show: false, booking: null };
+    }
+
+    const booking = providerListData.find(b => 
+      b.pc_no === pcNo && 
+      convertTimeToMinutes(b.starting_time) <= timeSlot.totalMinutes + 60 && // booking ends after slot starts
+      convertTimeToMinutes(b.ending_time) > timeSlot.totalMinutes // booking starts before slot ends
+    );
+
+    return {
+      show: !!booking,
+      booking: booking || null
+    };
+  };
+
+  // NEW: Helper function to get booking display style for exact timing
+  const getBookingDisplayStyle = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps) => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const endMinutes = convertTimeToMinutes(booking.ending_time);
+    const slotStartMinutes = timeSlot.totalMinutes;
+    const slotEndMinutes = slotStartMinutes + 60;
+
+    // Calculate exact overlap
+    const overlapStart = Math.max(startMinutes, slotStartMinutes);
+    const overlapEnd = Math.min(endMinutes, slotEndMinutes);
+    const overlapMinutes = overlapEnd - overlapStart;
+
+    // Calculate position and height percentages
+    const positionPercentage = ((overlapStart - slotStartMinutes) / 60) * 100;
+    const heightPercentage = (overlapMinutes / 60) * 100;
+
+    return {
+      top: `${positionPercentage}%`,
+      height: `${heightPercentage}%`,
+      isStart: startMinutes >= slotStartMinutes && startMinutes < slotEndMinutes,
+      isEnd: endMinutes > slotStartMinutes && endMinutes <= slotEndMinutes,
+      exactStartTime: booking.starting_time,
+      exactEndTime: booking.ending_time
+    };
+  };
+
+  // Helper function to get booking for a specific time cell
+  const getBookingForCell = (pcNumber: number, timeSlot: typeof timeSlotsDetailed[0]): ProviderBookingProps | null => {
     if (!providerListData || !providerListData.length) return null;
-
-    const cellTime24 = convertTo24Hour(timeLabel);
-
+    
     return providerListData.find(booking => {
-      // Check if PC number matches
       if (booking.pc_no !== pcNumber) return false;
-
-      // Check if the booking's starting time matches this cell's time
-      const bookingStartTime24 = convertTo24Hour(booking.starting_time);
-
-      return bookingStartTime24 === cellTime24;
-    });
+      
+      const startMinutes = convertTimeToMinutes(booking.starting_time);
+      const endMinutes = convertTimeToMinutes(booking.ending_time);
+      const slotStartMinutes = timeSlot.totalMinutes;
+      const slotEndMinutes = slotStartMinutes + 60;
+      
+      return startMinutes < slotEndMinutes && endMinutes > slotStartMinutes;
+    }) || null;
   };
+
+  // Helper function to check if this is the first time slot of a booking
+  const isFirstTimeSlotOfBooking = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps): boolean => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const slotStartMinutes = timeSlot.totalMinutes;
+    
+    return startMinutes >= slotStartMinutes && startMinutes < slotStartMinutes + 60;
+  };
+
+  // Helper function to calculate booking duration in terms of table rows
+  const getBookingRowSpan = (booking: ProviderBookingProps): number => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const endMinutes = convertTimeToMinutes(booking.ending_time);
+    const durationMinutes = endMinutes - startMinutes;
+    
+    const rowSpan = Math.ceil(durationMinutes / 60);
+    return Math.max(1, rowSpan);
+  };
+
+  // Check if current status allows adding gamers
+  const canAddGamer = selectedStatus === "Ongoing" || selectedStatus === "Upcoming";
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
+    if (!canAddGamer) return;
+
     const pcNo = colIndex + 1;
-    const timeLabel = timeLabels[rowIndex];
-    const booking = getBookingForCell(pcNo, timeLabel);
+    const timeSlot = timeSlotsDetailed[rowIndex];
+    const booking = getBookingForCell(pcNo, timeSlot);
 
     if (booking) {
-      // console.log(`Booking found:`, booking);
-      // console.log(`User: ${booking.user.name}`);
-      // console.log(`PC: ${booking.pc_no}`);
-      // console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
+      console.log(`Booking found:`, booking);
+      console.log(`User: ${booking.user.name}`);
+      console.log(`PC: ${booking.pc_no}`);
+      console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
     } else {
-      console.log(`No booking found for PC ${pcNo} at ${timeLabel}`);
+      console.log(`No booking found for PC ${pcNo} at ${timeSlot.time12}`);
     }
     setGamerInfo({
       booking_date: formattedDate,
-      starting_time: timeLabel,
+      starting_time: timeSlot.time12,
       pc_no: pcNo
     })
 
-    setIsAddRoom(!isAddRoom)
+    setIsAddGamer(!isAddGamer)
   };
 
   // Date Picker Functions - REMOVED RESTRICTIONS
@@ -372,26 +474,15 @@ const BookingPage = () => {
     }
   }
 
+  // Track which bookings we've already rendered to avoid duplicates
+  const renderedBookings = new Set();
+
   if (isLoading) {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
 
   return (
     <>
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #6523E7, #023CE3, #6523E7);
-          border-radius: 9999px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #5a20cc, #022fb8, #5a20cc);
-        }
-        /* Firefox fallback */
-        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
-      `}</style>
-
       <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
         <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
           <div>
@@ -492,8 +583,8 @@ const BookingPage = () => {
         {/* Main Content - Table Section */}
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 min-w-0 mt-8">
-            <div className="overflow-x-auto w-full max-h-[530px] custom-scrollbar">
-              <table className="min-w-full">
+            <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
+              <table className="min-w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4 border border-gray-800">Time</th>
@@ -506,39 +597,75 @@ const BookingPage = () => {
                 </thead>
 
                 <tbody>
-                  {timeLabels.map((timeLabel, rowIndex) => (
+                  {timeSlotsDetailed.map((timeSlot, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="min-w-[150px] h-[80px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 text-gray-500 ">
-                        {timeLabel}
+                      <td className="min-w-[150px] h-[60px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 regular-cell">
+                        {timeSlot.time12}
                       </td>
                       {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
                         const pcNo = colIndex + 1;
-                        const booking = getBookingForCell(pcNo, timeLabel);
+                        const { show: shouldShow, booking } = shouldShowBookingInSlot(timeSlot, pcNo);
+                        const isFirstSlot = booking ? isFirstTimeSlotOfBooking(timeSlot, booking) : false;
+                        const isInteractive = canAddGamer || booking;
+                        const displayStyle = booking ? getBookingDisplayStyle(timeSlot, booking) : null;
+                        
+                        // Skip rendering if this booking was already rendered in a previous row
+                        const bookingKey = `${booking?.id}-${pcNo}`;
+                        if (booking && renderedBookings.has(bookingKey) && !isFirstSlot) {
+                          return null;
+                        }
+                        
+                        if (booking && isFirstSlot) {
+                          renderedBookings.add(bookingKey);
+                        }
 
                         return (
                           <td
                             key={colIndex}
-                            onClick={booking ?
-                              () => handleModalOpen(booking.id, selectedStatus) :
-                              () => handleCellClick(rowIndex, colIndex)
+                            onClick={isInteractive ? 
+                              (booking ? 
+                                () => handleModalOpen(booking.id, selectedStatus) : 
+                                () => handleCellClick(rowIndex, colIndex)
+                              ) : 
+                              undefined
                             }
                             className={cn(
-                              "px-1 xl:px-4  border border-gray-800 text-center min-w-[200px] transition-all duration-200 rounded",
-                              booking ? `font-semibold cursor-pointer ${booking.duration === "1" ? 'bg-[#FFD6DD]' : 'bg-[#B9C8FF]'}` : "cursor-pointer"
+                              "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative",
+                              booking ? "booking-cell" : "regular-cell",
+                              isInteractive ? "cursor-pointer " : "disabled-cell cursor-default"
                             )}
+                            rowSpan={booking && isFirstSlot ? getBookingRowSpan(booking) : 1}
                           >
-                            {booking ? (
-                              <div className="flex flex-col items-center justify-center">
-                                <span className="text-black text-sm font-bold">{booking.user.name}</span>
-                                <span className="text-xs text-[#888888]">
-                                  {booking.starting_time} - {booking.ending_time}
-                                </span>
-                                <span className="text-xs text-black opacity-55 mt-1">
-                                  Duration: {booking.duration}hour
-                                </span>
+                            {booking && shouldShow && (
+                              <div 
+                                className="absolute left-0 right-0 bg-blue-200 border border-blue-300 rounded flex flex-col justify-center p-1"
+                                style={{
+                                  top: displayStyle?.top || '0%',
+                                  height: displayStyle?.height || '100%',
+                                  zIndex: 10
+                                }}
+                              >
+                                {isFirstSlot && (
+                                  <>
+                                    <div className="font-bold text-[12px] truncate text-blue-800">
+                                      {booking.user.name}
+                                    </div>
+                                    <div className="text-blue-700 text-[10px] truncate">
+                                      {booking.starting_time} - {booking.ending_time}
+                                    </div>
+                                    <div className="text-blue-600 text-[9px]">
+                                      Duration: {booking.duration}
+                                    </div>
+                                  </>
+                                )}
                               </div>
-                            ) : (
-                              <span className="text-gray-400 text-sm"></span>
+                            )}
+                            
+                            {/* Show empty state when no booking */}
+                            {!booking && isInteractive && (
+                              <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
+                               
+                              </div>
                             )}
                           </td>
                         );
@@ -552,17 +679,16 @@ const BookingPage = () => {
         </div>
       </div>
 
-
       {/* modal component(ADD_Gamer) */}
       <CustomModalTwo
-        open={isAddRoom}
-        setIsOpen={setIsAddRoom}
+        open={isAddGamer}
+        setIsOpen={setIsAddGamer}
         className={"p-4 max-h-[0vh]"}
         maxWidth={"md:!max-w-[40vw]"}
       >
         <AddGamer
-          open={isAddRoom}
-          setIsOpen={setIsAddRoom}
+         open={isAddGamer}
+        setIsOpen={setIsAddGamer}
           roomId={roomId}
           gamerInfo={gamerInfo}
         />
