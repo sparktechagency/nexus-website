@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 const GamerInfoConReschedule = () => {
+
+
+
   return (
-    <div className="">
+    <div className="p-4">
       <h1 className="text-center text-[24px] py-4">Gamer Information</h1>
 
       {/* Profile Image */}

@@ -21,7 +21,6 @@ const BookingConfirmation = ({ open, setIsOpen, bookingId }: BookingConfirmProps
   const [confirmBookingApi] = useConfirmBookingApiMutation()
   const [cancelBookingApi] = useCancelBookingApiMutation()
 
-console.log(bookingId,'booking id-------> ')
 
   const handleApply = async () => {
     if (selectedValue === "complete") {
@@ -29,6 +28,7 @@ console.log(bookingId,'booking id-------> ')
         const res = await confirmBookingApi(bookingId).unwrap()
         if (res?.status === "success") {
           toast.success(res?.message)
+          window.location.reload()
         }
       } catch (error) {
         console.log(error)

@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils";
 import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
 
-
-
 interface BookingProps {
   id: number | string;
   name: string;
@@ -16,28 +14,28 @@ interface BookingProps {
 
 interface ProviderBookingProps {
   id: number | string;
-  pc_no: string | number;
+  pc_no: number;
   starting_time: string;
   ending_time: string;
-  color: "blue" | "pink" | "green" | "orange" | undefined;
+  duration: string;
+  booking_date: string;
+  status: string;
   user: { id: number | string; name: string };
 }
 
 import { Button } from "@/components/ui/button";
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader";
-import WebEmptyData from "@/components/WebEmptyData";
-import CustomModal from "@/components/modal/customModal"
-import AddGamer from "@/components/modal/booking-section-modal/add-gamer"
-import GamerInfoPayComplete from "@/components/modal/booking-section-modal/gamer-info-pay-complete"
-import GamerInfoConBooking from "@/components/modal/booking-section-modal/gamer-info-con-booking"
-import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gamer-info-con-reschedule"
-import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating"
-import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal"
-import DatePicker from "react-datepicker";
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { DatePickerIcon } from "@/components/custom-icons";
 import CustomModalTwo from "@/components/modal/customModalTwo";
+import AddGamer from "@/components/modal/booking-section-modal/add-gamer";
+import CustomModal from "@/components/modal/customModal";
+import GamerInfoPayComplete from "@/components/modal/booking-section-modal/gamer-info-pay-complete";
+import GamerInfoConBooking from "@/components/modal/booking-section-modal/gamer-info-con-booking";
+import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gamer-info-con-reschedule";
+import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating";
+import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal";
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
-
-
 
 const BookingPage = () => {
   const [isAddRoom, setIsAddRoom] = useState(false)
@@ -45,33 +43,69 @@ const BookingPage = () => {
   const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
   const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
   const [gamerReviewRatingModalOpen, setGamerReviewRatingModalOpen] = useState(false)
-
   const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
+
   const [selectedGameType, setSelectedGameType] = useState<string>("");
   const [roomId, setRoomId] = useState<string | number>("");
   const [selectedStatus, setSelectedStatus] = useState("Ongoing");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [bookingId, setBookingId] = useState<string | number>('')
+  const [timeSlots, setTimeSlots] = useState<string[]>([])
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-
-  const [timeSlots, setTimeSlots] = useState<string[]>([])  // time data 
-  // const [pcs, setPcs] = useState<string[]>([])
-
-
+  const [gamerInfo, setGamerInfo] = useState()
 
 
 
-  // Format to yyyy-mm-dd
-  const dateStr = startDate || new Date()
-  const date = new Date(dateStr);
-  const formattedDate = date.toISOString().split('T')[0];
+  const timeLabels = [
+    '01:00 AM', '02:00 AM', '03:00 AM', '04:00 AM', '05:00 AM', '06:00 AM',
+    '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM',
+    '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM'
+  ];
+
+  // Format to yyyy-mm-dd - FIXED VERSION (Timezone Safe)
+  const formatDateToYYYYMMDD = (date: Date | null): string => {
+    if (!date) {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+
+    // Use local date components to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+
+
+
+
+  // ========= DATE FORMATE FUNCTION ================= //
+  const formatDateToLongFormat = (date: Date | null): string => {
+    if (!date) return "Select Date";
+
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const formattedDate = formatDateToYYYYMMDD(startDate);
+
+
+
+
+
+
 
 
   // get room api
   const { data: getAllRoom } = useAllRoomGetRoomApiQuery({ skip: true });
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
-
-
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
     room_id: roomId,
@@ -80,12 +114,9 @@ const BookingPage = () => {
   });
   const providerListData: ProviderBookingProps[] = getProviderList?.data;
 
-
   // BOOKING DETAILS API
   const { data: getBookingDetails } = useGetBookingDetailsApiQuery(bookingId);
   const bookingDetails = getBookingDetails?.data
-
-
 
   const pcNumber = allRoomData?.find(item => item.id === roomId)
 
@@ -96,16 +127,228 @@ const BookingPage = () => {
     }
   }, [allRoomData]);
 
-
-
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
-      // const newPcs = providerListData.map((_, index) => ` ${index + 1}`);
-      // setPcs(newPcs);
       const timeData = providerListData?.map((item) => item.starting_time)
       setTimeSlots(timeData)
+    } else {
+      // Set default time slots even when no data
+      setTimeSlots([]);
     }
   }, [providerListData]);
+
+  // Date navigation functions
+  const navigateDate = (direction: 'prev' | 'next') => {
+    setStartDate(prev => {
+      if (!prev) return new Date();
+
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setDate(prev.getDate() - 1);
+      } else {
+        newDate.setDate(prev.getDate() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  // Helper function to convert time to 24-hour format for comparison
+  const convertTo24Hour = (timeStr: string): string => {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':');
+
+    if (modifier === 'PM' && hours !== '12') {
+      hours = String(parseInt(hours, 10) + 12);
+    }
+    if (modifier === 'AM' && hours === '12') {
+      hours = '00';
+    }
+
+    return `${hours.padStart(2, '0')}:${minutes}`;
+  };
+
+  // Helper function to check if a booking matches the current cell
+  const getBookingForCell = (pcNumber: number, timeLabel: string) => {
+    if (!providerListData || !providerListData.length) return null;
+
+    const cellTime24 = convertTo24Hour(timeLabel);
+
+    return providerListData.find(booking => {
+      if (booking.pc_no !== pcNumber) return false;
+
+      // Check if the booking's starting time matches this cell's time
+      const bookingStartTime24 = convertTo24Hour(booking.starting_time);
+      return bookingStartTime24 === cellTime24;
+    });
+  };
+
+
+
+  const handleCellClick = (rowIndex: number, colIndex: number) => {
+    const pcNo = colIndex + 1;
+    const timeLabel = timeLabels[rowIndex];
+
+    setGamerInfo({
+      booking_date: formattedDate,
+      starting_time: timeLabel,
+      pc_no: pcNo
+    })
+
+    setIsAddRoom(!isAddRoom)
+  };
+
+
+
+
+  // Date Picker Functions
+  const handleDateSelect = (date: Date) => {
+    setStartDate(date);
+    setShowDatePicker(false);
+  };
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setStartDate(prev => {
+      if (!prev) return new Date();
+
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const navigateYear = (direction: 'prev' | 'next') => {
+    setStartDate(prev => {
+      if (!prev) return new Date();
+
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setFullYear(prev.getFullYear() - 1);
+      } else {
+        newDate.setFullYear(prev.getFullYear() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  // Render Date Picker
+  const renderDatePicker = () => {
+    if (!showDatePicker) return null;
+
+    const currentDate = startDate || new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDayOfMonth = getFirstDayOfMonth(year, month);
+
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    // Generate calendar days
+    const days = [];
+
+    // Empty cells for days before the first day of the month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(<div key={`empty-${i}`} className="w-8 h-8"></div>);
+    }
+
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayDate = new Date(year, month, day);
+      const isToday = new Date().toDateString() === dayDate.toDateString();
+      const isSelected = startDate?.toDateString() === dayDate.toDateString();
+
+
+      days.push(
+        <button
+          key={day}
+          onClick={() => handleDateSelect(dayDate)}
+          className={cn(
+            "w-8 h-8 rounded-full text-sm flex items-center justify-center transition-all cursor-pointer",
+            isSelected
+              ? "bg-gradient-to-r from-[#6523E7] to-[#023CE3] text-white font-bold"
+              : isToday
+                ? "bg-gray-700 text-white"
+                : "text-gray-300 hover:bg-gray-700"
+          )}
+        >
+          {day}
+        </button>
+      );
+    }
+
+    return (
+      <div className="absolute top-full left-0 mt-2 z-50 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl p-4 min-w-[270px]">
+        {/* Month/Year Navigation */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigateYear('prev')}
+            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
+          >
+          </button>
+
+          <button
+            onClick={() => navigateMonth('prev')}
+            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <div className="flex items-center gap-2 font-semibold">
+            <span>{monthNames[month]}</span>
+            <span>{year}</span>
+          </div>
+
+          <button
+            onClick={() => navigateMonth('next')}
+            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => navigateYear('next')}
+            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
+          >
+
+          </button>
+        </div>
+
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {dayNames.map(day => (
+            <div key={day} className="text-center text-xs text-gray-400 font-medium w-8">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {days}
+        </div>
+      </div>
+    );
+  };
+
+
+
 
   const handleModalOpen = (bookingSelectId: string | number, statusType: string) => {
     setBookingId(bookingSelectId)
@@ -124,29 +367,40 @@ const BookingPage = () => {
   }
 
 
+
   if (isLoading) {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
 
 
+
+
+
+
   return (
     <>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, #6523E7, #023CE3, #6523E7);
+          border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, #5a20cc, #022fb8, #5a20cc);
+        }
+        /* Firefox fallback */
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
+      `}</style>
+
       <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
         <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
           <div>
             <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
             <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
           </div>
-          <Button
-            onClick={() => setIsAddRoom(!isAddRoom)}
-            className="w-fit px-6 py-2 rounded-full cursor-pointer text-white font-semibold transition-all duration-200"
-            style={{
-              background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-            }}
-          >
-            Add Gamer
-          </Button>
         </div>
+
         {/* Filters */}
         <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
           {/* Game Type Filters */}
@@ -175,16 +429,14 @@ const BookingPage = () => {
             ))}
           </div>
 
-
-
-          {/* Status Tabs */}
-          <div className="flex flex-wrap gap-8 mb-6">
+          {/* Status Tabs and Date Picker */}
+          <div className="flex flex-wrap items-center gap-8 mb-6">
             {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
               <button
                 key={status}
                 onClick={() => setSelectedStatus(status)}
                 className={cn(
-                  "pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative",
+                  "px-1 text-sm font-medium transition-colors cursor-pointer relative",
                   selectedStatus === status
                     ? "cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
                     : "text-[##C2C2C2]"
@@ -192,89 +444,120 @@ const BookingPage = () => {
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
-
             ))}
 
 
-            {/* DATE PICKER (SELECT DATA) */}
+
+
+            {/* Custom Date Picker */}
             {
-              selectedStatus && (selectedStatus === "Upcoming" || selectedStatus === "Completed" || selectedStatus === "Canceled") ? <div className="">
-                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)}
-                  className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
-                  wrapperClassName="w-full"
-                />
-              </div> : ""
+              selectedStatus === "Ongoing" ? "" : <div className="relative ">
+                <div className="flex items-center gap-2 rounded-lg px-3 py-2"
+                  style={{
+                    background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                  }}
+                >
+                  <button
+                    onClick={() => navigateDate('prev')}
+                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <span className="min-w-[180px] text-center font-medium flex items-center gap-3 py-1">
+                    <button
+                      onClick={() => setShowDatePicker(!showDatePicker)}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <DatePickerIcon className="cursor-pointer" />
+                      {formatDateToLongFormat(startDate)}
+                    </button>
+                  </span>
+
+                  <button
+                    onClick={() => navigateDate('next')}
+                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Date Picker Dropdown */}
+                {showDatePicker && (
+                  <div className="absolute top-full left-0  z-50">
+                    {renderDatePicker()}
+                  </div>
+                )}
+              </div>
             }
+
           </div>
         </div>
 
-
-        {/* TABLE COMPONENT */}
-        <div className="overflow-x-auto w-full">
-          {
-            providerListData?.length > 0 ? <table className="min-w-full">
-              <thead>
-                <tr >
-                  <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-2 border border-gray-800">Time</th>
-                  {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
-                    <th key={index} className="text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800 ">
-                      PC {index + 1}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-
-              <tbody>
-                {timeSlots.map((slot, slotIndex) => (
-                  <tr key={slotIndex}>
-                    <td className="text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800">
-                      {slot}
-                    </td>
-
-                    {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => {
-                      const pcNumber = index + 1;
-                      const bookingData = providerListData?.find(b =>
-                        b.starting_time === slot && Number(b.pc_no) === pcNumber
-                      );
-
-                      return (
-                        <td
-                          key={index}
-                          className={`px-1 xl:px-4 py-2 md:py-6 border border-gray-800  text-center ${bookingData ? 'cursor-pointer bg-[#FFD6DD]' : ''
-                            }`}
-                          onClick={() => bookingData && handleModalOpen(bookingData.id, selectedStatus)}
-                        >
-                          {bookingData ? (
-                            <>
-                              <div
-                                onClick={() => handleModalOpen(bookingData?.id, selectedStatus)}
-                                className="flex flex-col cursor-pointer ">
-                                <p className="text-gray-900 text-[10px] md:text-[14px] xl:text-[16px] font-bold">{bookingData?.user.name}</p>
-                                <p className="flex flex-col md:flex-row  justify-center text-[10px] md:text-[12px] xl:text-[16px] text-gray-500"><span className="mr-[2px]">{bookingData?.starting_time}</span> - <span className="ml-[2px]">{bookingData?.ending_time}</span></p>
-                              </div>
-                            </>
-                          ) : (
-                            <span className="text-gray-500"></span>
-                          )}
-                        </td>
-                      );
-                    })}
+        {/* Main Content - Table Section */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex-1 min-w-0 mt-8">
+            <div className="overflow-x-auto w-full max-h-[530px] custom-scrollbar">
+              <table className="min-w-full">
+                <thead >
+                  <tr>
+                    <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4  border border-gray-800">Time</th>
+                    {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
+                      <th key={index} className="min-w-[200px] text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800">
+                        PC {index + 1}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-              :
-              <WebEmptyData
-                customStyle={`bg-red-500 text-white `}
-                style={{
-                  background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                }}
-              />
-          }
+                </thead>
+
+
+
+                <tbody>
+                  {timeLabels.map((timeLabel, rowIndex) => (
+                    <tr key={rowIndex}>
+                      <td className="min-w-[150px] h-[80px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 text-gray-500">
+                        {timeLabel}
+                      </td>
+                      {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
+                        const pcNo = colIndex + 1;
+                        const booking = getBookingForCell(pcNo, timeLabel);
+
+                        return (
+                          <td
+                            key={colIndex}
+                            onClick={booking ?
+                              () => handleModalOpen(booking.id, selectedStatus) :
+                              () => handleCellClick(rowIndex, colIndex)
+                            }
+                            className={cn(
+                              " px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200",
+                              booking ? ` font-semibold cursor-pointer ${booking.duration === "1" ? 'bg-[#FFD6DD] rounded' : 'bg-[#B9C8FF] rounded'}` : "cursor-pointer "
+                            )}
+                          >
+                            {booking ? (
+                              <div className="flex flex-col items-center justify-center">
+                                <span className="text-black text-sm font-bold">{booking.user.name}</span>
+                                <span className="text-xs text-[#888888]">
+                                  {booking.starting_time} - {booking.ending_time}
+                                </span>
+                                <span className="text-xs text-black opacity-55 mt-1">
+                                  Duration: {booking.duration} hour
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm"></span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-
 
 
       {/* modal component(ADD_Gamer) */}
@@ -282,12 +565,13 @@ const BookingPage = () => {
         open={isAddRoom}
         setIsOpen={setIsAddRoom}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[50vw]"}
+        maxWidth={"md:!max-w-[40vw]"}
       >
         <AddGamer
           open={isAddRoom}
           setIsOpen={setIsAddRoom}
           roomId={roomId}
+          gamerInfo={gamerInfo}
         />
       </CustomModalTwo>
 

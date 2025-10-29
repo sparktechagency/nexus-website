@@ -50,21 +50,26 @@ const GamerInfoPayComplete = ({ open, setIsOpen, bookingId }: GamerInfoPayComple
   }
 
 
+
+
   return (
 
     <div className="">
       <h1 className="text-center text-[24px] py-4">Gamer Information</h1>
 
       {/* Profile Image */}
-      <div className="flex justify-center mb-8 mt-6">
+      {
+        bookingDetails?.user?.avatar && <div className="flex justify-center mb-8 mt-6">
         <Image
-          src="https://randomuser.me/api/portraits/women/2.jpg"
+          src={bookingDetails?.user?.avatar}
           alt="photo"
           className="object-cover rounded-full"
           width={150}
           height={150}
         />
       </div>
+      }
+      
 
       {/* Information Grid */}
       <div className="mb-8">

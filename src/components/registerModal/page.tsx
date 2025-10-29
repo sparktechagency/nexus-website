@@ -72,21 +72,25 @@ export default function RegisterModal({ registerData }: { registerData: Register
     }
 
 
-    // TIME FORMATE (---AM/PM---)
+
+    // TIME FORMAT (---AM/PM---) with leading zeros
     function convertTo12HourFormat(time: string): string {
         const [hours, minutes] = time.split(':');
         let hour = parseInt(hours);
         const ampm = hour >= 12 ? 'PM' : 'AM';
         hour = hour % 12;
         hour = hour ? hour : 12; // the hour '0' should be '12'
-        return `${hour}:${minutes} ${ampm}`;
+
+        // Format hour and minutes with leading zeros
+        const formattedHour = hour.toString().padStart(2, '0');
+        const formattedMinutes = minutes.padStart(2, '0');
+
+        return `${formattedHour}:${formattedMinutes} ${ampm}`;
     }
 
 
     const onSubmit = async (data: RoomFormValues) => {
-
         const formData = new FormData();
-
         formData.append("name", registerData?.name);
         formData.append("email", registerData?.email);
         formData.append("password", registerData?.password);

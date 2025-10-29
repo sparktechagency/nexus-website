@@ -81,21 +81,26 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
 
 
 
-  // TIME FORMATE (---AM/PM---)
-  function convertTo12HourFormat(time: string): string {
-    const [hours, minutes] = time.split(':');
-    let hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12;
-    hour = hour ? hour : 12; // the hour '0' should be '12'
-    return `${hour}:${minutes} ${ampm}`;
-  }
+     // TIME FORMAT (---AM/PM---) with leading zeros
+    function convertTo12HourFormat(time: string): string {
+        const [hours, minutes] = time.split(':');
+        let hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour ? hour : 12; // the hour '0' should be '12'
+
+        // Format hour and minutes with leading zeros
+        const formattedHour = hour.toString().padStart(2, '0');
+        const formattedMinutes = minutes.padStart(2, '0');
+
+        return `${formattedHour}:${formattedMinutes} ${ampm}`;
+    }
 
 
   const onSubmit = async (data: RoomFormValues) => {
 
     const formData = new FormData();
-    formData.append("room_id", bookingId.toString());
+    formData.append("room_id", roomId.toString());
     formData.append("booking_date", data.booking_date);
     formData.append("starting_time", convertTo12HourFormat(data.starting_time));
     formData.append("pc_no", data.pc_no);
@@ -135,7 +140,6 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <p>Room of your gaming center:</p>
-
         <RadioGroup
           value={selectedRoom}
           onValueChange={(value) => setSelectedRoom(value)}
