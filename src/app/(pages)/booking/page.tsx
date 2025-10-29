@@ -60,17 +60,17 @@ const BookingPage = () => {
     for (let hour = 0; hour < 24; hour++) {
       const time = new Date();
       time.setHours(hour, 0, 0, 0);
-      
+
       // Format to "01:00 AM" format (WITH leading zeros)
       const formattedTime = time.toLocaleString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true
       });
-      
+
       // Create 24-hour format for calculations
       const time24 = `${hour.toString().padStart(2, '0')}:00`;
-      
+
       slots.push({
         time24: time24,
         time12: formattedTime,
@@ -190,10 +190,10 @@ const BookingPage = () => {
     if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
       const [timePart, modifier] = cleanTime.split(' ');
       const [h, m] = timePart.split(':').map(Number);
-      
+
       hours = h;
       minutes = m || 0;
-      
+
       if (modifier === 'PM' && hours !== 12) {
         hours += 12;
       }
@@ -205,7 +205,7 @@ const BookingPage = () => {
       hours = h;
       minutes = m;
     }
-    
+
     return hours * 60 + minutes;
   };
 
@@ -215,8 +215,8 @@ const BookingPage = () => {
       return { show: false, booking: null };
     }
 
-    const booking = providerListData.find(b => 
-      b.pc_no === pcNo && 
+    const booking = providerListData.find(b =>
+      b.pc_no === pcNo &&
       convertTimeToMinutes(b.starting_time) <= timeSlot.totalMinutes + 60 && // booking ends after slot starts
       convertTimeToMinutes(b.ending_time) > timeSlot.totalMinutes // booking starts before slot ends
     );
@@ -256,15 +256,15 @@ const BookingPage = () => {
   // Helper function to get booking for a specific time cell
   const getBookingForCell = (pcNumber: number, timeSlot: typeof timeSlotsDetailed[0]): ProviderBookingProps | null => {
     if (!providerListData || !providerListData.length) return null;
-    
+
     return providerListData.find(booking => {
       if (booking.pc_no !== pcNumber) return false;
-      
+
       const startMinutes = convertTimeToMinutes(booking.starting_time);
       const endMinutes = convertTimeToMinutes(booking.ending_time);
       const slotStartMinutes = timeSlot.totalMinutes;
       const slotEndMinutes = slotStartMinutes + 60;
-      
+
       return startMinutes < slotEndMinutes && endMinutes > slotStartMinutes;
     }) || null;
   };
@@ -273,7 +273,7 @@ const BookingPage = () => {
   const isFirstTimeSlotOfBooking = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps): boolean => {
     const startMinutes = convertTimeToMinutes(booking.starting_time);
     const slotStartMinutes = timeSlot.totalMinutes;
-    
+
     return startMinutes >= slotStartMinutes && startMinutes < slotStartMinutes + 60;
   };
 
@@ -282,7 +282,7 @@ const BookingPage = () => {
     const startMinutes = convertTimeToMinutes(booking.starting_time);
     const endMinutes = convertTimeToMinutes(booking.ending_time);
     const durationMinutes = endMinutes - startMinutes;
-    
+
     const rowSpan = Math.ceil(durationMinutes / 60);
     return Math.max(1, rowSpan);
   };
@@ -483,6 +483,20 @@ const BookingPage = () => {
 
   return (
     <>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, #6523E7, #023CE3, #6523E7);
+          border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, #5a20cc, #022fb8, #5a20cc);
+        }
+        /* Firefox fallback */
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
+      `}</style>
+
       <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
         <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
           <div>
@@ -608,13 +622,13 @@ const BookingPage = () => {
                         const isFirstSlot = booking ? isFirstTimeSlotOfBooking(timeSlot, booking) : false;
                         const isInteractive = canAddGamer || booking;
                         const displayStyle = booking ? getBookingDisplayStyle(timeSlot, booking) : null;
-                        
+
                         // Skip rendering if this booking was already rendered in a previous row
                         const bookingKey = `${booking?.id}-${pcNo}`;
                         if (booking && renderedBookings.has(bookingKey) && !isFirstSlot) {
                           return null;
                         }
-                        
+
                         if (booking && isFirstSlot) {
                           renderedBookings.add(bookingKey);
                         }
@@ -622,11 +636,11 @@ const BookingPage = () => {
                         return (
                           <td
                             key={colIndex}
-                            onClick={isInteractive ? 
-                              (booking ? 
-                                () => handleModalOpen(booking.id, selectedStatus) : 
+                            onClick={isInteractive ?
+                              (booking ?
+                                () => handleModalOpen(booking.id, selectedStatus) :
                                 () => handleCellClick(rowIndex, colIndex)
-                              ) : 
+                              ) :
                               undefined
                             }
                             className={cn(
@@ -637,7 +651,7 @@ const BookingPage = () => {
                             rowSpan={booking && isFirstSlot ? getBookingRowSpan(booking) : 1}
                           >
                             {booking && shouldShow && (
-                              <div 
+                              <div
                                 className="absolute left-0 right-0 bg-blue-200 border border-blue-300 rounded flex flex-col justify-center p-1"
                                 style={{
                                   top: displayStyle?.top || '0%',
@@ -660,11 +674,11 @@ const BookingPage = () => {
                                 )}
                               </div>
                             )}
-                            
+
                             {/* Show empty state when no booking */}
                             {!booking && isInteractive && (
                               <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                               
+
                               </div>
                             )}
                           </td>
@@ -687,8 +701,8 @@ const BookingPage = () => {
         maxWidth={"md:!max-w-[40vw]"}
       >
         <AddGamer
-         open={isAddGamer}
-        setIsOpen={setIsAddGamer}
+          open={isAddGamer}
+          setIsOpen={setIsAddGamer}
           roomId={roomId}
           gamerInfo={gamerInfo}
         />
