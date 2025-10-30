@@ -52,13 +52,7 @@ const BookingPage = () => {
   const [bookingId, setBookingId] = useState<string | number>('')
   const [timeSlots, setTimeSlots] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [gamerInfo, setGamerInfo] = useState<any>(null)
-  
-  // Drag state management
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartCell, setDragStartCell] = useState<{rowIndex: number, colIndex: number} | null>(null);
-  const [dragCurrentCell, setDragCurrentCell] = useState<{rowIndex: number, colIndex: number} | null>(null);
-  const [dragDuration, setDragDuration] = useState<number>(0);
+  const [gamerInfo, setGamerInfo] = useState()
 
   // Generate time slots with 1-hour intervals for display
   const generateTimeSlots = () => {
@@ -296,69 +290,6 @@ const BookingPage = () => {
   // Check if current status allows adding gamers
   const canAddGamer = selectedStatus === "Ongoing" || selectedStatus === "Upcoming";
 
-  // Drag handlers
-  const handleDragStart = (rowIndex: number, colIndex: number) => {
-    if (!canAddGamer) return;
-    
-    const pcNo = colIndex + 1;
-    const timeSlot = timeSlotsDetailed[rowIndex];
-    const booking = getBookingForCell(pcNo, timeSlot);
-
-    // Only allow drag on empty cells
-    if (!booking) {
-      setIsDragging(true);
-      setDragStartCell({ rowIndex, colIndex });
-      setDragCurrentCell({ rowIndex, colIndex });
-      setDragDuration(1); // Start with 1 hour
-    }
-  };
-
-  const handleDragOver = (rowIndex: number, colIndex: number) => {
-    if (!isDragging || !dragStartCell) return;
-    
-    // Only allow vertical dragging in the same column
-    if (colIndex === dragStartCell.colIndex) {
-      setDragCurrentCell({ rowIndex, colIndex });
-      
-      // Calculate duration based on row difference
-      const startRow = dragStartCell.rowIndex;
-      const endRow = rowIndex;
-      const duration = Math.abs(endRow - startRow) + 1; // +1 because we include the start row
-      setDragDuration(duration);
-    }
-  };
-
-  const handleDragEnd = () => {
-    if (!isDragging || !dragStartCell || !dragCurrentCell) return;
-
-    const startRow = dragStartCell.rowIndex;
-    const endRow = dragCurrentCell.rowIndex;
-    const colIndex = dragStartCell.colIndex;
-
-    // Check if it's a valid drag (vertical movement only, same column)
-    if (colIndex === dragCurrentCell.colIndex) {
-      const pcNo = colIndex + 1;
-      const startTimeSlot = timeSlotsDetailed[Math.min(startRow, endRow)];
-      
-      setGamerInfo({
-        booking_date: formattedDate,
-        starting_time: startTimeSlot.time12,
-        pc_no: pcNo,
-        duration: dragDuration.toString(),
-        startRow: Math.min(startRow, endRow),
-        endRow: Math.max(startRow, endRow)
-      });
-      
-      setIsAddGamer(true);
-    }
-
-    // Reset drag state
-    setIsDragging(false);
-    setDragStartCell(null);
-    setDragCurrentCell(null);
-    setDragDuration(0);
-  };
-
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     if (!canAddGamer) return;
 
@@ -371,57 +302,16 @@ const BookingPage = () => {
       console.log(`User: ${booking.user.name}`);
       console.log(`PC: ${booking.pc_no}`);
       console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
-      handleModalOpen(booking.id, selectedStatus);
     } else {
-      // Single click for 1 hour booking
-      setGamerInfo({
-        booking_date: formattedDate,
-        starting_time: timeSlot.time12,
-        pc_no: pcNo,
-        duration: "1",
-        startRow: rowIndex,
-        endRow: rowIndex
-      });
-      setIsAddGamer(true);
+      console.log(`No booking found for PC ${pcNo} at ${timeSlot.time12}`);
     }
-  };
+    setGamerInfo({
+      booking_date: formattedDate,
+      starting_time: timeSlot.time12,
+      pc_no: pcNo
+    })
 
-  // Get drag selection style
-  const getDragSelectionStyle = (rowIndex: number, colIndex: number) => {
-    if (!isDragging || !dragStartCell || !dragCurrentCell) return {};
-    
-    const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    
-    if (colIndex === dragStartCell.colIndex && rowIndex >= startRow && rowIndex <= endRow) {
-      return {
-        background: "#B9C8FF",
-        position: "relative" as const
-      };
-    }
-    
-    return {};
-  };
-
-  // Get drag duration display
-  const getDragDurationDisplay = (rowIndex: number, colIndex: number) => {
-    if (!isDragging || !dragStartCell || !dragCurrentCell) return null;
-    
-    const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    
-    // Show duration only in the first cell of the selection
-    if (colIndex === dragStartCell.colIndex && rowIndex === startRow) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center ">
-          <span className="text-white font-bold text-sm">
-            {dragDuration} Hour{dragDuration > 1 ? 's' : ''}
-          </span>
-        </div>
-      );
-    }
-    
-    return null;
+    setIsAddGamer(!isAddGamer)
   };
 
   // Date Picker Functions - REMOVED RESTRICTIONS
@@ -605,15 +495,6 @@ const BookingPage = () => {
         }
         /* Firefox fallback */
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
-        
-    
-        
-        .no-select {
-          user-select: none;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-        }
       `}</style>
 
       <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
@@ -713,12 +594,11 @@ const BookingPage = () => {
           </div>
         </div>
 
-
         {/* Main Content - Table Section */}
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 min-w-0 mt-8">
             <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
-              <table className="min-w-full border-collapse no-select">
+              <table className="min-w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4 border border-gray-800">Time</th>
@@ -756,16 +636,18 @@ const BookingPage = () => {
                         return (
                           <td
                             key={colIndex}
-                            onClick={() => handleCellClick(rowIndex, colIndex)}
-                            onMouseDown={() => handleDragStart(rowIndex, colIndex)}
-                            onMouseEnter={() => handleDragOver(rowIndex, colIndex)}
-                            onMouseUp={handleDragEnd}
+                            onClick={isInteractive ?
+                              (booking ?
+                                () => handleModalOpen(booking.id, selectedStatus) :
+                                () => handleCellClick(rowIndex, colIndex)
+                              ) :
+                              undefined
+                            }
                             className={cn(
-                              "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative select-none",
+                              "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative",
                               booking ? "booking-cell" : "regular-cell",
                               isInteractive ? "cursor-pointer " : "disabled-cell cursor-default"
                             )}
-                            style={getDragSelectionStyle(rowIndex, colIndex)}
                             rowSpan={booking && isFirstSlot ? getBookingRowSpan(booking) : 1}
                           >
                             {booking && shouldShow && (
@@ -793,8 +675,12 @@ const BookingPage = () => {
                               </div>
                             )}
 
-                            {/* Drag duration display */}
-                            {getDragDurationDisplay(rowIndex, colIndex)}
+                            {/* Show empty state when no booking */}
+                            {!booking && isInteractive && (
+                              <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
+
+                              </div>
+                            )}
                           </td>
                         );
                       })}
@@ -822,7 +708,10 @@ const BookingPage = () => {
         />
       </CustomModalTwo>
 
-      {/* Other modals remain the same */}
+
+
+
+      {/* modal component(Gamer_Info_Pay_Complete) */}
       <CustomModal
         open={gamerInfoPayCompleteModalOpen}
         setIsOpen={setGamerInfoPayCompleteModalOpen}
@@ -836,6 +725,9 @@ const BookingPage = () => {
         />
       </CustomModal>
 
+
+
+      {/* modal component(Gamer_Info_con-booking ===== Details [STATUS----> UP_Coming ]) */}
       <CustomModal
         open={gamerInfoConBookingModalOpen}
         setIsOpen={setGamerInfoConBookingModalOpen}
@@ -849,6 +741,8 @@ const BookingPage = () => {
         />
       </CustomModal>
 
+
+      {/* modal component(gamer-info-con-reschedule) */}
       <CustomModal
         open={gamerInfoRescheduleModalOpen}
         setIsOpen={setGamerInfoRescheduleModalOpen}
@@ -858,6 +752,9 @@ const BookingPage = () => {
         <GamerInfoConReschedule />
       </CustomModal>
 
+
+
+      {/* modal component(REVIEW_RATING) */}
       <CustomModal
         open={gamerReviewRatingModalOpen}
         setIsOpen={setGamerReviewRatingModalOpen}
@@ -871,6 +768,10 @@ const BookingPage = () => {
         />
       </CustomModal>
 
+
+
+
+      {/* modal component(CancelTab_Modal) */}
       <CustomModal
         open={cancelTabModalModalOpen}
         setIsOpen={setCancelTabModalModalOpen}
@@ -883,6 +784,7 @@ const BookingPage = () => {
           bookingId={bookingId}
         />
       </CustomModal>
+
 
       {/* SUBSCRIPTION COMPONENT MODAL */}
       <CommonSubscription />

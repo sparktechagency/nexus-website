@@ -1,25 +1,30 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, } from 'react';
 
-import { useForm, Controller } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import DatePicker from 'react-datepicker';
+
 import "react-datepicker/dist/react-datepicker.css";
 import toast from 'react-hot-toast';
 import { useAddGamerApiMutation } from '@/redux/website/booking/bookingApi';
 import CustomButtonLoader from '@/components/loader/CustomButtonLoader';
-import { useGetAllRoomApiQuery } from '@/redux/website/rooms/roomApi';
 
+// Define the GamerInfo interface
+interface GamerInfo {
+  booking_date: string;
+  starting_time: string;
+  pc_no: string;
+  duration: string;
+}
 
 interface AddGamerProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   roomId: number | string;
-  gamerInfo: ReactNode;
+  gamerInfo: GamerInfo; // Changed from ReactNode to GamerInfo
 }
 
 interface ApiError {
@@ -38,68 +43,18 @@ type RoomFormValues = {
   pc_no: string
   duration: string
 }
-interface RoomProps {
-  id: number;
-  provider_id: number;
-  name: string;
-  photo: string;
-  no_of_pc: number;
-  price: number;
-  created_at: string;
-  updated_at: string;
-}
 
 
 
 const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const [isScrollable, setIsScrollable] = useState(false);
 
-  const { data: getAllRoom, } = useGetAllRoomApiQuery({ skip: true })
-  const roomData: RoomProps[] = getAllRoom?.data?.data
 
   const [addGamerApi, { isLoading }] = useAddGamerApiMutation()
-  const pcNumber = roomData?.find(item => item.id === roomId)
-
-
-
   const {
     register,
     handleSubmit,
-    setValue,
-    control,
     formState: { errors },
   } = useForm<RoomFormValues>()
-
-
-
-  // Update form value when date changes
-  useEffect(() => {
-    if (startDate) {
-      const formattedDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-      setValue("booking_date", formattedDate);
-    }
-  }, [startDate, setValue]);
-
-
-
-
-
-  // TIME FORMAT (---AM/PM---) with leading zeros
-  // function convertTo12HourFormat(time: string): string {
-  //   const [hours, minutes] = time.split(':');
-  //   let hour = parseInt(hours);
-  //   const ampm = hour >= 12 ? 'PM' : 'AM';
-  //   hour = hour % 12;
-  //   hour = hour ? hour : 12; // the hour '0' should be '12'
-
-  //   // Format hour and minutes with leading zeros
-  //   const formattedHour = hour.toString().padStart(2, '0');
-  //   const formattedMinutes = minutes.padStart(2, '0');
-
-  //   return `${formattedHour}:${formattedMinutes} ${ampm}`;
-  // }
 
 
 
@@ -109,7 +64,6 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
 
 
   const onSubmit = async (data: RoomFormValues) => {
-
     const formData = new FormData();
     formData.append("room_id", roomId.toString());
     formData.append("email", data.email);
@@ -120,7 +74,7 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
     formData.append("pc_no", gamerInfo?.pc_no);
     formData.append("duration", data.duration);
 
-    // formData.forEach((key,value)=>console.log(key,value))
+// formData.forEach((key, value)=> console.log(key, value))
 
     try {
       const res = await addGamerApi(formData).unwrap();
@@ -137,8 +91,6 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
         toast.error(errorValue?.data?.message);
       }
     }
-
-
   }
 
   const handleCancel = () => {
@@ -165,49 +117,8 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
 
       <div className='xl:p-6'>
         <h1 className="text-center text-[24px]">Add Gamer</h1>
-        <div ref={contentRef}
-          className={`${isScrollable ? "max-h-[620px] custom-scrollbar" : ""}`}>
+        <div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-8">
-
-            {/* <div className='flex flex-col xl:flex-row gap-4'>
-              <div className="space-y-2 w-full xl:w-[50%]">
-                <Label htmlFor="email" className="text-white text-sm">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter the name of the room"
-                  {...register("email")}
-                  className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 "
-                />
-                {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
-              </div>
-
-
-              <div className="space-y-2 w-full xl:w-[50%]">
-                <Label htmlFor="phone" className="text-white text-sm">
-                  Contact Number
-                </Label>
-                <Input
-                  id="phone"
-                  type="number"
-                  placeholder="Enter the contact number"
-                  maxLength={11}
-                  onInput={(e) => {
-                    const target = e.target as HTMLInputElement
-                    if (target.value.length > 11) {
-                      target.value = target.value.slice(0, 11)
-                    }
-                  }}
-                  {...register("phone")}
-                  className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone.message}</p>}
-              </div>
-            </div> */}
-
-
             <div className="space-y-2">
               <Label htmlFor="name" className="text-white text-sm">
                 Full Name
@@ -215,50 +126,12 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
               <Input
                 id="name"
                 type="name"
-                placeholder="Enter the name of the room"
+                placeholder="Write your full name"
                 {...register("name")}
                 className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6  text-white placeholder:text-gray-500 "
               />
               {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
             </div>
-
-            {/* <div className='flex flex-col xl:flex-row gap-4'>
-              <div className="space-y-2 w-full xl:w-[50%]">
-                <div className="space-y-2 w-full">
-                  <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
-                  <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
-                    wrapperClassName="w-full"
-                  />
-                </div>
-              </div>
-
-
-              <div className="space-y-2 w-full xl:w-[50%]">
-                <Label htmlFor="starting_time" className="text-white text-sm">
-                  Starting time
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="starting_time"
-                    type="time"
-                    placeholder="Enter the opening time(10.00 AM)"
-                    {...register("starting_time")}
-                    className=" border-gray-700 text-white rounded-lg border-none bg-[#5E5E5E33]/80 py-6 [&::-webkit-calendar-picker-indicator]:invert"
-                  />
-                </div>
-                {errors.starting_time && <p className="text-red-400 text-xs mt-1">{errors.starting_time.message}</p>}
-              </div>
-            </div> */}
-
-
-
-
-
-
-
-
-
-
             {/* phone number */}
             <div className="space-y-2">
               <Label htmlFor="phone" className="text-white text-sm">
@@ -281,38 +154,19 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
               {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone.message}</p>}
             </div>
 
-
-
             <div className="space-y-2">
               <Label htmlFor="duration" className="text-white text-sm">
                 Duration
               </Label>
-              <Controller
-                name="duration"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500">
-                      <SelectValue placeholder="Select Duration" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      <SelectItem value="1" className="text-white hover:bg-gray-700">
-                        1 Hour
-                      </SelectItem>
-                      <SelectItem value="2" className="text-white hover:bg-gray-700">
-                        2 Hours
-                      </SelectItem>
-                      <SelectItem value="3" className="text-white hover:bg-gray-700">
-                        3 Hours
-                      </SelectItem>
-                      <SelectItem value="4" className="text-white hover:bg-gray-700">
-                        4 Hours
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
+             
+             <Input
+                id="duration"
+                type="text"
+                readOnly
+                value={gamerInfo?.duration}
+                className="rounded-lg border-none bg-[#5E5E5E33]/80 py-6 text-white placeholder:text-gray-500 readonly-input"
+                {...register("duration")}
               />
-              {errors.duration && <p className="text-red-400 text-xs mt-1">{errors.duration.message}</p>}
             </div>
 
             <div className=' mt-8 pb-6'>
