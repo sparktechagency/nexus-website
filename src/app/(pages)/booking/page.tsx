@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
@@ -53,12 +53,15 @@ const BookingPage = () => {
   const [timeSlots, setTimeSlots] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gamerInfo, setGamerInfo] = useState<any>(null)
-  
+
   // Drag state management
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStartCell, setDragStartCell] = useState<{rowIndex: number, colIndex: number} | null>(null);
-  const [dragCurrentCell, setDragCurrentCell] = useState<{rowIndex: number, colIndex: number} | null>(null);
+  const [dragStartCell, setDragStartCell] = useState<{ rowIndex: number, colIndex: number } | null>(null);
+  const [dragCurrentCell, setDragCurrentCell] = useState<{ rowIndex: number, colIndex: number } | null>(null);
   const [dragDuration, setDragDuration] = useState<number>(0);
+
+  // Track rendered bookings to avoid duplicates
+  const renderedBookings = useRef(new Set());
 
   // Generate time slots with 1-hour intervals for display
   const generateTimeSlots = () => {
@@ -82,7 +85,9 @@ const BookingPage = () => {
         time12: formattedTime,
         hour,
         minute: 0,
-        totalMinutes: hour * 60
+        totalMinutes: hour * 60,
+        slotStartMinutes: hour * 60,
+        slotEndMinutes: (hour + 1) * 60
       });
     }
     return slots;
@@ -215,82 +220,109 @@ const BookingPage = () => {
     return hours * 60 + minutes;
   };
 
-  // NEW: Helper function to check if a time slot should show booking background
-  const shouldShowBookingInSlot = (timeSlot: typeof timeSlotsDetailed[0], pcNo: number): { show: boolean; booking: ProviderBookingProps | null } => {
+  // ENHANCED: Function to get booking information for a specific PC and time range
+  const getBookingForPC = (pcNo: number) => {
     if (!providerListData || !providerListData.length) {
-      return { show: false, booking: null };
+      return [];
     }
 
-    const booking = providerListData.find(b =>
-      b.pc_no === pcNo &&
-      convertTimeToMinutes(b.starting_time) <= timeSlot.totalMinutes + 60 && // booking ends after slot starts
-      convertTimeToMinutes(b.ending_time) > timeSlot.totalMinutes // booking starts before slot ends
-    );
+    return providerListData
+      .filter(booking => booking.pc_no === pcNo)
+      .map(booking => {
+        const startMinutes = convertTimeToMinutes(booking.starting_time);
+        const endMinutes = convertTimeToMinutes(booking.ending_time);
+        const totalMinutes = endMinutes - startMinutes;
+        
+        // Calculate which rows this booking spans
+        const startRow = Math.floor(startMinutes / 60);
+        const endRow = Math.ceil(endMinutes / 60) - 1;
+        const totalRows = endRow - startRow + 1;
 
-    return {
-      show: !!booking,
-      booking: booking || null
-    };
+        // Calculate position within the first row
+        const startPositionPercentage = ((startMinutes % 60) / 60) * 100;
+        
+        // Calculate position within the last row  
+        const endPositionPercentage = ((endMinutes % 60) / 60) * 100;
+
+        return {
+          booking,
+          startMinutes,
+          endMinutes,
+          totalMinutes,
+          startRow,
+          endRow,
+          totalRows,
+          startPositionPercentage,
+          endPositionPercentage,
+          middleRow: startRow + Math.floor(totalRows / 2)
+        };
+      });
   };
 
-  // NEW: Helper function to get booking display style for exact timing
-  const getBookingDisplayStyle = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps) => {
-    const startMinutes = convertTimeToMinutes(booking.starting_time);
-    const endMinutes = convertTimeToMinutes(booking.ending_time);
-    const slotStartMinutes = timeSlot.totalMinutes;
-    const slotEndMinutes = slotStartMinutes + 60;
+  // NEW: Function to check if a specific cell should show booking content
+  const getBookingForCell = (rowIndex: number, pcNo: number) => {
+    const bookings = getBookingForPC(pcNo);
+    
+    for (const bookingInfo of bookings) {
+      const { startRow, endRow, middleRow, booking } = bookingInfo;
+      
+      // Check if this cell is within the booking's row range
+      if (rowIndex >= startRow && rowIndex <= endRow) {
+        // Only show content in the middle row for multi-row bookings, or first row for single row
+        const shouldShowContent = bookingInfo.totalRows === 1 
+          ? rowIndex === startRow
+          : rowIndex === middleRow;
 
-    // Calculate exact overlap
-    const overlapStart = Math.max(startMinutes, slotStartMinutes);
-    const overlapEnd = Math.min(endMinutes, slotEndMinutes);
+        return {
+          show: true,
+          booking,
+          bookingInfo,
+          shouldShowContent,
+          isFirstRow: rowIndex === startRow,
+          isLastRow: rowIndex === endRow
+        };
+      }
+    }
+
+    return { show: false, booking: null, bookingInfo: null, shouldShowContent: false };
+  };
+
+  // NEW: Function to get booking style for a specific cell
+  const getBookingStyleForCell = (rowIndex: number, pcNo: number) => {
+    const { show, booking, bookingInfo, isFirstRow, isLastRow } = getBookingForCell(rowIndex, pcNo);
+    
+    if (!show || !bookingInfo) return null;
+
+    const {
+      startMinutes,
+      endMinutes,
+      startRow,
+      endRow,
+      startPositionPercentage,
+      endPositionPercentage
+    } = bookingInfo;
+
+    const cellStartMinutes = rowIndex * 60;
+    const cellEndMinutes = (rowIndex + 1) * 60;
+
+    // Calculate overlap for this specific cell
+    const overlapStart = Math.max(startMinutes, cellStartMinutes);
+    const overlapEnd = Math.min(endMinutes, cellEndMinutes);
     const overlapMinutes = overlapEnd - overlapStart;
 
-    // Calculate position and height percentages
-    const positionPercentage = ((overlapStart - slotStartMinutes) / 60) * 100;
+    // Calculate position and height percentages within this cell
+    const positionPercentage = isFirstRow ? startPositionPercentage : 0;
     const heightPercentage = (overlapMinutes / 60) * 100;
 
     return {
       top: `${positionPercentage}%`,
       height: `${heightPercentage}%`,
-      isStart: startMinutes >= slotStartMinutes && startMinutes < slotEndMinutes,
-      isEnd: endMinutes > slotStartMinutes && endMinutes <= slotEndMinutes,
-      exactStartTime: booking.starting_time,
-      exactEndTime: booking.ending_time
+      isFirstRow,
+      isLastRow,
+      overlapMinutes,
+      positionPercentage,
+      heightPercentage
     };
-  };
-
-  // Helper function to get booking for a specific time cell
-  const getBookingForCell = (pcNumber: number, timeSlot: typeof timeSlotsDetailed[0]): ProviderBookingProps | null => {
-    if (!providerListData || !providerListData.length) return null;
-
-    return providerListData.find(booking => {
-      if (booking.pc_no !== pcNumber) return false;
-
-      const startMinutes = convertTimeToMinutes(booking.starting_time);
-      const endMinutes = convertTimeToMinutes(booking.ending_time);
-      const slotStartMinutes = timeSlot.totalMinutes;
-      const slotEndMinutes = slotStartMinutes + 60;
-
-      return startMinutes < slotEndMinutes && endMinutes > slotStartMinutes;
-    }) || null;
-  };
-
-  // Helper function to check if this is the first time slot of a booking
-  const isFirstTimeSlotOfBooking = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps): boolean => {
-    const startMinutes = convertTimeToMinutes(booking.starting_time);
-    const slotStartMinutes = timeSlot.totalMinutes;
-
-    return startMinutes >= slotStartMinutes && startMinutes < slotStartMinutes + 60;
-  };
-
-  // Helper function to calculate booking duration in terms of table rows
-  const getBookingRowSpan = (booking: ProviderBookingProps): number => {
-    const startMinutes = convertTimeToMinutes(booking.starting_time);
-    const endMinutes = convertTimeToMinutes(booking.ending_time);
-    const durationMinutes = endMinutes - startMinutes;
-
-    const rowSpan = Math.ceil(durationMinutes / 60);
-    return Math.max(1, rowSpan);
   };
 
   // Check if current status allows adding gamers
@@ -299,10 +331,10 @@ const BookingPage = () => {
   // Drag handlers
   const handleDragStart = (rowIndex: number, colIndex: number) => {
     if (!canAddGamer) return;
-    
+
     const pcNo = colIndex + 1;
     const timeSlot = timeSlotsDetailed[rowIndex];
-    const booking = getBookingForCell(pcNo, timeSlot);
+    const { booking } = getBookingForCell(rowIndex, pcNo);
 
     // Only allow drag on empty cells
     if (!booking) {
@@ -315,11 +347,11 @@ const BookingPage = () => {
 
   const handleDragOver = (rowIndex: number, colIndex: number) => {
     if (!isDragging || !dragStartCell) return;
-    
+
     // Only allow vertical dragging in the same column
     if (colIndex === dragStartCell.colIndex) {
       setDragCurrentCell({ rowIndex, colIndex });
-      
+
       // Calculate duration based on row difference
       const startRow = dragStartCell.rowIndex;
       const endRow = rowIndex;
@@ -339,7 +371,7 @@ const BookingPage = () => {
     if (colIndex === dragCurrentCell.colIndex) {
       const pcNo = colIndex + 1;
       const startTimeSlot = timeSlotsDetailed[Math.min(startRow, endRow)];
-      
+
       setGamerInfo({
         booking_date: formattedDate,
         starting_time: startTimeSlot.time12,
@@ -348,7 +380,7 @@ const BookingPage = () => {
         startRow: Math.min(startRow, endRow),
         endRow: Math.max(startRow, endRow)
       });
-      
+
       setIsAddGamer(true);
     }
 
@@ -363,7 +395,7 @@ const BookingPage = () => {
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const pcNo = colIndex + 1;
     const timeSlot = timeSlotsDetailed[rowIndex];
-    const booking = getBookingForCell(pcNo, timeSlot);
+    const { booking } = getBookingForCell(rowIndex, pcNo);
 
     if (booking) {
       console.log(`Booking found:`, booking);
@@ -372,7 +404,6 @@ const BookingPage = () => {
       console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
       handleModalOpen(booking.id, selectedStatus);
     } else {
-      // শুধুমাত্র Ongoing এবং Upcoming স্ট্যাটাসে নতুন বুকিং এড করতে পারবে
       if (canAddGamer) {
         setGamerInfo({
           booking_date: formattedDate,
@@ -390,38 +421,26 @@ const BookingPage = () => {
   // Get drag selection style
   const getDragSelectionStyle = (rowIndex: number, colIndex: number) => {
     if (!isDragging || !dragStartCell || !dragCurrentCell) return {};
-    
+
     const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
     const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    
+
     if (colIndex === dragStartCell.colIndex && rowIndex >= startRow && rowIndex <= endRow) {
       return {
         background: "#B9C8FF",
         position: "relative" as const
       };
     }
-    
+
     return {};
   };
 
   // Get drag duration display
   const getDragDurationDisplay = (rowIndex: number, colIndex: number) => {
     if (!isDragging || !dragStartCell || !dragCurrentCell) return null;
-    
+
     const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
     const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    
-    // Show duration only in the first cell of the selection
-    // if (colIndex === dragStartCell.colIndex && rowIndex === startRow) {
-    //   return (
-    //     <div className="absolute inset-0 flex items-center justify-center">
-    //       <span className="text-white font-bold text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
-    //         {dragDuration} Hour{dragDuration > 1 ? 's' : ''}
-    //       </span>
-    //     </div>
-    //   );
-    // }
-    
     return null;
   };
 
@@ -587,8 +606,10 @@ const BookingPage = () => {
     }
   }
 
-  // Track which bookings we've already rendered to avoid duplicates
-  const renderedBookings = new Set();
+  // Reset rendered bookings when data changes
+  useEffect(() => {
+    renderedBookings.current = new Set();
+  }, [providerListData, roomId]);
 
   if (isLoading) {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
@@ -612,10 +633,7 @@ const BookingPage = () => {
         .booking-cell {
           cursor: pointer !important;
           transition: all 0.2s ease;
-        }
-        
-        .booking-cell:hover {
-          background-color: rgba(185, 200, 255, 0.3) !important;
+          border: none !important;
         }
         
         .regular-cell {
@@ -632,198 +650,327 @@ const BookingPage = () => {
           -moz-user-select: none;
           -ms-user-select: none;
         }
+
+        /* UPDATED: Enhanced booking overlay styles for perfect background spanning */
+        .booking-overlay {
+          position: absolute;
+          left: 0;
+          right: 0;
+          background: #B9C8FF;
+          border: 0px solid #B9C8FF;
+          border-radius: 0px;
+          z-index: 10;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+        }
+
+        .booking-content {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 2px 4px;
+          box-sizing: border-box;
+        }
+
+        /* UPDATED: Perfect text centering */
+        .booking-text {
+          color: #000000;
+          line-height: 1.2;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          margin: 0;
+          padding: 0;
+        }
+
+        .booking-name {
+          font-weight: bold;
+          font-size: 12px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 1px;
+          width: 100%;
+          text-align: center;
+        }
+
+        .booking-time {
+          font-size: 10px;
+          color: #4A5568;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 1px;
+          width: 100%;
+          text-align: center;
+        }
+
+        .booking-duration {
+          font-size: 9px;
+          color: #000000;
+          width: 100%;
+          text-align: center;
+        }
+
+        /* UPDATED: Remove any transforms that might affect centering */
+        .booking-overlay .booking-content .booking-text {
+          transform: none !important;
+        }
+
+        /* UPDATED: Multi-row booking styling */
+        .multi-row-booking .booking-text {
+          transform: none !important;
+        }
+
+        /* UPDATED: Ensure table cells have proper positioning context */
+        .booking-table-cell {
+          position: relative;
+          min-width: 200px;
+          height: 60px;
+          padding: 0;
+          margin: 0;
+        }
+
+        /* UPDATED: Remove any conflicting styles */
+        .booking-overlay * {
+          box-sizing: border-box;
+        }
+
+        /* NEW: Styles for partial cell backgrounds */
+        .partial-cell-booking {
+          position: absolute;
+          left: 0;
+          right: 0;
+          background: #B9C8FF;
+          z-index: 5;
+        }
       `}</style>
 
-      <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
-        <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
-          <div>
-            <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
-            <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
-          </div>
+      {
+        allRoomData?.length < 1 ? <div className="flex justify-center items-center h-[800px]">
+          <p className="max-w-[350px] text-center">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
         </div>
+          :
+          <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
+            <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
+              <div>
+                <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
+                <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
+              </div>
+            </div>
 
-        {/* Filters */}
-        <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
-          {/* Game Type Filters */}
-          <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%]">
-            {allRoomData?.map((item) => (
-              <Button
-                key={item.id}
-                onClick={() => {
-                  setSelectedGameType(item?.name);
-                  setRoomId(item?.id);
-                }}
-                className={`${selectedGameType === item?.name
-                  ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
-                  : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
-                  }`}
-              >
-                <span
-                  className={`${selectedGameType === item?.name
-                    ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
-                    : ""
-                    }`}
-                >
-                  {item?.name?.toUpperCase()}
-                </span>
-              </Button>
-            ))}
-          </div>
-
-          {/* Status Tabs and Date Picker */}
-          <div className="flex flex-wrap items-center gap-8 mb-6">
-            {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
-              <button
-                key={status}
-                onClick={() => setSelectedStatus(status)}
-                className={cn(
-                  "px-1 text-sm font-medium transition-colors cursor-pointer relative",
-                  selectedStatus === status
-                    ? "cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
-                    : "text-[##C2C2C2]"
-                )}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-
-            {/* Custom Date Picker */}
-            {selectedStatus === "Ongoing" ? "" : (
-              <div className="relative">
-                <div className="flex items-center gap-2 rounded-lg px-3 py-2"
-                  style={{
-                    background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                  }}
-                >
-                  <button
-                    onClick={() => navigateDate('prev')}
-                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+            {/* Filters */}
+            <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
+              {/* Game Type Filters */}
+              <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%]">
+                {allRoomData?.map((item) => (
+                  <Button
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedGameType(item?.name);
+                      setRoomId(item?.id);
+                    }}
+                    className={`${selectedGameType === item?.name
+                      ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
+                      : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
+                      }`}
                   >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  <span className="min-w-[180px] text-center font-medium flex items-center gap-3 py-1">
-                    <button
-                      onClick={() => setShowDatePicker(!showDatePicker)}
-                      className="flex items-center gap-2 cursor-pointer"
+                    <span
+                      className={`${selectedGameType === item?.name
+                        ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
+                        : ""
+                        }`}
                     >
-                      <DatePickerIcon className="cursor-pointer" />
-                      {formatDateToLongFormat(startDate)}
-                    </button>
-                  </span>
+                      {item?.name?.toUpperCase()}
+                    </span>
+                  </Button>
+                ))}
+              </div>
 
+              {/* Status Tabs and Date Picker */}
+              <div className="flex flex-wrap items-center gap-8 mb-6">
+                {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
                   <button
-                    onClick={() => navigateDate('next')}
-                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                    key={status}
+                    onClick={() => setSelectedStatus(status)}
+                    className={cn(
+                      "px-1 text-sm font-medium transition-colors cursor-pointer relative",
+                      selectedStatus === status
+                        ? "cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
+                        : "text-[##C2C2C2]"
+                    )}
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
-                </div>
+                ))}
 
-                {/* Date Picker Dropdown */}
-                {showDatePicker && (
-                  <div className="absolute top-full left-0 z-50">
-                    {renderDatePicker()}
+                {/* Custom Date Picker */}
+                {selectedStatus === "Ongoing" ? "" : (
+                  <div className="relative">
+                    <div className="flex items-center gap-2 rounded-lg px-3 py-2"
+                      style={{
+                        background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                      }}
+                    >
+                      <button
+                        onClick={() => navigateDate('prev')}
+                        className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+
+                      <span className="min-w-[180px] text-center font-medium flex items-center gap-3 py-1">
+                        <button
+                          onClick={() => setShowDatePicker(!showDatePicker)}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          <DatePickerIcon className="cursor-pointer" />
+                          {formatDateToLongFormat(startDate)}
+                        </button>
+                      </span>
+
+                      <button
+                        onClick={() => navigateDate('next')}
+                        className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Date Picker Dropdown */}
+                    {showDatePicker && (
+                      <div className="absolute top-full left-0 z-50">
+                        {renderDatePicker()}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
+            {/* Main Content - Table Section */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 min-w-0 mt-8">
+                <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
+                  <table className="min-w-full border-collapse no-select">
+                    <thead>
+                      <tr>
+                        <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4 border border-gray-800">Time</th>
+                        {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
+                          <th key={index} className="min-w-[200px] text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800">
+                            PC {index + 1}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
 
-        {/* Main Content - Table Section */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 min-w-0 mt-8">
-            <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
-              <table className="min-w-full border-collapse no-select">
-                <thead>
-                  <tr>
-                    <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4 border border-gray-800">Time</th>
-                    {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
-                      <th key={index} className="min-w-[200px] text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800">
-                        PC {index + 1}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {timeSlotsDetailed.map((timeSlot, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="min-w-[150px] h-[60px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 regular-cell">
-                        {timeSlot.time12}
-                      </td>
-                      {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
-                        const pcNo = colIndex + 1;
-                        const { show: shouldShow, booking } = shouldShowBookingInSlot(timeSlot, pcNo);
-                        const isFirstSlot = booking ? isFirstTimeSlotOfBooking(timeSlot, booking) : false;
-                        const isInteractive = booking || canAddGamer;
-                        const displayStyle = booking ? getBookingDisplayStyle(timeSlot, booking) : null;
-
-                        // Skip rendering if this booking was already rendered in a previous row
-                        const bookingKey = `${booking?.id}-${pcNo}`;
-                        if (booking && renderedBookings.has(bookingKey) && !isFirstSlot) {
-                          return null;
-                        }
-
-                        if (booking && isFirstSlot) {
-                          renderedBookings.add(bookingKey);
-                        }
-
-                        return (
-                          <td
-                            key={colIndex}
-                            onClick={() => handleCellClick(rowIndex, colIndex)}
-                            onMouseDown={() => canAddGamer && handleDragStart(rowIndex, colIndex)}
-                            onMouseEnter={() => isDragging && handleDragOver(rowIndex, colIndex)}
-                            onMouseUp={handleDragEnd}
-                            className={cn(
-                              "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative select-none",
-                              booking ? "booking-cell" : "regular-cell",
-                              isInteractive ? "cursor-pointer " : "disabled-cell cursor-default"
-                            )}
-                            style={getDragSelectionStyle(rowIndex, colIndex)}
-                            rowSpan={booking && isFirstSlot ? getBookingRowSpan(booking) : 1}
-                          >
-                            {booking && shouldShow && (
-                              <div
-                                className="absolute left-0 right-0 bg-[#B9C8FF] border border-[#B9C8FF] rounded flex flex-col justify-center p-1"
-                                style={{
-                                  top: displayStyle?.top || '0%',
-                                  height: displayStyle?.height || '100%',
-                                  zIndex: 10
-                                }}
-                              >
-                                {isFirstSlot && (
-                                  <>
-                                    <div className="font-bold text-[12px] truncate text-black">
-                                      {booking.user.name}
-                                    </div>
-                                    <div className="text-gray-500 text-[10px] truncate">
-                                      {booking.starting_time} - {booking.ending_time}
-                                    </div>
-                                    <div className="text-black text-[9px]">
-                                      Duration: {booking.duration}
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Drag duration display */}
-                            {getDragDurationDisplay(rowIndex, colIndex)}
+                    <tbody>
+                      {timeSlotsDetailed.map((timeSlot, rowIndex) => (
+                        <tr key={rowIndex}>
+                          <td className="min-w-[150px] h-[60px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 regular-cell">
+                            {timeSlot.time12}
                           </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
+                            const pcNo = colIndex + 1;
+                            const { show: shouldShow, booking, shouldShowContent, bookingInfo } = getBookingForCell(rowIndex, pcNo);
+                            const bookingStyle = getBookingStyleForCell(rowIndex, pcNo);
+                            const isInteractive = booking || canAddGamer;
+                            const bookingKey = `${booking?.id}-${pcNo}-${rowIndex}`;
+
+                            // Skip rendering booking overlay if we've already rendered this booking in a previous slot
+                            // but only if it's not the content slot
+                            if (booking && renderedBookings.current.has(bookingKey) && !shouldShowContent) {
+                              return (
+                                <td
+                                  key={colIndex}
+                                  className={cn(
+                                    "px-1 xl:px-4 border border-gray-800 text-center booking-table-cell transition-all duration-200 relative select-none",
+                                    booking ? "booking-cell " : "regular-cell",
+                                    isInteractive ? "cursor-pointer " : "disabled-cell cursor-default"
+                                  )}
+                                  style={getDragSelectionStyle(rowIndex, colIndex)}
+                                >
+                                  {/* Empty cell with booking background */}
+                                  {shouldShow && bookingStyle && (
+                                    <div
+                                      className="partial-cell-booking"
+                                      style={{
+                                        top: bookingStyle.top,
+                                        height: bookingStyle.height,
+                                      }}
+                                    />
+                                  )}
+                                </td>
+                              );
+                            }
+
+                            if (booking && shouldShowContent) {
+                              renderedBookings.current.add(bookingKey);
+                            }
+
+                            return (
+                              <td
+                                key={colIndex}
+                                onClick={() => handleCellClick(rowIndex, colIndex)}
+                                onMouseDown={() => canAddGamer && handleDragStart(rowIndex, colIndex)}
+                                onMouseEnter={() => isDragging && handleDragOver(rowIndex, colIndex)}
+                                onMouseUp={handleDragEnd}
+                                className={cn(
+                                  "px-1 xl:px-4 border border-gray-800 text-center booking-table-cell transition-all duration-200 relative select-none",
+                                  booking ? "booking-cell" : "regular-cell",
+                                  isInteractive ? "cursor-pointer " : "disabled-cell cursor-default",
+                                  bookingInfo?.totalRows > 1 && shouldShowContent ? "multi-row-booking" : ""
+                                )}
+                                style={getDragSelectionStyle(rowIndex, colIndex)}
+                              >
+                                {shouldShow && bookingStyle && (
+                                  <div
+                                    className={shouldShowContent ? "booking-overlay" : "partial-cell-booking"}
+                                    style={{
+                                      top: bookingStyle.top,
+                                      height: bookingStyle.height,
+                                    }}
+                                  >
+                                    {shouldShowContent && booking && (
+                                      <div className="booking-content">
+                                        <div className="booking-text">
+                                          <div className="booking-name">
+                                            {booking.user.name}
+                                          </div>
+                                          <div className="booking-time">
+                                            {booking.starting_time} - {booking.ending_time}
+                                          </div>
+                                          <div className="booking-duration">
+                                            Duration: {booking.duration}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Drag duration display */}
+                                {getDragDurationDisplay(rowIndex, colIndex)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+      }
 
       {/* modal component(ADD_Gamer) */}
       <CustomModalTwo

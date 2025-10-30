@@ -38,7 +38,7 @@ import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
 
 const BookingPage = () => {
-  const [isAddRoom, setIsAddRoom] = useState(false)
+  const [isAddGamer, setIsAddGamer] = useState(false)
   const [gamerInfoPayCompleteModalOpen, setGamerInfoPayCompleteModalOpen] = useState(false)
   const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
   const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
@@ -52,17 +52,56 @@ const BookingPage = () => {
   const [bookingId, setBookingId] = useState<string | number>('')
   const [timeSlots, setTimeSlots] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [gamerInfo, setGamerInfo] = useState<any>(null)
 
-  const [gamerInfo, setGamerInfo] = useState()
+  // Drag state management
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartCell, setDragStartCell] = useState<{ rowIndex: number, colIndex: number } | null>(null);
+  const [dragCurrentCell, setDragCurrentCell] = useState<{ rowIndex: number, colIndex: number } | null>(null);
+  const [dragDuration, setDragDuration] = useState<number>(0);
 
+  // Generate time slots with 1-hour intervals for display
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const time = new Date();
+      time.setHours(hour, 0, 0, 0);
 
+      // Format to "01:00 AM" format (WITH leading zeros)
+      const formattedTime = time.toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
 
-  const timeLabels = [
-    '01:00 AM', '02:00 AM', '03:00 AM', '04:00 AM', '05:00 AM', '06:00 AM',
-    '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM',
-    '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM'
-  ];
+      // Create 24-hour format for calculations
+      const time24 = `${hour.toString().padStart(2, '0')}:00`;
+
+      slots.push({
+        time24: time24,
+        time12: formattedTime,
+        hour,
+        minute: 0,
+        totalMinutes: hour * 60
+      });
+    }
+    return slots;
+  };
+
+  const timeSlotsDetailed = generateTimeSlots();
+
+  // Get initial date based on status
+  const getInitialDate = (status: string): Date => {
+    const today = new Date();
+    if (status === "Ongoing") {
+      return today;
+    } else {
+      // For Upcoming, Completed, Canceled - show tomorrow's date
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      return tomorrow;
+    }
+  };
 
   // Format to yyyy-mm-dd - FIXED VERSION (Timezone Safe)
   const formatDateToYYYYMMDD = (date: Date | null): string => {
@@ -79,10 +118,7 @@ const BookingPage = () => {
     return `${year}-${month}-${day}`;
   };
 
-
-
-
-  // ========= DATE FORMATE FUNCTION ================= //
+  // Format date to "October 29, 2025" format
   const formatDateToLongFormat = (date: Date | null): string => {
     if (!date) return "Select Date";
 
@@ -95,13 +131,6 @@ const BookingPage = () => {
   };
 
   const formattedDate = formatDateToYYYYMMDD(startDate);
-
-
-
-
-
-
-
 
   // get room api
   const { data: getAllRoom } = useAllRoomGetRoomApiQuery({ skip: true });
@@ -127,6 +156,11 @@ const BookingPage = () => {
     }
   }, [allRoomData]);
 
+  // Update date when status changes
+  useEffect(() => {
+    setStartDate(getInitialDate(selectedStatus));
+  }, [selectedStatus]);
+
   useEffect(() => {
     if (providerListData && providerListData.length > 0) {
       const timeData = providerListData?.map((item) => item.starting_time)
@@ -137,12 +171,13 @@ const BookingPage = () => {
     }
   }, [providerListData]);
 
-  // Date navigation functions
+  // Date navigation functions - REMOVED RESTRICTIONS
   const navigateDate = (direction: 'prev' | 'next') => {
     setStartDate(prev => {
-      if (!prev) return new Date();
+      if (!prev) return getInitialDate(selectedStatus);
 
       const newDate = new Date(prev);
+
       if (direction === 'prev') {
         newDate.setDate(prev.getDate() - 1);
       } else {
@@ -152,55 +187,232 @@ const BookingPage = () => {
     });
   };
 
-  // Helper function to convert time to 24-hour format for comparison
-  const convertTo24Hour = (timeStr: string): string => {
-    const [time, modifier] = timeStr.split(' ');
-    let [hours, minutes] = time.split(':');
+  // Helper function to convert time string to minutes since midnight
+  const convertTimeToMinutes = (timeStr: string): number => {
+    let cleanTime = timeStr.trim();
+    let hours = 0;
+    let minutes = 0;
 
-    if (modifier === 'PM' && hours !== '12') {
-      hours = String(parseInt(hours, 10) + 12);
-    }
-    if (modifier === 'AM' && hours === '12') {
-      hours = '00';
+    if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
+      const [timePart, modifier] = cleanTime.split(' ');
+      const [h, m] = timePart.split(':').map(Number);
+
+      hours = h;
+      minutes = m || 0;
+
+      if (modifier === 'PM' && hours !== 12) {
+        hours += 12;
+      }
+      if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+      }
+    } else {
+      const [h, m] = cleanTime.split(':').map(Number);
+      hours = h;
+      minutes = m;
     }
 
-    return `${hours.padStart(2, '0')}:${minutes}`;
+    return hours * 60 + minutes;
   };
 
-  // Helper function to check if a booking matches the current cell
-  const getBookingForCell = (pcNumber: number, timeLabel: string) => {
-    if (!providerListData || !providerListData.length) return null;
+  // NEW: Helper function to check if a time slot should show booking background
+  const shouldShowBookingInSlot = (timeSlot: typeof timeSlotsDetailed[0], pcNo: number): { show: boolean; booking: ProviderBookingProps | null } => {
+    if (!providerListData || !providerListData.length) {
+      return { show: false, booking: null };
+    }
 
-    const cellTime24 = convertTo24Hour(timeLabel);
+    const booking = providerListData.find(b =>
+      b.pc_no === pcNo &&
+      convertTimeToMinutes(b.starting_time) <= timeSlot.totalMinutes + 60 && // booking ends after slot starts
+      convertTimeToMinutes(b.ending_time) > timeSlot.totalMinutes // booking starts before slot ends
+    );
+
+    return {
+      show: !!booking,
+      booking: booking || null
+    };
+  };
+
+  // NEW: Helper function to get booking display style for exact timing
+  const getBookingDisplayStyle = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps) => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const endMinutes = convertTimeToMinutes(booking.ending_time);
+    const slotStartMinutes = timeSlot.totalMinutes;
+    const slotEndMinutes = slotStartMinutes + 60;
+
+    // Calculate exact overlap
+    const overlapStart = Math.max(startMinutes, slotStartMinutes);
+    const overlapEnd = Math.min(endMinutes, slotEndMinutes);
+    const overlapMinutes = overlapEnd - overlapStart;
+
+    // Calculate position and height percentages
+    const positionPercentage = ((overlapStart - slotStartMinutes) / 60) * 100;
+    const heightPercentage = (overlapMinutes / 60) * 100;
+
+    return {
+      top: `${positionPercentage}%`,
+      height: `${heightPercentage}%`,
+      isStart: startMinutes >= slotStartMinutes && startMinutes < slotEndMinutes,
+      isEnd: endMinutes > slotStartMinutes && endMinutes <= slotEndMinutes,
+      exactStartTime: booking.starting_time,
+      exactEndTime: booking.ending_time
+    };
+  };
+
+  // Helper function to get booking for a specific time cell
+  const getBookingForCell = (pcNumber: number, timeSlot: typeof timeSlotsDetailed[0]): ProviderBookingProps | null => {
+    if (!providerListData || !providerListData.length) return null;
 
     return providerListData.find(booking => {
       if (booking.pc_no !== pcNumber) return false;
 
-      // Check if the booking's starting time matches this cell's time
-      const bookingStartTime24 = convertTo24Hour(booking.starting_time);
-      return bookingStartTime24 === cellTime24;
-    });
+      const startMinutes = convertTimeToMinutes(booking.starting_time);
+      const endMinutes = convertTimeToMinutes(booking.ending_time);
+      const slotStartMinutes = timeSlot.totalMinutes;
+      const slotEndMinutes = slotStartMinutes + 60;
+
+      return startMinutes < slotEndMinutes && endMinutes > slotStartMinutes;
+    }) || null;
   };
 
+  // Helper function to check if this is the first time slot of a booking
+  const isFirstTimeSlotOfBooking = (timeSlot: typeof timeSlotsDetailed[0], booking: ProviderBookingProps): boolean => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const slotStartMinutes = timeSlot.totalMinutes;
 
+    return startMinutes >= slotStartMinutes && startMinutes < slotStartMinutes + 60;
+  };
 
+  // Helper function to calculate booking duration in terms of table rows
+  const getBookingRowSpan = (booking: ProviderBookingProps): number => {
+    const startMinutes = convertTimeToMinutes(booking.starting_time);
+    const endMinutes = convertTimeToMinutes(booking.ending_time);
+    const durationMinutes = endMinutes - startMinutes;
+
+    const rowSpan = Math.ceil(durationMinutes / 60);
+    return Math.max(1, rowSpan);
+  };
+
+  // Check if current status allows adding gamers
+  const canAddGamer = selectedStatus === "Ongoing" || selectedStatus === "Upcoming";
+
+  // Drag handlers
+  const handleDragStart = (rowIndex: number, colIndex: number) => {
+    if (!canAddGamer) return;
+
+    const pcNo = colIndex + 1;
+    const timeSlot = timeSlotsDetailed[rowIndex];
+    const booking = getBookingForCell(pcNo, timeSlot);
+
+    // Only allow drag on empty cells
+    if (!booking) {
+      setIsDragging(true);
+      setDragStartCell({ rowIndex, colIndex });
+      setDragCurrentCell({ rowIndex, colIndex });
+      setDragDuration(1); // Start with 1 hour
+    }
+  };
+
+  const handleDragOver = (rowIndex: number, colIndex: number) => {
+    if (!isDragging || !dragStartCell) return;
+
+    // Only allow vertical dragging in the same column
+    if (colIndex === dragStartCell.colIndex) {
+      setDragCurrentCell({ rowIndex, colIndex });
+
+      // Calculate duration based on row difference
+      const startRow = dragStartCell.rowIndex;
+      const endRow = rowIndex;
+      const duration = Math.abs(endRow - startRow) + 1; // +1 because we include the start row
+      setDragDuration(duration);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging || !dragStartCell || !dragCurrentCell) return;
+
+    const startRow = dragStartCell.rowIndex;
+    const endRow = dragCurrentCell.rowIndex;
+    const colIndex = dragStartCell.colIndex;
+
+    // Check if it's a valid drag (vertical movement only, same column)
+    if (colIndex === dragCurrentCell.colIndex) {
+      const pcNo = colIndex + 1;
+      const startTimeSlot = timeSlotsDetailed[Math.min(startRow, endRow)];
+
+      setGamerInfo({
+        booking_date: formattedDate,
+        starting_time: startTimeSlot.time12,
+        pc_no: pcNo,
+        duration: dragDuration.toString(),
+        startRow: Math.min(startRow, endRow),
+        endRow: Math.max(startRow, endRow)
+      });
+
+      setIsAddGamer(true);
+    }
+
+    // Reset drag state
+    setIsDragging(false);
+    setDragStartCell(null);
+    setDragCurrentCell(null);
+    setDragDuration(0);
+  };
+
+  // UPDATED: Handle cell click - now allows clicking on bookings in all statuses
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const pcNo = colIndex + 1;
-    const timeLabel = timeLabels[rowIndex];
+    const timeSlot = timeSlotsDetailed[rowIndex];
+    const booking = getBookingForCell(pcNo, timeSlot);
 
-    setGamerInfo({
-      booking_date: formattedDate,
-      starting_time: timeLabel,
-      pc_no: pcNo
-    })
-
-    setIsAddRoom(!isAddRoom)
+    if (booking) {
+      console.log(`Booking found:`, booking);
+      console.log(`User: ${booking.user.name}`);
+      console.log(`PC: ${booking.pc_no}`);
+      console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
+      handleModalOpen(booking.id, selectedStatus);
+    } else {
+      if (canAddGamer) {
+        setGamerInfo({
+          booking_date: formattedDate,
+          starting_time: timeSlot.time12,
+          pc_no: pcNo,
+          duration: "1",
+          startRow: rowIndex,
+          endRow: rowIndex
+        });
+        setIsAddGamer(true);
+      }
+    }
   };
 
+  // Get drag selection style
+  const getDragSelectionStyle = (rowIndex: number, colIndex: number) => {
+    if (!isDragging || !dragStartCell || !dragCurrentCell) return {};
 
+    const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
+    const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
 
+    if (colIndex === dragStartCell.colIndex && rowIndex >= startRow && rowIndex <= endRow) {
+      return {
+        background: "#B9C8FF",
+        position: "relative" as const
+      };
+    }
 
-  // Date Picker Functions
+    return {};
+  };
+
+  // Get drag duration display
+  const getDragDurationDisplay = (rowIndex: number, colIndex: number) => {
+    if (!isDragging || !dragStartCell || !dragCurrentCell) return null;
+
+    const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
+    const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
+    return null;
+  };
+
+  // Date Picker Functions - REMOVED RESTRICTIONS
   const handleDateSelect = (date: Date) => {
     setStartDate(date);
     setShowDatePicker(false);
@@ -216,7 +428,7 @@ const BookingPage = () => {
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     setStartDate(prev => {
-      if (!prev) return new Date();
+      if (!prev) return getInitialDate(selectedStatus);
 
       const newDate = new Date(prev);
       if (direction === 'prev') {
@@ -230,7 +442,7 @@ const BookingPage = () => {
 
   const navigateYear = (direction: 'prev' | 'next') => {
     setStartDate(prev => {
-      if (!prev) return new Date();
+      if (!prev) return getInitialDate(selectedStatus);
 
       const newDate = new Date(prev);
       if (direction === 'prev') {
@@ -246,12 +458,11 @@ const BookingPage = () => {
   const renderDatePicker = () => {
     if (!showDatePicker) return null;
 
-    const currentDate = startDate || new Date();
+    const currentDate = startDate || getInitialDate(selectedStatus);
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = getFirstDayOfMonth(year, month);
-
 
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -274,7 +485,6 @@ const BookingPage = () => {
       const isToday = new Date().toDateString() === dayDate.toDateString();
       const isSelected = startDate?.toDateString() === dayDate.toDateString();
 
-
       days.push(
         <button
           key={day}
@@ -284,7 +494,7 @@ const BookingPage = () => {
             isSelected
               ? "bg-gradient-to-r from-[#6523E7] to-[#023CE3] text-white font-bold"
               : isToday
-                ? "bg-gray-700 text-white"
+                ? "bg-gray-700 text-white hover:bg-gray-600"
                 : "text-gray-300 hover:bg-gray-700"
           )}
         >
@@ -301,6 +511,7 @@ const BookingPage = () => {
             onClick={() => navigateYear('prev')}
             className="p-1 hover:bg-gray-700 rounded cursor-pointer"
           >
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
           <button
@@ -326,7 +537,7 @@ const BookingPage = () => {
             onClick={() => navigateYear('next')}
             className="p-1 hover:bg-gray-700 rounded cursor-pointer"
           >
-
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -347,9 +558,6 @@ const BookingPage = () => {
     );
   };
 
-
-
-
   const handleModalOpen = (bookingSelectId: string | number, statusType: string) => {
     setBookingId(bookingSelectId)
     if (statusType === 'Ongoing') {
@@ -366,16 +574,12 @@ const BookingPage = () => {
     }
   }
 
-
+  // Track which bookings we've already rendered to avoid duplicates
+  const renderedBookings = new Set();
 
   if (isLoading) {
     return <div className="h-[50vh] flex justify-center items-center"><CustomButtonLoader /></div>
   }
-
-
-
-
-
 
   return (
     <>
@@ -391,194 +595,248 @@ const BookingPage = () => {
         }
         /* Firefox fallback */
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
+        
+        .booking-cell {
+          cursor: pointer !important;
+          transition: all 0.2s ease;
+        }
+        
+        .booking-cell:hover {
+          background-color: rgba(185, 200, 255, 0.3) !important;
+        }
+        
+        .regular-cell {
+          cursor: ${canAddGamer ? 'pointer' : 'default'};
+        }
+        
+        .disabled-cell {
+          cursor: default !important;
+        }
+        
+        .no-select {
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+        }
       `}</style>
 
-      <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
-        <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
-          <div>
-            <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
-            <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
-          </div>
+
+      {
+        allRoomData?.length < 1 ? <div className="flex justify-center items-center h-[800px]">
+          <p className="max-w-[350px] text-center">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
         </div>
+          :
+          <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
+            <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
+              <div>
+                <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
+                <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
+              </div>
+            </div>
 
-        {/* Filters */}
-        <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
-          {/* Game Type Filters */}
-          <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%]">
-            {allRoomData?.map((item) => (
-              <Button
-                key={item.id}
-                onClick={() => {
-                  setSelectedGameType(item?.name);
-                  setRoomId(item?.id);
-                }}
-                className={`${selectedGameType === item?.name
-                  ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
-                  : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
-                  }`}
-              >
-                <span
-                  className={`${selectedGameType === item?.name
-                    ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
-                    : ""
-                    }`}
-                >
-                  {item?.name?.toUpperCase()}
-                </span>
-              </Button>
-            ))}
-          </div>
-
-          {/* Status Tabs and Date Picker */}
-          <div className="flex flex-wrap items-center gap-8 mb-6">
-            {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
-              <button
-                key={status}
-                onClick={() => setSelectedStatus(status)}
-                className={cn(
-                  "px-1 text-sm font-medium transition-colors cursor-pointer relative",
-                  selectedStatus === status
-                    ? "cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
-                    : "text-[##C2C2C2]"
-                )}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-
-
-
-
-            {/* Custom Date Picker */}
-            {
-              selectedStatus === "Ongoing" ? "" : <div className="relative ">
-                <div className="flex items-center gap-2 rounded-lg px-3 py-2"
-                  style={{
-                    background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
-                  }}
-                >
-                  <button
-                    onClick={() => navigateDate('prev')}
-                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+            {/* Filters */}
+            <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
+              {/* Game Type Filters */}
+              <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%]">
+                {allRoomData?.map((item) => (
+                  <Button
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedGameType(item?.name);
+                      setRoomId(item?.id);
+                    }}
+                    className={`${selectedGameType === item?.name
+                      ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
+                      : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
+                      }`}
                   >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  <span className="min-w-[180px] text-center font-medium flex items-center gap-3 py-1">
-                    <button
-                      onClick={() => setShowDatePicker(!showDatePicker)}
-                      className="flex items-center gap-2 cursor-pointer"
+                    <span
+                      className={`${selectedGameType === item?.name
+                        ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
+                        : ""
+                        }`}
                     >
-                      <DatePickerIcon className="cursor-pointer" />
-                      {formatDateToLongFormat(startDate)}
-                    </button>
-                  </span>
+                      {item?.name?.toUpperCase()}
+                    </span>
+                  </Button>
+                ))}
+              </div>
 
+              {/* Status Tabs and Date Picker */}
+              <div className="flex flex-wrap items-center gap-8 mb-6">
+                {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
                   <button
-                    onClick={() => navigateDate('next')}
-                    className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                    key={status}
+                    onClick={() => setSelectedStatus(status)}
+                    className={cn(
+                      "px-1 text-sm font-medium transition-colors cursor-pointer relative",
+                      selectedStatus === status
+                        ? "cursor-pointer bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] inline-block text-transparent bg-clip-text underline underline-offset-8 decoration-[#6523E7]"
+                        : "text-[##C2C2C2]"
+                    )}
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
-                </div>
+                ))}
 
-                {/* Date Picker Dropdown */}
-                {showDatePicker && (
-                  <div className="absolute top-full left-0  z-50">
-                    {renderDatePicker()}
+                {/* Custom Date Picker */}
+                {selectedStatus === "Ongoing" ? "" : (
+                  <div className="relative">
+                    <div className="flex items-center gap-2 rounded-lg px-3 py-2"
+                      style={{
+                        background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
+                      }}
+                    >
+                      <button
+                        onClick={() => navigateDate('prev')}
+                        className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+
+                      <span className="min-w-[180px] text-center font-medium flex items-center gap-3 py-1">
+                        <button
+                          onClick={() => setShowDatePicker(!showDatePicker)}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          <DatePickerIcon className="cursor-pointer" />
+                          {formatDateToLongFormat(startDate)}
+                        </button>
+                      </span>
+
+                      <button
+                        onClick={() => navigateDate('next')}
+                        className="p-1 hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Date Picker Dropdown */}
+                    {showDatePicker && (
+                      <div className="absolute top-full left-0 z-50">
+                        {renderDatePicker()}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            }
-
-          </div>
-        </div>
-
-        {/* Main Content - Table Section */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 min-w-0 mt-8">
-            <div className="overflow-x-auto w-full max-h-[530px] custom-scrollbar">
-              <table className="min-w-full">
-                <thead >
-                  <tr>
-                    <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4  border border-gray-800">Time</th>
-                    {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
-                      <th key={index} className="min-w-[200px] text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800">
-                        PC {index + 1}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-
-
-                <tbody>
-                  {timeLabels.map((timeLabel, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="min-w-[150px] h-[80px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 text-gray-500">
-                        {timeLabel}
-                      </td>
-                      {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
-                        const pcNo = colIndex + 1;
-                        const booking = getBookingForCell(pcNo, timeLabel);
-
-                        return (
-                          <td
-                            key={colIndex}
-                            onClick={booking ?
-                              () => handleModalOpen(booking.id, selectedStatus) :
-                              () => handleCellClick(rowIndex, colIndex)
-                            }
-                            className={cn(
-                              " px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200",
-                              booking ? ` font-semibold cursor-pointer ${booking.duration === "1" ? 'bg-[#FFD6DD] rounded' : 'bg-[#B9C8FF] rounded'}` : "cursor-pointer "
-                            )}
-                          >
-                            {booking ? (
-                              <div className="flex flex-col items-center justify-center">
-                                <span className="text-black text-sm font-bold">{booking.user.name}</span>
-                                <span className="text-xs text-[#888888]">
-                                  {booking.starting_time} - {booking.ending_time}
-                                </span>
-                                <span className="text-xs text-black opacity-55 mt-1">
-                                  Duration: {booking.duration} hour
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400 text-sm"></span>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
-          </div>
-        </div>
-      </div>
 
+
+
+            {/* Main Content - Table Section */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1 min-w-0 mt-8">
+                <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
+                  <table className="min-w-full border-collapse no-select">
+                    <thead>
+                      <tr>
+                        <th className="text-[14px] md:text-[16px] px-2 md:px-4 py-4 border border-gray-800">Time</th>
+                        {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, index) => (
+                          <th key={index} className="min-w-[200px] text-[14px] md:text-[16px] px-2 md:px-4 md:py-2 border border-gray-800">
+                            PC {index + 1}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {timeSlotsDetailed.map((timeSlot, rowIndex) => (
+                        <tr key={rowIndex}>
+                          <td className="min-w-[150px] h-[60px] text-[10px] md:text-[14px] xl:text-[16px] px-1 xl:px-4 py-2 text-center border border-gray-800 regular-cell">
+                            {timeSlot.time12}
+                          </td>
+                          {pcNumber && Array.from({ length: pcNumber.no_of_pc ?? 0 }, (_, colIndex) => {
+                            const pcNo = colIndex + 1;
+                            const { show: shouldShow, booking } = shouldShowBookingInSlot(timeSlot, pcNo);
+                            const isFirstSlot = booking ? isFirstTimeSlotOfBooking(timeSlot, booking) : false;
+                            const isInteractive = booking || canAddGamer;
+                            const displayStyle = booking ? getBookingDisplayStyle(timeSlot, booking) : null;
+
+                            // Skip rendering if this booking was already rendered in a previous row
+                            const bookingKey = `${booking?.id}-${pcNo}`;
+                            if (booking && renderedBookings.has(bookingKey) && !isFirstSlot) {
+                              return null;
+                            }
+
+                            if (booking && isFirstSlot) {
+                              renderedBookings.add(bookingKey);
+                            }
+
+                            return (
+                              <td
+                                key={colIndex}
+                                onClick={() => handleCellClick(rowIndex, colIndex)}
+                                onMouseDown={() => canAddGamer && handleDragStart(rowIndex, colIndex)}
+                                onMouseEnter={() => isDragging && handleDragOver(rowIndex, colIndex)}
+                                onMouseUp={handleDragEnd}
+                                className={cn(
+                                  "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative select-none",
+                                  booking ? "booking-cell" : "regular-cell",
+                                  isInteractive ? "cursor-pointer " : "disabled-cell cursor-default"
+                                )}
+                                style={getDragSelectionStyle(rowIndex, colIndex)}
+                                rowSpan={booking && isFirstSlot ? getBookingRowSpan(booking) : 1}
+                              >
+                                {booking && shouldShow && (
+                                  <div
+                                    className="absolute left-0 right-0 bg-[#B9C8FF] border border-[#B9C8FF] rounded flex flex-col justify-center p-1"
+                                    style={{
+                                      top: displayStyle?.top || '0%',
+                                      height: displayStyle?.height || '100%',
+                                      zIndex: 10
+                                    }}
+                                  >
+                                    {isFirstSlot && (
+                                      <>
+                                        <div className="font-bold text-[12px] truncate text-black">
+                                          {booking.user.name}
+                                        </div>
+                                        <div className="text-gray-500 text-[10px] truncate">
+                                          {booking.starting_time} - {booking.ending_time}
+                                        </div>
+                                        <div className="text-black text-[9px]">
+                                          Duration: {booking.duration}
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Drag duration display */}
+                                {getDragDurationDisplay(rowIndex, colIndex)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+      }
 
       {/* modal component(ADD_Gamer) */}
       <CustomModalTwo
-        open={isAddRoom}
-        setIsOpen={setIsAddRoom}
+        open={isAddGamer}
+        setIsOpen={setIsAddGamer}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[35vw]"}
       >
         <AddGamer
-          open={isAddRoom}
-          setIsOpen={setIsAddRoom}
+          open={isAddGamer}
+          setIsOpen={setIsAddGamer}
           roomId={roomId}
           gamerInfo={gamerInfo}
         />
       </CustomModalTwo>
 
-
-
-
-      {/* modal component(Gamer_Info_Pay_Complete) */}
+      {/* Other modals remain the same */}
       <CustomModal
         open={gamerInfoPayCompleteModalOpen}
         setIsOpen={setGamerInfoPayCompleteModalOpen}
@@ -592,9 +850,6 @@ const BookingPage = () => {
         />
       </CustomModal>
 
-
-
-      {/* modal component(Gamer_Info_con-booking ===== Details [STATUS----> UP_Coming ]) */}
       <CustomModal
         open={gamerInfoConBookingModalOpen}
         setIsOpen={setGamerInfoConBookingModalOpen}
@@ -608,20 +863,6 @@ const BookingPage = () => {
         />
       </CustomModal>
 
-
-      {/* modal component(gamer-info-con-reschedule) */}
-      <CustomModal
-        open={gamerInfoRescheduleModalOpen}
-        setIsOpen={setGamerInfoRescheduleModalOpen}
-        className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
-      >
-        <GamerInfoConReschedule />
-      </CustomModal>
-
-
-
-      {/* modal component(REVIEW_RATING) */}
       <CustomModal
         open={gamerReviewRatingModalOpen}
         setIsOpen={setGamerReviewRatingModalOpen}
@@ -635,10 +876,6 @@ const BookingPage = () => {
         />
       </CustomModal>
 
-
-
-
-      {/* modal component(CancelTab_Modal) */}
       <CustomModal
         open={cancelTabModalModalOpen}
         setIsOpen={setCancelTabModalModalOpen}
@@ -651,7 +888,6 @@ const BookingPage = () => {
           bookingId={bookingId}
         />
       </CustomModal>
-
 
       {/* SUBSCRIPTION COMPONENT MODAL */}
       <CommonSubscription />
