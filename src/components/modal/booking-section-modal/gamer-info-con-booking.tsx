@@ -22,7 +22,7 @@ interface BookingDetails {
   room: Room;
   pc_no: string;
   starting_time: string;
-  duration: string;
+  duration: number;
   status: string;
 }
 
@@ -177,6 +177,7 @@ const GamerInfoConBooking = ({ bookingDetails, bookingId,roomId }: GamerInfoConB
           setIsOpen={setRescheduleUpdateModalOpen}
           bookingId={bookingId}
           roomId={roomId}
+          durationValue={bookingDetails?.duration}
         />
       </CustomModal>
     </div>

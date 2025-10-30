@@ -359,9 +359,8 @@ const BookingPage = () => {
     setDragDuration(0);
   };
 
+  // UPDATED: Handle cell click - now allows clicking on bookings in all statuses
   const handleCellClick = (rowIndex: number, colIndex: number) => {
-    if (!canAddGamer) return;
-
     const pcNo = colIndex + 1;
     const timeSlot = timeSlotsDetailed[rowIndex];
     const booking = getBookingForCell(pcNo, timeSlot);
@@ -373,16 +372,18 @@ const BookingPage = () => {
       console.log(`Time: ${booking.starting_time} - ${booking.ending_time}`);
       handleModalOpen(booking.id, selectedStatus);
     } else {
-      // Single click for 1 hour booking
-      setGamerInfo({
-        booking_date: formattedDate,
-        starting_time: timeSlot.time12,
-        pc_no: pcNo,
-        duration: "1",
-        startRow: rowIndex,
-        endRow: rowIndex
-      });
-      setIsAddGamer(true);
+      // শুধুমাত্র Ongoing এবং Upcoming স্ট্যাটাসে নতুন বুকিং এড করতে পারবে
+      if (canAddGamer) {
+        setGamerInfo({
+          booking_date: formattedDate,
+          starting_time: timeSlot.time12,
+          pc_no: pcNo,
+          duration: "1",
+          startRow: rowIndex,
+          endRow: rowIndex
+        });
+        setIsAddGamer(true);
+      }
     }
   };
 
@@ -411,15 +412,15 @@ const BookingPage = () => {
     const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
     
     // Show duration only in the first cell of the selection
-    if (colIndex === dragStartCell.colIndex && rowIndex === startRow) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center ">
-          <span className="text-white font-bold text-sm">
-            {dragDuration} Hour{dragDuration > 1 ? 's' : ''}
-          </span>
-        </div>
-      );
-    }
+    // if (colIndex === dragStartCell.colIndex && rowIndex === startRow) {
+    //   return (
+    //     <div className="absolute inset-0 flex items-center justify-center">
+    //       <span className="text-white font-bold text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+    //         {dragDuration} Hour{dragDuration > 1 ? 's' : ''}
+    //       </span>
+    //     </div>
+    //   );
+    // }
     
     return null;
   };
@@ -523,6 +524,7 @@ const BookingPage = () => {
             onClick={() => navigateYear('prev')}
             className="p-1 hover:bg-gray-700 rounded cursor-pointer"
           >
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
           <button
@@ -548,6 +550,7 @@ const BookingPage = () => {
             onClick={() => navigateYear('next')}
             className="p-1 hover:bg-gray-700 rounded cursor-pointer"
           >
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -606,7 +609,22 @@ const BookingPage = () => {
         /* Firefox fallback */
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6523E7 transparent; }
         
-    
+        .booking-cell {
+          cursor: pointer !important;
+          transition: all 0.2s ease;
+        }
+        
+        .booking-cell:hover {
+          background-color: rgba(185, 200, 255, 0.3) !important;
+        }
+        
+        .regular-cell {
+          cursor: ${canAddGamer ? 'pointer' : 'default'};
+        }
+        
+        .disabled-cell {
+          cursor: default !important;
+        }
         
         .no-select {
           user-select: none;
@@ -740,7 +758,7 @@ const BookingPage = () => {
                         const pcNo = colIndex + 1;
                         const { show: shouldShow, booking } = shouldShowBookingInSlot(timeSlot, pcNo);
                         const isFirstSlot = booking ? isFirstTimeSlotOfBooking(timeSlot, booking) : false;
-                        const isInteractive = canAddGamer || booking;
+                        const isInteractive = booking || canAddGamer;
                         const displayStyle = booking ? getBookingDisplayStyle(timeSlot, booking) : null;
 
                         // Skip rendering if this booking was already rendered in a previous row
@@ -757,8 +775,8 @@ const BookingPage = () => {
                           <td
                             key={colIndex}
                             onClick={() => handleCellClick(rowIndex, colIndex)}
-                            onMouseDown={() => handleDragStart(rowIndex, colIndex)}
-                            onMouseEnter={() => handleDragOver(rowIndex, colIndex)}
+                            onMouseDown={() => canAddGamer && handleDragStart(rowIndex, colIndex)}
+                            onMouseEnter={() => isDragging && handleDragOver(rowIndex, colIndex)}
                             onMouseUp={handleDragEnd}
                             className={cn(
                               "px-1 xl:px-4 border border-gray-800 text-center min-w-[200px] transition-all duration-200 h-[60px] relative select-none",
@@ -770,7 +788,7 @@ const BookingPage = () => {
                           >
                             {booking && shouldShow && (
                               <div
-                                className="absolute left-0 right-0 bg-blue-200 border border-blue-300 rounded flex flex-col justify-center p-1"
+                                className="absolute left-0 right-0 bg-[#B9C8FF] border border-[#B9C8FF] rounded flex flex-col justify-center p-1"
                                 style={{
                                   top: displayStyle?.top || '0%',
                                   height: displayStyle?.height || '100%',
@@ -779,13 +797,13 @@ const BookingPage = () => {
                               >
                                 {isFirstSlot && (
                                   <>
-                                    <div className="font-bold text-[12px] truncate text-blue-800">
+                                    <div className="font-bold text-[12px] truncate text-black">
                                       {booking.user.name}
                                     </div>
-                                    <div className="text-blue-700 text-[10px] truncate">
+                                    <div className="text-gray-500 text-[10px] truncate">
                                       {booking.starting_time} - {booking.ending_time}
                                     </div>
-                                    <div className="text-blue-600 text-[9px]">
+                                    <div className="text-black text-[9px]">
                                       Duration: {booking.duration}
                                     </div>
                                   </>
@@ -812,7 +830,7 @@ const BookingPage = () => {
         open={isAddGamer}
         setIsOpen={setIsAddGamer}
         className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
+        maxWidth={"md:!max-w-[35vw]"}
       >
         <AddGamer
           open={isAddGamer}
@@ -847,15 +865,6 @@ const BookingPage = () => {
           bookingId={bookingId}
           roomId={roomId}
         />
-      </CustomModal>
-
-      <CustomModal
-        open={gamerInfoRescheduleModalOpen}
-        setIsOpen={setGamerInfoRescheduleModalOpen}
-        className={"p-4 max-h-[0vh]"}
-        maxWidth={"md:!max-w-[40vw]"}
-      >
-        <GamerInfoConReschedule />
       </CustomModal>
 
       <CustomModal

@@ -26,6 +26,7 @@ interface AddGamerProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   bookingId: string | number;
   roomId: string | number;
+  durationValue: number;
 }
 
 interface ApiError {
@@ -43,9 +44,10 @@ interface RoomProps {
   price: number;
   created_at: string;
   updated_at: string;
+  
 }
 
-const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps) => {
+const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId, durationValue }: AddGamerProps) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedRoom, setSelectedRoom] = useState<string>("");
 
@@ -81,20 +83,20 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
 
 
 
-     // TIME FORMAT (---AM/PM---) with leading zeros
-    function convertTo12HourFormat(time: string): string {
-        const [hours, minutes] = time.split(':');
-        let hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        hour = hour % 12;
-        hour = hour ? hour : 12; // the hour '0' should be '12'
+  // TIME FORMAT (---AM/PM---) with leading zeros
+  function convertTo12HourFormat(time: string): string {
+    const [hours, minutes] = time.split(':');
+    let hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
 
-        // Format hour and minutes with leading zeros
-        const formattedHour = hour.toString().padStart(2, '0');
-        const formattedMinutes = minutes.padStart(2, '0');
+    // Format hour and minutes with leading zeros
+    const formattedHour = hour.toString().padStart(2, '0');
+    const formattedMinutes = minutes.padStart(2, '0');
 
-        return `${formattedHour}:${formattedMinutes} ${ampm}`;
-    }
+    return `${formattedHour}:${formattedMinutes} ${ampm}`;
+  }
 
 
   const onSubmit = async (data: RoomFormValues) => {
@@ -134,10 +136,11 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
 
 
 
+
   return (
     <div className='xl:p-8'>
       <h1 className="text-center text-[24px] py-4">Reschedule</h1>
-
+      {/* <p>Duration: {gamerInfo.duration}</p> */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <p>Room of your gaming center:</p>
         <RadioGroup
@@ -170,7 +173,7 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
             Date
           </Label>
           <div className="space-y-2 w-full">
-            <Label htmlFor="validate_date" className="text-base font-medium">Validate Date</Label>
+
             <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="bg-[#5E5E5E33] p-3 w-full block rounded-lg  focus:outline-none focus:border-none"
               wrapperClassName="w-full"
             />
@@ -226,7 +229,6 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
         </div>
 
 
-
         <div className="space-y-2">
           <Label htmlFor="duration" className="text-white text-sm">
             Duration
@@ -240,18 +242,18 @@ const RescheduleUpdate = ({ open, setIsOpen, bookingId, roomId }: AddGamerProps)
                   <SelectValue placeholder="Select Duration" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="1" className="text-white hover:bg-gray-700">
-                    1 Hour
-                  </SelectItem>
-                  <SelectItem value="2" className="text-white hover:bg-gray-700">
-                    2 Hours
-                  </SelectItem>
-                  <SelectItem value="3" className="text-white hover:bg-gray-700">
-                    3 Hours
-                  </SelectItem>
-                  <SelectItem value="4" className="text-white hover:bg-gray-700">
-                    4 Hours
-                  </SelectItem>
+                  {Array.from({ length: durationValue }, (_, i) => {
+                    const value = (i + 1).toString();
+                    return (
+                      <SelectItem
+                        key={value}
+                        value={value}
+                        className="text-white hover:bg-gray-700"
+                      >
+                        {value} Hour{value !== "1" ? "s" : ""}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             )}
