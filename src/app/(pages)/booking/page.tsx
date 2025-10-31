@@ -30,9 +30,9 @@ interface ProviderBookingProps {
   user: { id: number | string; name: string };
 }
 
-import { Button } from "@/components/ui/button";
+
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DatePickerIcon } from "@/components/custom-icons";
 import CustomModalTwo from "@/components/modal/customModalTwo";
 import AddGamer from "@/components/modal/booking-section-modal/add-gamer";
@@ -43,7 +43,7 @@ import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gam
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating";
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal";
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
-import SwiperRooms from "@/components/shared/SwiperRooms";
+
 
 const BookingPage = () => {
   const [isAddGamer, setIsAddGamer] = useState(false)
@@ -557,12 +557,7 @@ const BookingPage = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <button
-            onClick={() => navigateMonth('prev')}
-            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+       
 
           <div className="flex items-center gap-2 font-semibold">
             <span>{monthNames[month]}</span>
@@ -571,13 +566,6 @@ const BookingPage = () => {
 
           <button
             onClick={() => navigateMonth('next')}
-            className="p-1 hover:bg-gray-700 rounded cursor-pointer"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={() => navigateYear('next')}
             className="p-1 hover:bg-gray-700 rounded cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
@@ -765,39 +753,47 @@ const BookingPage = () => {
         }
 
 
-        /* Custom swiper styles */
-.gameTypeSwiper {
-  width: 100%;
-  padding: 0 10px;
-}
+                  /* Custom swiper navigation position */
+          .gameTypeSwiper .swiper-button-next {
+            right: 0px;
+            left: auto;
+          }
 
-.gameTypeSwiper .swiper-slide {
-  width: auto !important;
-}
+          .gameTypeSwiper .swiper-button-prev {
+            left: 0px;
+            right: auto;
+          }
 
-/* Custom navigation arrow styles */
-.gameTypeSwiper .swiper-button-next,
-.gameTypeSwiper .swiper-button-prev {
-  color: #6523E7;
-  background: rgba(255, 255, 255, 0.8);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+          /* Or move inside the container */
+          .gameTypeSwiper .swiper-button-next {
+            right: 10px;
+          }
 
-.gameTypeSwiper .swiper-button-next:after,
-.gameTypeSwiper .swiper-button-prev:after {
-  font-size: 16px;
-  font-weight: bold;
-}
-      `}</style>
+          .gameTypeSwiper .swiper-button-prev {
+            left: 10px;
+          }
+
+          /* Move to top/bottom */
+          .gameTypeSwiper .swiper-button-next,
+          .gameTypeSwiper .swiper-button-prev {
+            top: 50%;
+            transform: translateY(-50%);
+          }
+
+          /* Move outside container */
+          .gameTypeSwiper .swiper-button-next {
+            right: -30px;
+          }
+
+          .gameTypeSwiper .swiper-button-prev {
+            left: -30px;
+          }
+      `}
+      </style>
 
       {
-        allRoomData?.length < 1 ? <div className="flex justify-center items-center h-[800px]">
-          <p className="max-w-[350px] text-center">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
+        allRoomData?.length < 1 ? <div className=" flex justify-center items-center h-[800px] bg-gray-900">
+          <p className="max-w-[350px] text-center text-gray-500">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
         </div>
           :
           <div className=" mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg px-6">
@@ -805,13 +801,17 @@ const BookingPage = () => {
 
 
             {/* Filters */}
-            <div className="flex flex-col xl:flex-row xl:justify-between items-center gap-4 h-5">
-              <div className="flex gap-3 mb-0 w-[60%]"> 
+            <div className="flex flex-col xl:flex-row xl:justify-between items-center gap-4 h-5 px-6">
+
+              <div className="flex gap-3 mb-0 relative  xl:max-w-[60%]">
                 <Swiper
                   spaceBetween={10}
                   slidesPerView={'auto'}
-                  navigation={false} 
-                  modules={[Navigation]} 
+                  navigation={{
+                    nextEl: '.custom-next',
+                    prevEl: '.custom-prev',
+                  }}
+                  modules={[Navigation]}
                   className="gameTypeSwiper"
                 >
                   {allRoomData?.map((item) => (
@@ -838,6 +838,14 @@ const BookingPage = () => {
                     </SwiperSlide>
                   ))}
                 </Swiper>
+
+                {/* Custom Navigation Buttons */}
+                <div className=" custom-prev absolute pb-2 -left-8 top-1/2  flex justify-center items-center transform -translate-y-1/2 z-10 text-4xl  bg-primary text-[#6523E7] rounded-full w-8 h-8 shadow-md cursor-pointer">
+                  ‹
+                </div>
+                <div className="custom-next absolute pb-2 -right-10 top-1/2  flex justify-center items-center transform -translate-y-1/2 z-10 text-4xl  bg-primary text-[#6523E7] rounded-full w-8 h-8 shadow-md cursor-pointer">
+                  ›
+                </div>
               </div>
 
               {/* Status Tabs and Date Picker */}
@@ -919,7 +927,7 @@ const BookingPage = () => {
             {/* Main Content - Table Section */}
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1 min-w-0 mt-4">
-                <div className="overflow-x-auto w-full max-h-screen custom-scrollbar">
+                <div className="overflow-x-auto w-full xl:max-h-screen custom-scrollbar">
                   <table className="min-w-full border-collapse no-select">
                     <thead>
                       <tr>
