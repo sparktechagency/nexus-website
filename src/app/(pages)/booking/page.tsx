@@ -3,8 +3,15 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { useAllRoomGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
+import { useAllRoomGetRoomApiQuery, useGetAllRoomApiQuery, useGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+// If you need navigation arrows
+import { Navigation } from 'swiper/modules';
 
 interface BookingProps {
   id: number | string;
@@ -36,6 +43,7 @@ import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gam
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating";
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal";
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
+import SwiperRooms from "@/components/shared/SwiperRooms";
 
 const BookingPage = () => {
   const [isAddGamer, setIsAddGamer] = useState(false)
@@ -137,9 +145,12 @@ const BookingPage = () => {
 
   const formattedDate = formatDateToYYYYMMDD(startDate);
 
+  const [currentPage,] = useState(1)
+  const perPage = 1000
   // get room api
-  const { data: getAllRoom } = useAllRoomGetRoomApiQuery({ skip: true });
+  const { data: getAllRoom } = useGetRoomApiQuery({ per_page: perPage, page: currentPage });
   const allRoomData: BookingProps[] = getAllRoom?.data?.data;
+
 
   const { data: getProviderList, isLoading } = useGetProviderBookingListApiQuery({
     room_id: roomId,
@@ -232,7 +243,7 @@ const BookingPage = () => {
         const startMinutes = convertTimeToMinutes(booking.starting_time);
         const endMinutes = convertTimeToMinutes(booking.ending_time);
         const totalMinutes = endMinutes - startMinutes;
-        
+
         // Calculate which rows this booking spans
         const startRow = Math.floor(startMinutes / 60);
         const endRow = Math.ceil(endMinutes / 60) - 1;
@@ -240,7 +251,7 @@ const BookingPage = () => {
 
         // Calculate position within the first row
         const startPositionPercentage = ((startMinutes % 60) / 60) * 100;
-        
+
         // Calculate position within the last row  
         const endPositionPercentage = ((endMinutes % 60) / 60) * 100;
 
@@ -262,14 +273,14 @@ const BookingPage = () => {
   // NEW: Function to check if a specific cell should show booking content
   const getBookingForCell = (rowIndex: number, pcNo: number) => {
     const bookings = getBookingForPC(pcNo);
-    
+
     for (const bookingInfo of bookings) {
       const { startRow, endRow, middleRow, booking } = bookingInfo;
-      
+
       // Check if this cell is within the booking's row range
       if (rowIndex >= startRow && rowIndex <= endRow) {
         // Only show content in the middle row for multi-row bookings, or first row for single row
-        const shouldShowContent = bookingInfo.totalRows === 1 
+        const shouldShowContent = bookingInfo.totalRows === 1
           ? rowIndex === startRow
           : rowIndex === middleRow;
 
@@ -290,7 +301,7 @@ const BookingPage = () => {
   // NEW: Function to get booking style for a specific cell
   const getBookingStyleForCell = (rowIndex: number, pcNo: number) => {
     const { show, booking, bookingInfo, isFirstRow, isLastRow } = getBookingForCell(rowIndex, pcNo);
-    
+
     if (!show || !bookingInfo) return null;
 
     const {
@@ -524,7 +535,7 @@ const BookingPage = () => {
           className={cn(
             "w-8 h-8 rounded-full text-sm flex items-center justify-center transition-all cursor-pointer",
             isSelected
-              ? "bg-gradient-to-r from-[#6523E7] to-[#023CE3] text-white font-bold"
+              ? "bg-gradient-to-r from-[#6523E7] to-[#023CE3] text-white "
               : isToday
                 ? "bg-gray-700 text-white hover:bg-gray-600"
                 : "text-gray-300 hover:bg-gray-700"
@@ -752,6 +763,36 @@ const BookingPage = () => {
           background: #B9C8FF;
           z-index: 5;
         }
+
+
+        /* Custom swiper styles */
+.gameTypeSwiper {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.gameTypeSwiper .swiper-slide {
+  width: auto !important;
+}
+
+/* Custom navigation arrow styles */
+.gameTypeSwiper .swiper-button-next,
+.gameTypeSwiper .swiper-button-prev {
+  color: #6523E7;
+  background: rgba(255, 255, 255, 0.8);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameTypeSwiper .swiper-button-next:after,
+.gameTypeSwiper .swiper-button-prev:after {
+  font-size: 16px;
+  font-weight: bold;
+}
       `}</style>
 
       {
@@ -759,44 +800,48 @@ const BookingPage = () => {
           <p className="max-w-[350px] text-center">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
         </div>
           :
-          <div className="px-4 md:px-6 lg:px-8 mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg p-6">
-            <div className="flex flex-col md:flex-row gap-6 xl:items-center justify-between mb-6">
-              <div>
-                <h1 className="xl:text-2xl font-bold text-white mb-2">Ongoing Bookings of Your Gaming Zone</h1>
-                <p className="text-gray-400 text-sm">You can update your room information from here & also can add a new room.</p>
-              </div>
-            </div>
+          <div className=" mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg px-6">
+
+
 
             {/* Filters */}
-            <div className="flex flex-col xl:flex-row xl:justify-between pt-8 xl:pt-0">
-              {/* Game Type Filters */}
-              <div className="flex flex-wrap gap-3 mb-6 w-full xl:w-[50%]">
-                {allRoomData?.map((item) => (
-                  <Button
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedGameType(item?.name);
-                      setRoomId(item?.id);
-                    }}
-                    className={`${selectedGameType === item?.name
-                      ? "bg-white font-bold border border-gray-600 rounded-full cursor-pointer py-4 px-6 "
-                      : "bg-transparent border border-gray-600 text-gray-400 rounded-full cursor-pointer py-4 px-6 "
-                      }`}
-                  >
-                    <span
-                      className={`${selectedGameType === item?.name
-                        ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
-                        : ""
-                        }`}
-                    >
-                      {item?.name?.toUpperCase()}
-                    </span>
-                  </Button>
-                ))}
+            <div className="flex flex-col xl:flex-row xl:justify-between items-center gap-4 h-5">
+              <div className="flex gap-3 mb-0 w-[60%]"> 
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={'auto'}
+                  navigation={false} 
+                  modules={[Navigation]} 
+                  className="gameTypeSwiper"
+                >
+                  {allRoomData?.map((item) => (
+                    <SwiperSlide key={item.id} style={{ width: 'auto' }}>
+                      <button
+                        onClick={() => {
+                          setSelectedGameType(item?.name);
+                          setRoomId(item?.id);
+                        }}
+                        className={`${selectedGameType === item?.name
+                          ? "bg-white px-4 py-2 border border-gray-600 rounded-lg cursor-pointer text-[10px] whitespace-nowrap"
+                          : "bg-transparent px-4 py-2 border border-gray-600 text-gray-400 rounded-lg cursor-pointer text-[10px] whitespace-nowrap"
+                          }`}
+                      >
+                        <span
+                          className={`${selectedGameType === item?.name
+                            ? "bg-gradient-to-r from-[#6523E7] via-[#023CE3] to-[#6523E7] bg-clip-text text-transparent"
+                            : ""
+                            }`}
+                        >
+                          {item?.name?.toUpperCase()}
+                        </span>
+                      </button>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
               </div>
 
               {/* Status Tabs and Date Picker */}
-              <div className="flex flex-wrap items-center gap-8 mb-6">
+              <div className="flex  items-center gap-8">
                 {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
                   <button
                     key={status}
@@ -815,7 +860,7 @@ const BookingPage = () => {
                 {/* Custom Date Picker */}
                 {selectedStatus === "Ongoing" ? "" : (
                   <div className="relative">
-                    <div className="flex items-center gap-2 rounded-lg px-3 py-2"
+                    <div className="flex items-center gap-2 rounded-lg py-1"
                       style={{
                         background: "linear-gradient(90deg, #6523E7 0%, #023CE3 80%, #6523E7 100%)",
                       }}
@@ -856,10 +901,25 @@ const BookingPage = () => {
               </div>
             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             {/* Main Content - Table Section */}
             <div className="flex flex-col lg:flex-row gap-6">
-              <div className="flex-1 min-w-0 mt-8">
-                <div className="overflow-x-auto w-full max-h-[630px] custom-scrollbar">
+              <div className="flex-1 min-w-0 mt-4">
+                <div className="overflow-x-auto w-full max-h-screen custom-scrollbar">
                   <table className="min-w-full border-collapse no-select">
                     <thead>
                       <tr>

@@ -15,7 +15,7 @@ const WebEmptyData: React.FC<WebEmptyDataProps> = ({ customStyle, style }) => {
     return (
         <div>
             <div className="h-[250px] md:h-[470px]  rounded-lg flex flex-col justify-center items-center">
-                <p className="lg:text-6xl text-2xl font-bold text-gray-200 uppercase text-center">No data found</p>
+                <p className="lg:text-6xl text-2xl font-bold text-gray-700 uppercase text-center">No data found</p>
                 <button
                     onClick={handleBack}
                     className={`cursor-pointer flex items-center gap-2 rounded-full px-5 py-2 mt-4 font-bold group ${customStyle || ""}`}

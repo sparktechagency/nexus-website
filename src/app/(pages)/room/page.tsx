@@ -63,6 +63,8 @@ const RoomPage = () => {
   }
 
 
+
+
   return (
     <div className="px-4 md:px-6 lg:px-8 mb-6 ">
       <div className=" rounded-2xl">

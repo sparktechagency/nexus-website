@@ -356,7 +356,7 @@ export default function WebProfilePage() {
                   </div>
                 ))}
               </div> : <div className="xl:h-[550px]  w-full rounded-lg flex flex-col justify-center items-center">
-                <p className="xl:text-6xl text-2xl font-bold text-gray-200 uppercase text-center">No data found</p>
+                <p className="xl:text-6xl text-2xl font-bold text-gray-700 uppercase text-center">No data found</p>
               </div>
             }
           </div>
