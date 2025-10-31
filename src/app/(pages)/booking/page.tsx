@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { useAllRoomGetRoomApiQuery, useGetAllRoomApiQuery, useGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
+import { useGetRoomApiQuery } from "@/redux/website/rooms/roomApi";
 import { useGetBookingDetailsApiQuery, useGetProviderBookingListApiQuery } from "@/redux/website/booking/bookingApi";
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -557,7 +557,7 @@ const BookingPage = () => {
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-       
+
 
           <div className="flex items-center gap-2 font-semibold">
             <span>{monthNames[month]}</span>
@@ -719,7 +719,6 @@ const BookingPage = () => {
           text-align: center;
         }
 
-        /* UPDATED: Remove any transforms that might affect centering */
         .booking-overlay .booking-content .booking-text {
           transform: none !important;
         }
@@ -729,8 +728,7 @@ const BookingPage = () => {
           transform: none !important;
         }
 
-        /* UPDATED: Ensure table cells have proper positioning context */
-        .booking-table-cell {
+       .booking-table-cell {
           position: relative;
           min-width: 200px;
           height: 60px;
@@ -738,12 +736,12 @@ const BookingPage = () => {
           margin: 0;
         }
 
-        /* UPDATED: Remove any conflicting styles */
+
         .booking-overlay * {
           box-sizing: border-box;
         }
 
-        /* NEW: Styles for partial cell backgrounds */
+
         .partial-cell-booking {
           position: absolute;
           left: 0;
@@ -753,7 +751,7 @@ const BookingPage = () => {
         }
 
 
-                  /* Custom swiper navigation position */
+          /* Custom swiper navigation position */
           .gameTypeSwiper .swiper-button-next {
             right: 0px;
             left: auto;
@@ -800,7 +798,7 @@ const BookingPage = () => {
 
 
 
-            {/* Filters */}
+            {/* Swiper button */}
             <div className="flex flex-col xl:flex-row xl:justify-between items-center gap-4 h-5 px-6">
 
               <div className="flex gap-3 mb-0 relative  xl:max-w-[60%]">
@@ -952,9 +950,6 @@ const BookingPage = () => {
                             const bookingStyle = getBookingStyleForCell(rowIndex, pcNo);
                             const isInteractive = booking || canAddGamer;
                             const bookingKey = `${booking?.id}-${pcNo}-${rowIndex}`;
-
-                            // Skip rendering booking overlay if we've already rendered this booking in a previous slot
-                            // but only if it's not the content slot
                             if (booking && renderedBookings.current.has(bookingKey) && !shouldShowContent) {
                               return (
                                 <td
