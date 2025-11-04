@@ -29,6 +29,14 @@ interface ProviderBookingProps {
   status: string;
   user: { id: number | string; name: string };
 }
+interface GamerInfoProps {
+  booking_date: string;
+  starting_time: string;
+  pc_no: number;
+  duration: string;
+  startRow: number;
+  endRow: number;
+}
 
 
 import CustomButtonLoader from "@/components/loader/CustomButtonLoader";
@@ -39,7 +47,6 @@ import AddGamer from "@/components/modal/booking-section-modal/add-gamer";
 import CustomModal from "@/components/modal/customModal";
 import GamerInfoPayComplete from "@/components/modal/booking-section-modal/gamer-info-pay-complete";
 import GamerInfoConBooking from "@/components/modal/booking-section-modal/gamer-info-con-booking";
-import GamerInfoConReschedule from "@/components/modal/booking-section-modal/gamer-info-con-reschedule";
 import GamerInfoReviewRating from "@/components/modal/booking-section-modal/gamer-info-review-rating";
 import CancelTabModal from "@/components/modal/booking-section-modal/cancel-tab-modal";
 import CommonSubscription from "@/components/commonSubscription/CommonSubscription";
@@ -49,7 +56,6 @@ const BookingPage = () => {
   const [isAddGamer, setIsAddGamer] = useState(false)
   const [gamerInfoPayCompleteModalOpen, setGamerInfoPayCompleteModalOpen] = useState(false)
   const [gamerInfoConBookingModalOpen, setGamerInfoConBookingModalOpen] = useState(false)
-  const [gamerInfoRescheduleModalOpen, setGamerInfoRescheduleModalOpen] = useState(false)
   const [gamerReviewRatingModalOpen, setGamerReviewRatingModalOpen] = useState(false)
   const [cancelTabModalModalOpen, setCancelTabModalModalOpen] = useState(false)
 
@@ -58,9 +64,9 @@ const BookingPage = () => {
   const [selectedStatus, setSelectedStatus] = useState("Ongoing");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [bookingId, setBookingId] = useState<string | number>('')
-  const [timeSlots, setTimeSlots] = useState<string[]>([])
+  const [, setTimeSlots] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [gamerInfo, setGamerInfo] = useState<any>(null)
+  const [gamerInfo, setGamerInfo] = useState<GamerInfoProps | null>(null)
 
   // Drag state management
   const [isDragging, setIsDragging] = useState(false);
@@ -205,7 +211,7 @@ const BookingPage = () => {
 
   // Helper function to convert time string to minutes since midnight
   const convertTimeToMinutes = (timeStr: string): number => {
-    let cleanTime = timeStr.trim();
+    const cleanTime = timeStr.trim();
     let hours = 0;
     let minutes = 0;
 
@@ -300,17 +306,14 @@ const BookingPage = () => {
 
   // NEW: Function to get booking style for a specific cell
   const getBookingStyleForCell = (rowIndex: number, pcNo: number) => {
-    const { show, booking, bookingInfo, isFirstRow, isLastRow } = getBookingForCell(rowIndex, pcNo);
+    const { show, bookingInfo, isFirstRow, isLastRow } = getBookingForCell(rowIndex, pcNo);
 
     if (!show || !bookingInfo) return null;
 
     const {
       startMinutes,
       endMinutes,
-      startRow,
-      endRow,
       startPositionPercentage,
-      endPositionPercentage
     } = bookingInfo;
 
     const cellStartMinutes = rowIndex * 60;
@@ -344,7 +347,7 @@ const BookingPage = () => {
     if (!canAddGamer) return;
 
     const pcNo = colIndex + 1;
-    const timeSlot = timeSlotsDetailed[rowIndex];
+    // const timeSlot = timeSlotsDetailed[rowIndex];
     const { booking } = getBookingForCell(rowIndex, pcNo);
 
     // Only allow drag on empty cells
@@ -447,11 +450,8 @@ const BookingPage = () => {
   };
 
   // Get drag duration display
-  const getDragDurationDisplay = (rowIndex: number, colIndex: number) => {
+  const getDragDurationDisplay = () => {
     if (!isDragging || !dragStartCell || !dragCurrentCell) return null;
-
-    const startRow = Math.min(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
-    const endRow = Math.max(dragStartCell.rowIndex, dragCurrentCell.rowIndex);
     return null;
   };
 
@@ -794,14 +794,14 @@ const BookingPage = () => {
           <p className="max-w-[350px] text-center text-gray-500">If you want to add a gamer, you must first go to the room page where the room is located. Then you will be able to add the gamer.</p>
         </div>
           :
-          <div className=" mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg px-6">
+          <div className=" mb-6 text-white h-full bg-gradient-to-r from-[#0f0829] via-black to-[#0f0829] rounded-lg px-4 xl:px-6">
 
 
 
             {/* Swiper button */}
-            <div className="flex flex-col xl:flex-row xl:justify-between items-center gap-4 h-5 px-6">
+            <div className="mb-10 xl:mb-0 flex flex-col xl:flex-row xl:justify-between items-center gap-8 xl:gap-4 h-5 px-6">
 
-              <div className="flex gap-3 mb-0 relative  xl:max-w-[60%]">
+              <div className="flex gap-3 mb-0 relative w-full xl:max-w-[60%]">
                 <Swiper
                   spaceBetween={10}
                   slidesPerView={'auto'}
@@ -847,7 +847,7 @@ const BookingPage = () => {
               </div>
 
               {/* Status Tabs and Date Picker */}
-              <div className="flex  items-center gap-8">
+              <div className="flex flex-wrap items-center gap-4 xl:gap-8">
                 {(["Ongoing", "Upcoming", "Completed", "Canceled"]).map((status) => (
                   <button
                     key={status}
@@ -909,21 +909,8 @@ const BookingPage = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             {/* Main Content - Table Section */}
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-6 mt-44 md:mt-20 xl:mt-0">
               <div className="flex-1 min-w-0 mt-4">
                 <div className="overflow-x-auto w-full xl:max-h-screen custom-scrollbar">
                   <table className="min-w-full border-collapse no-select">
@@ -990,7 +977,7 @@ const BookingPage = () => {
                                   "px-1 xl:px-4 border border-gray-800 text-center booking-table-cell transition-all duration-200 relative select-none",
                                   booking ? "booking-cell" : "regular-cell",
                                   isInteractive ? "cursor-pointer " : "disabled-cell cursor-default",
-                                  bookingInfo?.totalRows > 1 && shouldShowContent ? "multi-row-booking" : ""
+                                  (bookingInfo && bookingInfo.totalRows > 1 && shouldShowContent) ? "multi-row-booking" : ""
                                 )}
                                 style={getDragSelectionStyle(rowIndex, colIndex)}
                               >
@@ -1021,7 +1008,7 @@ const BookingPage = () => {
                                 )}
 
                                 {/* Drag duration display */}
-                                {getDragDurationDisplay(rowIndex, colIndex)}
+                                {getDragDurationDisplay()}
                               </td>
                             );
                           })}
@@ -1046,7 +1033,14 @@ const BookingPage = () => {
           open={isAddGamer}
           setIsOpen={setIsAddGamer}
           roomId={roomId}
-          gamerInfo={gamerInfo}
+          gamerInfo={gamerInfo || {
+            booking_date: "",
+            starting_time: "",
+            pc_no: 0,
+            duration: "",
+            startRow: 0,
+            endRow: 0
+          }}
         />
       </CustomModalTwo>
 

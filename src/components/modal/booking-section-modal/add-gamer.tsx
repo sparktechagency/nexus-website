@@ -16,15 +16,17 @@ import CustomButtonLoader from '@/components/loader/CustomButtonLoader';
 interface GamerInfo {
   booking_date: string;
   starting_time: string;
-  pc_no: string;
+  pc_no: number;
   duration: string;
+  startRow: number; // Add this
+  endRow: number; // Add this
 }
 
 interface AddGamerProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   roomId: number | string;
-  gamerInfo: GamerInfo; // Changed from ReactNode to GamerInfo
+  gamerInfo: GamerInfo;
 }
 
 interface ApiError {
@@ -40,7 +42,7 @@ type RoomFormValues = {
   phone: string
   booking_date: string
   starting_time: string
-  pc_no: string
+  pc_no: number
   duration: string
 }
 
@@ -71,10 +73,10 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
     formData.append("phone", data.phone);
     formData.append("booking_date", gamerInfo?.booking_date);
     formData.append("starting_time", (gamerInfo?.starting_time));
-    formData.append("pc_no", gamerInfo?.pc_no);
+    formData.append("pc_no", gamerInfo?.pc_no.toString());
     formData.append("duration", data.duration);
 
-// formData.forEach((key, value)=> console.log(key, value))
+    // formData.forEach((key, value)=> console.log(key, value))
 
     try {
       const res = await addGamerApi(formData).unwrap();
@@ -158,8 +160,8 @@ const AddGamer = ({ open, setIsOpen, roomId, gamerInfo }: AddGamerProps) => {
               <Label htmlFor="duration" className="text-white text-sm">
                 Duration
               </Label>
-             
-             <Input
+
+              <Input
                 id="duration"
                 type="text"
                 readOnly
